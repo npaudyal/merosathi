@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "882840586304",
+    "firebase_url": "https://merosathi-70fd3.firebaseio.com",
+    "project_id": "merosathi-70fd3",
+    "storage_bucket": "merosathi-70fd3.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:882840586304:android:9367ebb6790fbe348eb7a5",
+        "android_client_info": {
+          "package_name": "com.paudyal.merosathi"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "882840586304-alq6aqbooc7t85jb0rme9e0hek8pd846.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.paudyal.merosathi",
+            "certificate_hash": "c2834e07db0220a1900592f2d5989d958cc9e40d"
+          }
+        },
+        {
+          "client_id": "882840586304-a5910c34n74bjlme78c3sn4l5oqb423d.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBIxop4pBgzEUCfpTD7QYdOac9o-AkcP7M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "882840586304-a5910c34n74bjlme78c3sn4l5oqb423d.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
