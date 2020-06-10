@@ -21,8 +21,6 @@ class EmailChanged extends LoginEvent {
   String toString() => 'EmailChanged {email: $email}';
 }
 
-
-
 class PasswordChanged extends LoginEvent {
   final String password;
 

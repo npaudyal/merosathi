@@ -1,28 +1,24 @@
 import 'package:equatable/equatable.dart';
-import 'package:merosathi/bloc/authentication/bloc.dart';
 
 abstract class AuthenticationState extends Equatable {
   const AuthenticationState();
-   @override
+
+  @override
   List<Object> get props => [];
 }
 
-class Uninitialized extends AuthenticationState{
- 
-}
+class Uninitialized extends AuthenticationState {}
 
 class Authenticated extends AuthenticationState {
   final String userId;
-  
-  Authenticated(this.userId
-  );
 
-   @override
+  Authenticated(this.userId);
+
+  @override
   List<Object> get props => [userId];
 
-  @override 
+  @override
   String toString() => "Authenticated {userId}";
-
 }
 
 class AuthenticatedButNotSet extends AuthenticationState {
@@ -30,13 +26,8 @@ class AuthenticatedButNotSet extends AuthenticationState {
 
   AuthenticatedButNotSet(this.userId);
 
-   @override
+  @override
   List<Object> get props => [userId];
 }
 
-class Unauthenticated extends AuthenticationState {
-
-}
-
-
-
+class Unauthenticated extends AuthenticationState {}
