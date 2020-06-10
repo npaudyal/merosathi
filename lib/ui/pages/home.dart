@@ -4,6 +4,8 @@ import 'package:merosathi/bloc/authentication/authentication_bloc.dart';
 import 'package:merosathi/bloc/authentication/authentication_event.dart';
 import 'package:merosathi/bloc/authentication/authentication_state.dart';
 import 'package:merosathi/repositories/userRepository.dart';
+import 'package:merosathi/ui/pages/login.dart';
+import 'package:merosathi/ui/pages/signUp.dart';
 import 'package:merosathi/ui/pages/splash.dart';
 
 class Home extends StatefulWidget {
@@ -38,7 +40,7 @@ class _HomeState extends State<Home> {
                   return Splash();
                 } else 
                 return Container(
-                  child: Text("Done"),
+                  child: Login(userRepository: _userRepository,),
                 );
 
             },
