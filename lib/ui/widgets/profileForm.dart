@@ -1,8 +1,10 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:merosathi/bloc/authentication/authentication_bloc.dart';
 import 'package:merosathi/bloc/authentication/authentication_event.dart';
@@ -134,10 +136,47 @@ class _ProfileFormState extends State<ProfileForm> {
                     width: size.width,
                     child: CircleAvatar(radius:size.width * 0.3,
                     backgroundColor: Colors.transparent,
-                    
+                    child: photo == null ? GestureDetector(
+                        onTap: () async {
+                          File getPic = await FilePicker.getFile(type: FileType.image);
+                          if(getPic !=null) {
+                            photo = getPic;
+                          }
+                        },
+
+                        child: Image.asset('assets/profilePhoto.png'),
+                    ) :  GestureDetector(
+                      onTap:() async {
+                          File getPic = await FilePicker.getFile(type: FileType.image);
+                          if(getPic !=null) {
+                            photo = getPic;
+                          }
+                        }, 
+
+                        child: CircleAvatar(
+                          radius: size.width * 0.3,
+                          backgroundImage: FileImage(photo),
+
+                        ),
+                    )
+
                     ),
                     
 
+                  ),
+                  textFieldWidget(_nameController, "Name", size),
+                  GestureDetector(
+                    onTap: () {
+                      DatePicker.showDatePicker(context, showTitleActions: true, 
+                      minTime:DateTime(1900,1,1),
+                      maxTime: DateTime(DateTime.now().year -19, 1,1 ),
+                      onConfirm: (date) {
+                        setState(() {
+                          age =date;
+                        });
+                      },
+                      );
+                    },
                   ),
                 ],
               ),
