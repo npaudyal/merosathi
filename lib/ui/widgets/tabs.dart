@@ -3,6 +3,8 @@ import 'package:merosathi/ui/constants.dart';
 import 'package:merosathi/ui/pages/matches.dart';
 import 'package:merosathi/ui/pages/messages.dart';
 import 'package:merosathi/ui/pages/search.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:merosathi/bloc/authentication/bloc.dart';
 
 class Tabs extends StatelessWidget {
 
@@ -26,7 +28,9 @@ class Tabs extends StatelessWidget {
             title: Text("MeroSathi", style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),),
             actions: <Widget>[
               IconButton(icon: Icon(Icons.exit_to_app),
-              onPressed: null)
+              onPressed: () {
+                BlocProvider.of<AuthenticationBloc>(context).add(LoggedOut());
+              })
             ],
             bottom: PreferredSize(
               preferredSize: Size.fromHeight(48), 

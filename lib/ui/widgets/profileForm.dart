@@ -5,12 +5,14 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:merosathi/bloc/authentication/authentication_bloc.dart';
 import 'package:merosathi/bloc/authentication/authentication_event.dart';
 import 'package:merosathi/bloc/profile/bloc.dart';
 import 'package:merosathi/repositories/userRepository.dart';
 import 'package:merosathi/ui/constants.dart';
+import 'package:merosathi/ui/widgets/gender.dart';
 
 class ProfileForm extends StatefulWidget {
 
@@ -177,7 +179,108 @@ class _ProfileFormState extends State<ProfileForm> {
                       },
                       );
                     },
+                    child: Text("Enter your birthday", style: TextStyle(
+                      color: Colors.white,
+                      fontSize: size.width * 0.09,
+
+                    ),) ,
                   ),
+                  SizedBox(height:10),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: size.height * 0.02),
+                        child: Text("You are", style: TextStyle(
+                          color: Colors.white, fontSize: size.width*0.09
+                        ),)
+                      ),
+                       Row(
+                         mainAxisAlignment: MainAxisAlignment.spaceAround,
+                         children: <Widget>[
+                           genderWidget(FontAwesomeIcons.venus, "Female", size, gender, (){
+                             setState(() {
+                               gender = "Female";
+                             });
+                           }),
+                           genderWidget(FontAwesomeIcons.mars, "Male", size, gender, (){
+                             setState(() {
+                               gender = "Male";
+                             });
+                           }),
+                           genderWidget(FontAwesomeIcons.transgender, "Trans", size, gender, (){
+                             setState(() {
+                               gender = "Transgender";
+                             });
+                           }),
+
+                         ],
+                       ),
+
+                       SizedBox(height:size.height* 0.02),
+
+                       Padding(padding: EdgeInsets.symmetric(horizontal: size.height * 0.02), 
+                       child: Text("Looking for", style: TextStyle(
+                          color: Colors.white, fontSize: size.width*0.09
+                        ),),
+
+
+                       
+                       ),
+                        Row(
+                         mainAxisAlignment: MainAxisAlignment.spaceAround,
+                         children: <Widget>[
+                           genderWidget(FontAwesomeIcons.venus, "Female", size, interestedIn, (){
+                             setState(() {
+                               interestedIn = "Female";
+                             });
+                           }),
+                           genderWidget(FontAwesomeIcons.mars, "Male", size, interestedIn, (){
+                             setState(() {
+                               interestedIn = "Male";
+                             });
+                           }),
+                           genderWidget(FontAwesomeIcons.transgender, "Trans", size, interestedIn, (){
+                             setState(() {
+                               interestedIn = "Transgender";
+                             });
+                           }),
+
+                         ],
+                       ),
+
+                    ],
+                  ),
+
+                  Padding(padding: EdgeInsets.symmetric(vertical: size.height * 0.02),
+                  child: GestureDetector(
+                    onTap: () {
+                      if(isButtonEnabled(state)) {
+                        _onSubmitted();
+                      } else {
+
+                      }
+                    },
+
+                    child: Container(
+                      width: size.width * 0.8,
+                      height: size.height * 0.06,
+                      decoration: BoxDecoration(
+                        color: isButtonEnabled(state) ? Colors.white : Colors.grey,
+                        borderRadius: BorderRadius.circular(size.height * 0.05),
+
+                      ),
+                      child: Center(
+                        child: Text("Save", style: TextStyle(
+                          fontSize: size.height * 0.025,
+                          color: Colors.blue,
+
+                        ),),
+                      ),
+                    ),
+
+                  ),
+                  )
                 ],
               ),
             ),

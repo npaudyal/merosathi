@@ -5,50 +5,46 @@ import 'package:merosathi/bloc/authentication/authentication_event.dart';
 import 'package:merosathi/bloc/authentication/authentication_state.dart';
 import 'package:merosathi/repositories/userRepository.dart';
 import 'package:merosathi/ui/pages/login.dart';
+import 'package:merosathi/ui/pages/profile.dart';
 import 'package:merosathi/ui/pages/signUp.dart';
 import 'package:merosathi/ui/pages/splash.dart';
+import 'package:merosathi/ui/widgets/tabs.dart';
 
-class Home extends StatefulWidget {
-  @override
-  _HomeState createState() => _HomeState();
-}
+class Home extends StatelessWidget {
+  final UserRepository _userRepository;
 
-class _HomeState extends State<Home> {
-  final UserRepository _userRepository = UserRepository();
-  AuthenticationBloc _authenticationBloc;
-
-  @override
-  void initState() {
-    _authenticationBloc = AuthenticationBloc(userRepository: _userRepository);
-
-    _authenticationBloc.add(AppStarted());
-
-    super.initState();
-  }
-
+  Home({@required UserRepository userRepository})
+      : assert(userRepository != null),
+        _userRepository = userRepository;
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => _authenticationBloc,
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        home: BlocBuilder(
-            bloc: _authenticationBloc,
-            builder: (BuildContext context, AuthenticationState state) {
-                if(state is Uninitialized) {
-                  return Splash();
-                } else 
-                return Container(
-                  child: Login(userRepository: _userRepository,),
-                );
-
-            },
-
-
-        ),
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: BlocBuilder<AuthenticationBloc, AuthenticationState>(
+        builder: (context, state) {
+          if (state is Uninitialized) {
+            return Splash();
+          }
+          if (state is Authenticated) {
+            return Tabs(
+             
+            );
+          }
+          if (state is AuthenticatedButNotSet) {
+            return Profile(
+              userRepository: _userRepository,
+              userId: state.userId,
+            );
+          }
+          if (state is Unauthenticated) {
+            return Login(
+              userRepository: _userRepository,
+            );
+          } else
+            return Container();
+        },
       ),
-
-    ) ;
+    );
   }
 }
