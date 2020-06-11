@@ -13,6 +13,12 @@ import 'package:merosathi/bloc/profile/bloc.dart';
 import 'package:merosathi/repositories/userRepository.dart';
 import 'package:merosathi/ui/constants.dart';
 import 'package:merosathi/ui/widgets/gender.dart';
+import 'package:image/image.dart' as Im;
+import 'package:path_provider/path_provider.dart';
+
+
+
+
 
 class ProfileForm extends StatefulWidget {
 
@@ -46,6 +52,16 @@ class _ProfileFormState extends State<ProfileForm> {
   bool isButtonEnabled(ProfileState state) {
     return isFilled && !state.isSubmitting;
   }
+
+  compressImage() async {
+  final tempDir = await getTemporaryDirectory();
+  final path = tempDir.path;
+  Im.Image imageFile = Im.decodeImage(photo.readAsBytesSync());
+  final compressedImageFile = File('$path/img_${_userRepository.getUser()}.jpg')..writeAsBytesSync(Im.encodeJpg(imageFile, quality:85));
+  setState(() {
+    photo = compressedImageFile;
+  });
+}
 
   _getlocation () async {
     Position position = await 
@@ -151,6 +167,7 @@ class _ProfileFormState extends State<ProfileForm> {
                       onTap:() async {
                           File getPic = await FilePicker.getFile(type: FileType.image);
                           if(getPic !=null) {
+                            await compressImage();
                             photo = getPic;
                           }
                         }, 

@@ -1,4 +1,4 @@
-import 'package:chill/models/user.dart';
+import 'package:merosathi/models/user.dart';
 import 'package:equatable/equatable.dart';
 
 abstract class SearchState extends Equatable {

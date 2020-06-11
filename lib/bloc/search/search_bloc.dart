@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
-import 'package:chill/models/user.dart';
-import 'package:chill/repositories/searchRepository.dart';
+import 'package:merosathi/models/user.dart';
+import 'package:merosathi/repositories/searchRepository.dart';
 import 'package:meta/meta.dart';
 import './bloc.dart';
 
