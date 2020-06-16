@@ -9,18 +9,37 @@ class Splash extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: backgroundColor,
-      body: Container(
-        width: size.width,
-        child: Center(
-          child: Text(
-            "MeroSathi",
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: size.width * 0.2,
+      body: Stack(
+        fit: StackFit.expand,
+        children: <Widget>[
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.black
             ),
           ),
-        ),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              Expanded(
+                flex: 2,
+                child: Container(
+                  child:Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Image(image: AssetImage('assets/unnamed.png'), 
+                        height: 100,
+                        width: 100,
+                      )
+                    ],
+
+                  ),
+                ))
+            ],
+
+          ),
+        ],
       ),
     );
   }
 }
+

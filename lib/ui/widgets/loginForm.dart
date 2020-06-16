@@ -5,6 +5,7 @@ import 'package:merosathi/bloc/login/bloc.dart';
 import 'package:merosathi/repositories/userRepository.dart';
 import 'package:merosathi/ui/constants.dart';
 import 'package:merosathi/ui/pages/signUp.dart';
+import 'package:merosathi/ui/widgets/fade_animation.dart';
 
 class LoginForm extends StatefulWidget {
   final UserRepository _userRepository;
@@ -76,6 +77,7 @@ class _LoginFormState extends State<LoginForm> {
         }
       },
       child: BlocBuilder<LoginBloc, LoginState>(builder: (context, state) {
+
         return SingleChildScrollView(
           child: Container(
             color: backgroundColor,
@@ -196,7 +198,11 @@ class _LoginFormState extends State<LoginForm> {
         );
       }),
     );
+  
   }
+
+  
+  
 
   void _onEmailChanged() {
     _loginBloc.add(

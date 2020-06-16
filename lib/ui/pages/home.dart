@@ -10,6 +10,7 @@ import 'package:merosathi/ui/pages/signUp.dart';
 import 'package:merosathi/ui/pages/splash.dart';
 import 'package:merosathi/ui/widgets/tabs.dart';
 
+
 class Home extends StatelessWidget {
   final UserRepository _userRepository;
 
@@ -23,6 +24,7 @@ class Home extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       home: BlocBuilder<AuthenticationBloc, AuthenticationState>(
         builder: (context, state) {
+         
           if (state is Uninitialized) {
             return Splash();
           }
