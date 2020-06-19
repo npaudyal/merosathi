@@ -8,13 +8,18 @@ import 'package:merosathi/bloc/authentication/bloc.dart';
 
 class Tabs extends StatelessWidget {
 
-  List<Widget> pages = [
-    Search(),
+  final userId;
+
+  const Tabs({this.userId});
+
+ 
+  @override
+  Widget build(BuildContext context) {
+     List<Widget> pages = [
+    Search(userId: userId),
     Matches(),
     Messages(),
   ];
-  @override
-  Widget build(BuildContext context) {
     return Theme(
       data: ThemeData(
         primaryColor: backgroundColor,

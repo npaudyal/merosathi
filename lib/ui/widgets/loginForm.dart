@@ -1,5 +1,7 @@
+import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:merosathi/bloc/authentication/bloc.dart';
 import 'package:merosathi/bloc/login/bloc.dart';
 import 'package:merosathi/repositories/userRepository.dart';
@@ -78,128 +80,161 @@ class _LoginFormState extends State<LoginForm> {
       },
       child: BlocBuilder<LoginBloc, LoginState>(builder: (context, state) {
 
-        return SingleChildScrollView(
-          child: Container(
-            color: backgroundColor,
-            width: size.width,
-            height: size.height,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                Center(
-                  child: Text(
-                    "MeroSathi",
-                    style: TextStyle(
-                        fontSize: size.width * 0.2, color: Colors.white),
-                  ),
-                ),
-                Container(
-                  width: size.width * 0.8,
-                  child: Divider(
-                    height: size.height * 0.05,
-                    color: Colors.white,
-                  ),
-                ),
-                 Padding(
-                    padding: EdgeInsets.all(size.height * 0.02),
-                    child: TextFormField(
-                      controller: _emailController,
-                      autovalidate: true,
-                      validator: (_) {
-                        return !state.isEmailValid ? "Invalid Email" : null;
-                      },
-                      decoration: InputDecoration(
-                        labelText: "Email",
-                        labelStyle: TextStyle(
-                            color: Colors.white, fontSize: size.height * 0.03),
-                        focusedBorder: OutlineInputBorder(
-                            borderSide:
-                                BorderSide(color: Colors.white, width: 1.0)),
-                        enabledBorder: OutlineInputBorder(
-                            borderSide:
-                                BorderSide(color: Colors.white, width: 1.0)),
-                      ),
-                    ),
-                  ),
-                Padding(
-                  padding: EdgeInsets.all(size.height * 0.02),
-                  child: TextFormField(
-                    controller: _passwordController,
-                    autovalidate: true,
-                    autocorrect: false,
-                    obscureText: true,
-                    validator: (_) {
-                      return !state.isPasswordValid ? "Invalid Password" : null;
-                    },
-                    decoration: InputDecoration(
-                      labelText: "Password",
-                      labelStyle: TextStyle(
-                          color: Colors.white, fontSize: size.height * 0.03),
-                      focusedBorder: OutlineInputBorder(
-                          borderSide:
-                              BorderSide(color: Colors.white, width: 1.0)),
-                      enabledBorder: OutlineInputBorder(
-                          borderSide:
-                              BorderSide(color: Colors.white, width: 1.0)),
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.all(size.height * 0.02),
-                  child: Column(
-                    children: <Widget>[
-                      GestureDetector(
-                        onTap:
-                            isLoginButtonEnabled(state) ? _onFormSubmitted : null,
-                        child: Container(
-                          width: size.width * 0.8,
-                          height: size.height * 0.06,
-                          decoration: BoxDecoration(
-                            color: isLoginButtonEnabled(state)
-                                ? Colors.white
-                                : Colors.grey,
-                            borderRadius: BorderRadius.circular(size.height * 0.05),
-                          ),
-                          child: Center(
-                            child: Text(
-                              "Login",
-                              style: TextStyle(
-                                  fontSize: size.height * 0.025,
-                                  color: Colors.blue),
-                            ),
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: size.height *0.02),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(builder: (context){
-                              return SignUp(userRepository: _userRepository);
-                            },),
-
-
-                          );
-                        },
-                        child: Text("New Here? Create an account",
-                        style: TextStyle(fontSize: size.height *0.025, 
-                        color: Colors.white
-                        ),
-                        
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+        return  Scaffold(
+      body: CustomPaint(
+        painter: BackgroundSignIn(),
+        child: Stack(
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 35),
+              child: Column(
+                children: <Widget>[
+                  _getHeader(),
+                  _getTextFields(state),
+                  _getSignIn(state),
+                  _getBottomRow(context),
+                ],
+              ),
             ),
-          ),
-        );
+            _getBackBtn(),
+          ],
+        ),
+      ),
+    );
       }),
     );
   
   }
+  _getBackBtn() {
+  return Positioned(
+    top: 35,
+    left: 25,
+    child: Icon(
+      Icons.arrow_back_ios,
+      color: Colors.white,
+    ),
+  );
+}
+
+_getBottomRow(context) {
+  return Expanded(
+    flex: 1,
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: <Widget>[
+        GestureDetector(
+          onTap: (){
+            Navigator.of(context).push(
+                            MaterialPageRoute(builder: (context){
+                              return SignUp(userRepository: _userRepository);
+                            }));
+          
+          },
+                  child: Text(
+            'Sign up',
+            style: GoogleFonts.raleway(fontSize: 15,
+              fontWeight: FontWeight.w500,
+              decoration: TextDecoration.underline,)
+            
+          ),
+        ),
+        Text(
+          'Forgot Password',
+          style: GoogleFonts.raleway(fontSize: 15,
+              fontWeight: FontWeight.w500,
+              decoration: TextDecoration.underline,)
+            
+          
+        ),
+      ],
+    ),
+  );
+}
+
+
+_getSignIn(LoginState state) {
+  return Expanded(
+    flex: 1,
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: <Widget>[
+        Text(
+          'Sign in',
+          style: GoogleFonts.raleway(fontSize: 25, fontWeight: FontWeight.w500 ),
+          
+        ),
+        GestureDetector(
+            onTap: () { 
+              
+            _onFormSubmitted();
+
+            },
+            child: CircleAvatar(
+            backgroundColor: Colors.grey.shade800,
+            radius: 40,
+            child: Icon(
+             EvaIcons.heartOutline ,
+              color: Colors.red,
+            ),
+          ),
+        )
+      ],
+    ),
+  );
+}
+
+_getTextFields(LoginState state) {
+  return Expanded(
+    flex: 4,
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: <Widget>[
+        SizedBox(
+          height: 15,
+        ),
+        TextFormField(
+          controller: _emailController,
+          autovalidate: true,
+          validator: (_) {
+         return !state.isEmailValid ? "Invalid Email" : null;
+            },
+          decoration: InputDecoration(labelText: 'Email', labelStyle: GoogleFonts.raleway()),
+        ),
+        SizedBox(
+          height: 15,
+        ),
+        TextFormField(
+          controller: _passwordController,
+          autovalidate: true,
+           autocorrect: false,
+          obscureText: true,
+          validator: (_) {
+             return !state.isPasswordValid ? "Invalid Password" : null;
+          },
+          decoration: InputDecoration(labelText: 'Password', labelStyle: GoogleFonts.raleway()),
+        ),
+        SizedBox(
+          height: 25,
+        ),
+      ],
+    ),
+  );
+}
+
+_getHeader() {
+  return Expanded(
+    flex: 3,
+    child: Container(
+      alignment: Alignment.bottomLeft,
+      child: Text(
+        'Welcome\nBack',
+        style: GoogleFonts.raleway(color: Colors.white, fontSize: 40,)
+        //  TextStyle(color: Colors.white, fontSize: 40, fontFamily:),
+      ),
+    ),
+  );
+}
+
 
   
   
@@ -226,5 +261,52 @@ class _LoginFormState extends State<LoginForm> {
   void _onFormSubmitted() {
     _loginBloc.add(LoginWithCredentialsPressed(
         email: _emailController.text, password: _passwordController.text));
+  }
+}
+
+
+class BackgroundSignIn extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    var sw = size.width;
+    var sh = size.height;
+    var paint = Paint();
+
+    Path mainBackground = Path();
+    mainBackground.addRect(Rect.fromLTRB(0, 0, sw, sh));
+    paint.color = Colors.grey.shade100;
+    canvas.drawPath(mainBackground, paint);
+
+    Path blueWave = Path();
+    blueWave.lineTo(sw, 0);
+    blueWave.lineTo(sw, sh * 0.5);
+    blueWave.quadraticBezierTo(sw * 0.5, sh * 0.45, sw * 0.2, 0);
+    blueWave.close();
+    paint.color = Colors.red.shade300;
+    canvas.drawPath(blueWave, paint);
+
+    Path greyWave = Path();
+    greyWave.lineTo(sw, 0);
+    greyWave.lineTo(sw, sh * 0.1);
+    greyWave.cubicTo(
+        sw * 0.95, sh * 0.15, sw * 0.65, sh * 0.15, sw * 0.6, sh * 0.38);
+    greyWave.cubicTo(sw * 0.52, sh * 0.52, sw * 0.05, sh * 0.45, 0, sh * 0.4);
+    greyWave.close();
+    paint.color = Colors.black87;
+    canvas.drawPath(greyWave, paint);
+
+    Path yellowWave = Path();
+    yellowWave.lineTo(sw * 0.7, 0);
+    yellowWave.cubicTo(
+        sw * 0.6, sh * 0.05, sw * 0.27, sh * 0.01, sw * 0.18, sh * 0.12);
+    yellowWave.quadraticBezierTo(sw * 0.12, sh * 0.2, 0, sh * 0.2);
+    yellowWave.close();
+    paint.color = Colors.pink.shade300;
+    canvas.drawPath(yellowWave, paint);
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) {
+    return oldDelegate != this;
   }
 }

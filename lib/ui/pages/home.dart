@@ -29,7 +29,7 @@ class Home extends StatelessWidget {
             return Splash();
           }
           if (state is Authenticated) {
-            return Tabs(
+            return Tabs(userId: state.userId,
              
             );
           }
