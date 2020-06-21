@@ -1,22 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_database/firebase_database.dart';
-import 'package:merosathi/models/Users.dart';
 import 'package:merosathi/models/user.dart';
-import 'package:merosathi/models/Users.dart';
 
 
 class SearchRepository {
   final Firestore _firestore;
   List<User> userList = [];
-
-  // getUsers() async {
-  //   DatabaseReference usersRef = FirebaseDatabase.instance.reference().child("users");
-  //   usersRef.once().then((DataSnapshot snap) {
-  //     var KEYS = snap.value.keys;
-  //     var DATA = snap.value;
-  //   });
-
-  // }
 
   SearchRepository({Firestore firestore})
       : _firestore = firestore ?? Firestore.instance;
@@ -94,53 +82,12 @@ class SearchRepository {
     return chosenList;
   }
 
-  // Future<User> getUser(userId) async {
-  //   User _user = User();
-    
-  //   List<String> chosenList = await getChosenList(userId);
-  //   User currentUser = await getUserInterests(userId);
-
-  //   await _firestore.collection('users').getDocuments().then((users) {
-  //     for (var user in users.documents) {
-  //       if ((!chosenList.contains(user.documentID)) &&
-  //           (user.documentID != userId) &&
-  //           (currentUser.interestedIn == user['gender']) &&
-  //           (user['interestedIn'] == currentUser.gender)) {
-
-           
-
-  //         _user.uid = user.documentID;
-  //         _user.name = user['name'];
-  //         _user.photo = user['photoUrl'];
-  //         _user.age = user['age'];
-  //         _user.location = user['location'];
-  //         _user.gender = user['gender'];
-  //         _user.interestedIn = user['interestedIn'];
-           
-  //         break;
-
-         
-         
-  //       }
-
-      
-        
-  //     }
-  //   });
-
-  //   return _user;
-
-    
   
-  // }
-   Future<User> getUser(userId) async {
+ Future<User> getUser(userId) async {
 
-     
     
-    User _user = new User();
-    
-    List<String> chosenList = await getChosenList(userId);
-    User currentUser = await getUserInterests(userId);
+  List<String> chosenList = await getChosenList(userId);
+  User currentUser = await getUserInterests(userId);
 
     await _firestore.collection('users').getDocuments().then((users) {
       for (var user in users.documents) {
@@ -152,23 +99,10 @@ class SearchRepository {
 
             User users1 = new User(uid: user.documentID,  name: user['name'], gender: user['gender'],  interestedIn: user['interestedIn'], photo:user['photoUrl'], age:user['age'], location:user['location']);
 
-          // _user.uid = user.documentID;
-          // _user.name = user['name'];
-          // _user.photo = user['photoUrl'];
-          // _user.age = user['age'];
-          // _user.location = user['location'];
-          // _user.gender = user['gender'];
-          // _user.interestedIn = user['interestedIn'];
-          //  userList.add(_user);
-          // break innerLoop;
-
           userList.add(users1);
           
          
-        }
-
-      
-        
+        } 
       }
     });
 

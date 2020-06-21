@@ -54,8 +54,9 @@ dependencies:
   eva_icons_flutter: ^2.0.0
   extended_image: ^0.9.0
   firebase_database: ^3.1.6
+  location_permissions: ^3.0.0+1
+  location: ^3.0.2
 
-  uuid:
 
 
 
@@ -103,6 +104,10 @@ flutter:
         - asset: assets/fonts/poppins/regular.ttf
         - asset: assets/fonts/poppins/semi-bold.ttf
         - asset: assets/fonts/poppins/bold.ttf
+    
+    
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+
+
