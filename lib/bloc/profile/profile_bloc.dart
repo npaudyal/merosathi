@@ -30,7 +30,27 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       yield* _mapLocationChangedToState(event.location);
     } else if (event is PhotoChanged) {
       yield* _mapPhotoChangedToState(event.photo);
-    } else if (event is Submitted) {
+    } else if (event is CountryChanged) {
+      yield* _mapCountryChangedToState(event.country);
+    }  else if (event is CommunityChanged) {
+      yield* _mapCommunityChangedToState(event.community);
+    }  else if (event is HeightPChanged) {
+      yield* _mapHeightPChangedToState(event.heightP);
+    } else if (event is ReligionChanged) {
+      yield* _mapReligionChangedToState(event.religion);
+    } else if (event is BioChanged) {
+      yield* _mapBioChangedToState(event.bio);
+    } else if (event is JobChanged) {
+      yield* _mapJobChangedToState(event.job);
+    } else if (event is GotraChanged) {
+      yield* _mapGotraChangedToState(event.gotra);
+    } else if (event is SalaryChanged) {
+      yield* _mapSalaryChangedToState(event.salary);
+    } else if (event is EducationChanged) {
+      yield* _mapEducationChangedToState(event.education);
+    }
+    
+     else if (event is Submitted) {
       final uid = await _userRepository.getUser();
       yield* _mapSubmittedToState(
           photo: event.photo,
@@ -39,7 +59,17 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
           userId: uid,
           age: event.age,
           location: event.location,
-          interestedIn: event.interestedIn);
+          interestedIn: event.interestedIn,
+          country: event.country,
+          community: event.community,
+          heightP: event.heightP,
+          salary: event.salary,
+          religion: event.religion,
+          bio: event.bio,
+          job: event.job,
+          gotra: event.gotra,
+          education:event.education
+          );
     }
   }
 
@@ -80,6 +110,58 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     );
   }
 
+
+ Stream<ProfileState> _mapCountryChangedToState(String country) async* {
+    yield state.update(
+      isCountryEmpty: country == null,
+    );
+  }
+
+   Stream<ProfileState> _mapCommunityChangedToState(String community) async* {
+    yield state.update(
+      isCommunityEmpty: community == null,
+    );
+  }
+   Stream<ProfileState> _mapHeightPChangedToState(String heightP) async* {
+    yield state.update(
+      isHeightPEmpty: heightP == null,
+    );
+  }
+   Stream<ProfileState> _mapBioChangedToState(String bio) async* {
+    yield state.update(
+      isBioEmpty: bio == null,
+    );
+  }
+   Stream<ProfileState> _mapGotraChangedToState(String gotra) async* {
+    yield state.update(
+      isGotraEmpty: gotra == null,
+    );
+  }
+   Stream<ProfileState> _mapReligionChangedToState(String religion) async* {
+    yield state.update(
+      isReligionEmpty: religion == null,
+    );
+  }
+   Stream<ProfileState> _mapSalaryChangedToState(String salary) async* {
+    yield state.update(
+      isSalaryEmpty: salary == null,
+    );
+  }
+   Stream<ProfileState> _mapJobChangedToState(String job) async* {
+    yield state.update(
+      isJobEmpty: job == null,
+    );
+  }
+
+   Stream<ProfileState> _mapEducationChangedToState(String education) async* {
+    yield state.update(
+      isEducationEmpty: education == null,
+    );
+  }
+
+
+
+
   Stream<ProfileState> _mapSubmittedToState(
       {File photo,
       String gender,
@@ -87,11 +169,22 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       String userId,
       DateTime age,
       GeoPoint location,
-      String interestedIn}) async* {
+      String interestedIn,
+      String country, 
+      String heightP,
+      String community,
+      String salary,
+      String gotra,
+      String bio,
+      String job,
+      String religion,
+      String education
+
+      }) async* {
     yield ProfileState.loading();
     try {
       await _userRepository.profileSetup(
-          photo, userId, name, gender, interestedIn, age, location);
+          photo, userId, name, gender, interestedIn,country, heightP, community,salary,gotra,job,bio,religion,education, age, location);
       yield ProfileState.success();
     } catch (_) {
       yield ProfileState.failure();

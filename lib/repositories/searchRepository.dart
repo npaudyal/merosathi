@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:merosathi/models/user.dart';
 
-
 class SearchRepository {
   final Firestore _firestore;
   List<User> userList = [];
@@ -82,36 +81,37 @@ class SearchRepository {
     return chosenList;
   }
 
-  
- Future<User> getUser(userId) async {
-
-    
-  List<String> chosenList = await getChosenList(userId);
-  User currentUser = await getUserInterests(userId);
+  Future<User> getUser(userId) async {
+    List<String> chosenList = await getChosenList(userId);
+    User currentUser = await getUserInterests(userId);
 
     await _firestore.collection('users').getDocuments().then((users) {
       for (var user in users.documents) {
-        
-         if ((!chosenList.contains(user.documentID)) &&
+        if (
             (user.documentID != userId) &&
             (currentUser.interestedIn == user['gender']) &&
             (user['interestedIn'] == currentUser.gender)) {
-
-            User users1 = new User(uid: user.documentID,  name: user['name'], gender: user['gender'],  interestedIn: user['interestedIn'], photo:user['photoUrl'], age:user['age'], location:user['location']);
+          User users1 = new User(
+              uid: user.documentID,
+              name: user['name'],
+              gender: user['gender'],
+              interestedIn: user['interestedIn'],
+              photo: user['photoUrl'],
+              age: user['age'],
+              location: user['location'],
+              country: user['country'],
+              community: user['community'],
+              heightP: user['height'],
+              job: user['job'],
+              bio: user['bio'],
+              salary: user['salary'],
+              education: user['education'],
+              gotra: user['gotra'],
+              religion: user['religion']);
 
           userList.add(users1);
-          
-         
-        } 
+        }
       }
     });
-
-    
-
-    
-  
   }
-
-
- 
-  }
+}

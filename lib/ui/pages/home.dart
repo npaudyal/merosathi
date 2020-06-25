@@ -6,6 +6,7 @@ import 'package:merosathi/bloc/authentication/authentication_state.dart';
 import 'package:merosathi/repositories/userRepository.dart';
 import 'package:merosathi/ui/pages/login.dart';
 import 'package:merosathi/ui/pages/profile.dart';
+import 'package:merosathi/ui/pages/search.dart';
 import 'package:merosathi/ui/pages/signUp.dart';
 import 'package:merosathi/ui/pages/splash.dart';
 import 'package:merosathi/ui/widgets/tabs.dart';
@@ -32,6 +33,8 @@ class Home extends StatelessWidget {
             return Tabs(userId: state.userId,
              
             );
+
+            // return Search(userId: state.userId);
           }
           if (state is AuthenticatedButNotSet) {
             return Profile(

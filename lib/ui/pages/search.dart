@@ -9,9 +9,11 @@ import 'package:liquid_swipe/liquid_swipe.dart';
 import 'package:merosathi/bloc/search/bloc.dart';
 import 'package:merosathi/models/user.dart';
 import 'package:merosathi/repositories/searchRepository.dart';
+import 'package:merosathi/ui/pages/people_profile.dart';
 import 'package:merosathi/ui/widgets/iconWidget.dart';
 import 'package:merosathi/ui/widgets/profile.dart';
 import 'package:merosathi/ui/widgets/userGender.dart';
+
 
 class Search extends StatefulWidget {
   final String userId;
@@ -27,6 +29,7 @@ class _SearchState extends State<Search> {
   SearchBloc _searchBloc;
   User _currentUser;
   int difference;
+  Firestore _firestore;
 
   List<Container> feed = [];
 
@@ -39,14 +42,14 @@ class _SearchState extends State<Search> {
     }
     double location = await Geolocator().distanceBetween(userLocation.latitude,
         userLocation.longitude, position.latitude, position.longitude);
-    
+
     difference = location.toInt();
   }
 
   @override
   void initState() {
     _searchBloc = SearchBloc(searchRepository: _searchRepository);
-  
+
     super.initState();
   }
 
@@ -74,167 +77,40 @@ class _SearchState extends State<Search> {
             ),
           );
         }
-        if (state is LoadUserState)  {
+        if (state is LoadUserState) {
           _currentUser = state.currentUser;
 
-          //print(difference);
-            
-         // buildContainer(_searchRepository.userList, _currentUser);
+          return FutureBuilder(
+              future: buildContainer(_searchRepository.userList, _currentUser),
+              builder: (context, snapshot) {
+                switch (snapshot.connectionState) {
+                  case ConnectionState.none:
+                    return Text('none');
+                  case ConnectionState.active:
+                  case ConnectionState.waiting:
+                    return Center(child: CircularProgressIndicator());
+                  case ConnectionState.done:
+                    return Scaffold(
+                        body: _searchRepository.userList.length > 0
+                            ? LiquidSwipe(
+                                enableLoop: false,
+                                pages: feed,
+                              )
+                            : Text("No users"));
 
-          // return Scaffold(
-          //   body: LiquidSwipe(
-          //     enableLoop: false,
-          //      pages: feed
-          //      ),
-          // );
-
-
-          return 
-          FutureBuilder(
-            future: buildContainer(_searchRepository.userList, _currentUser),
-            builder: (context, snapshot) {
-              switch(snapshot.connectionState) {
-                case ConnectionState.none:
-                return Text('none');
-                case ConnectionState.active:
-                case ConnectionState.waiting:
-                return Center(child: CircularProgressIndicator());
-                case ConnectionState.done:
-                
-                 return Scaffold(
-            body: LiquidSwipe(
-              enableLoop: false,
-               pages: feed
-               ),
-          );
-
-          default: 
-          return Text("Default");
-
-              }
-            }
-            
-            );
-
-
-
-
-          // _user = state.user;
-
-          // print(_searchRepository.userList[0].uid);
-          // print(_searchRepository.userList[1].uid);
-          // print(_searchRepository.userList[2].uid);
-
-          //buildContainer(_searchRepository.userList);
-
-          // getDifference(_user.location);
-          // if (_user.location == null) {
-          //   return Text(
-          //     "No One Here",
-          //     style: TextStyle(
-          //         fontSize: 20.0,
-          //         fontWeight: FontWeight.bold,
-          //         color: Colors.black),
-          //   );
-          // } else {
-          //   return Scaffold(
-          //     body: Column(
-          //       children: feed,
-          //     ),
-          //   );
-
-          // }
-          // return ProfileWidget(
-          //   padding: size.height * 0.035,
-          //   photoHeight: size.height * 0.824,
-          //   photoWidth: size.width * 0.95,
-          //   photo: _user.photo,
-          //   clipRadius: size.height * 0.02,
-          //   containerHeight: size.height * 0.3,
-          //   containerWidth: size.width * 0.9,
-          //   child: Padding(
-          //     padding: EdgeInsets.symmetric(horizontal: size.width * 0.02),
-          //     child: Column(
-          //       crossAxisAlignment: CrossAxisAlignment.start,
-          //       children: <Widget>[
-          //         SizedBox(
-          //           height: size.height * 0.06,
-          //         ),
-          //         Row(
-          //           children: <Widget>[
-          //             userGender(_user.gender),
-          //             Expanded(
-          //               child: Text(
-          //                 " " +
-          //                     _user.name +
-          //                     ", " +
-          //                     (DateTime.now().year - _user.age.toDate().year)
-          //                         .toString(),
-          //                 style: TextStyle(
-          //                     color: Colors.white,
-          //                     fontSize: size.height * 0.05),
-          //               ),
-          //             )
-          //           ],
-          //         ),
-          //         Row(
-          //           children: <Widget>[
-          //             Icon(
-          //               Icons.location_on,
-          //               color: Colors.white,
-          //             ),
-          //             Text(
-          //               difference != null
-          //                   ? (difference / 1000).floor().toString() +
-          //                       "km away"
-          //                   : "away",
-          //               style: TextStyle(color: Colors.white),
-          //             )
-          //           ],
-          //         ),
-          //         SizedBox(
-          //           height: size.height * 0.05,
-          //         ),
-          //         Row(
-          //           mainAxisAlignment: MainAxisAlignment.spaceAround,
-          //           children: <Widget>[
-          //             iconWidget(EvaIcons.flash, () {}, size.height * 0.04,
-          //                 Colors.yellow),
-          //             iconWidget(Icons.clear, () {
-          //               _searchBloc
-          //                   .add(PassUserEvent(widget.userId, _user.uid));
-          //             }, size.height * 0.08, Colors.blue),
-          //             iconWidget(FontAwesomeIcons.solidHeart, () {
-          //               _searchBloc.add(
-          //                 SelectUserEvent(
-          //                     name: _currentUser.name,
-          //                     photoUrl: _currentUser.photo,
-          //                     currentUserId: widget.userId,
-          //                     selectedUserId: _user.uid),
-          //               );
-          //             }, size.height * 0.06, Colors.red),
-          //             iconWidget(EvaIcons.options2, () {}, size.height * 0.04,
-          //                 Colors.white)
-          //           ],
-          //         )
-          //       ],
-          //     ),
-          //   ),
-          // );
+                  default:
+                    return Text("Default");
+                }
+              });
         }
-        // else
-        //   return Container();
       },
     );
   }
 
-  
-
-
   buildContainer(List<User> usersaa, User _currentUser) async {
     Size size = MediaQuery.of(context).size;
 
-    for (User usera in usersaa)   {
+    for (User usera in usersaa) {
       await getDifference(usera.location);
 
       // print(_currentUser.location.latitude);
@@ -254,77 +130,214 @@ class _SearchState extends State<Search> {
             photo: usera.photo,
             clipRadius: size.height * 0.02,
             containerHeight: size.height * 0.3,
-            containerWidth: size.width * 0.9,
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: size.width * 0.01),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  SizedBox(
-                    height: size.height * 0.06,
-                  ),
-                  Row(
+            containerWidth: size.width,
+            child: Stack(
+              children: <Widget>[
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: size.width * 0.01),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      userGender(usera.gender),
-                      Expanded(
-                        child: Text(
-                          " " +
-                              usera.name +
-                              ", " +
-                              (DateTime.now().year - usera.age.toDate().year)
-                                  .toString(),
-                          style: GoogleFonts.roboto(
-                              color: Colors.white,
-                              fontSize: size.height * 0.04),
-                        ),
-                      )
-                    ],
-                  ),
-                  Row(
-                    children: <Widget>[
-                      Icon(
-                        Icons.location_on,
-                        color: Colors.white,
+                      SizedBox(
+                        height: size.height * 0.11,
                       ),
-                      Text(
-                        difference != null
-                            ? (difference / 1000).floor().toString() + "km away"
-                            : "away",
-                        style: TextStyle(color: Colors.white),
-                      )
+                      Row(
+                        children: <Widget>[
+                          userGender(usera.gender),
+                          Expanded(
+                            child: Text(
+                              " " +
+                                  usera.name +
+                                  ", " +
+                                  (DateTime.now().year -
+                                          usera.age.toDate().year)
+                                      .toString(),
+                              style: GoogleFonts.roboto(
+                                  color: Colors.white,
+                                  fontSize: size.height * 0.04),
+                            ),
+                          )
+                        ],
+                      ),
+                      Row(
+                        children: <Widget>[
+                          Icon(
+                            Icons.location_on,
+                            color: Colors.white,
+                          ),
+                          Text(
+                            difference != null
+                                ? (difference / 1000).floor().toString() +
+                                    "km away"
+                                : "away",
+                            style: TextStyle(color: Colors.white),
+                          )
+                        ],
+                      ),
+                      SizedBox(
+                        height: size.height * 0.01,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: <Widget>[
+                          iconWidget(FontAwesomeIcons.commentDots, () {},
+                              size.height * 0.02, Colors.white),
+                          iconWidget(Icons.clear, () {
+                            _searchBloc
+                                .add(PassUserEvent(widget.userId, usera.uid));
+                          }, size.height * 0.02, Colors.blue),
+                          iconWidget(FontAwesomeIcons.solidHeart, () {
+                            _searchBloc.add(
+                              SelectUserEvent(
+                                  name: _currentUser.name,
+                                  photoUrl: _currentUser.photo,
+                                  currentUserId: widget.userId,
+                                  selectedUserId: usera.uid),
+                            );
+                          }, size.height * 0.02, Colors.red),
+                          iconWidget(EvaIcons.options2, () {},
+                              size.height * 0.02, Colors.white),
+                        ],
+                      ),
                     ],
                   ),
-                  SizedBox(
-                    height: size.height * 0.05,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: <Widget>[
-                      iconWidget(EvaIcons.home, () {}, size.height * 0.04,
-                          Colors.yellow),
-                      iconWidget(Icons.clear, () {
-                        _searchBloc
-                            .add(PassUserEvent(widget.userId, usera.uid));
-                      }, size.height * 0.08, Colors.blue),
-                      iconWidget(FontAwesomeIcons.solidHeart, () {
-                        _searchBloc.add(
-                          SelectUserEvent(
-                              name: _currentUser.name,
-                              photoUrl: _currentUser.photo,
-                              currentUserId: widget.userId,
-                              selectedUserId: usera.uid),
-                        );
-                      }, size.height * 0.06, Colors.red),
-                      iconWidget(EvaIcons.options2, () {}, size.height * 0.04,
-                          Colors.white),
-                    ],
-                  )
-                ],
-              ),
+                ),
+                CustomBottomBar(usera, _currentUser),
+                PlayButton(usera, _currentUser),
+              ],
             ),
           ),
         ));
       }
     }
   }
+
+  Widget CustomBottomBar(User user, User _currentUser) {
+    return Positioned(
+      bottom: 0,
+      width: MediaQuery.of(context).size.width,
+      child: IgnorePointer(
+        child: Stack(
+          alignment: Alignment.bottomCenter,
+          children: <Widget>[
+            ClipPath(
+              clipper: BottomBarClipper(),
+              child: Container(
+                height: 60,
+                width: MediaQuery.of(context).size.width,
+                alignment: Alignment.bottomCenter,
+                padding: EdgeInsets.only(top: 4),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
+                    colors: [
+                      Colors.black,
+                      // Colors.black87,
+                      // Colors.black54,
+                      Colors.black
+                      // Colors.blueGrey.shade800,
+                      // Colors.blue.shade800,
+                      // Colors.blue.shade300,
+                      // Colors.white,
+                      // Colors.white,
+                    ],
+                  ),
+                ),
+              ),
+            ),
+
+            //  Container(
+            //    padding: EdgeInsets.only(bottom:10, right: 10),
+            //   //  child: GestureDetector
+            //   //  (
+            //   //    onTap: () {
+            //   //  Navigator.push(context, MaterialPageRoute(builder: (context) => PeopleProfile(user: user, currentUserId: widget.userId, currentUser: _currentUser)));
+
+            //   //    },
+            //      child: IconButton(
+            //        icon: Icon(Icons.arrow_upward, color: Colors.white,),
+            //        onPressed: () {
+
+            //           Navigator.push(context, MaterialPageRoute(builder: (context) => PeopleProfile(user: user, currentUserId: widget.userId, currentUser: _currentUser)));
+            //        },
+            //         ),
+
+            //      ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget PlayButton(User user, User _currentUser) {
+    return Positioned(
+      bottom: 20,
+      left: MediaQuery.of(context).size.width / 2 - 15,
+      child: Container(
+        width: 20,
+        height: 20,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Colors.black,
+              Colors.black87,
+              Colors.black54,
+              Colors.black
+            ],
+          ),
+        ),
+        child: IconButton(
+          padding: EdgeInsets.only(right: 20),
+          onPressed: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => PeopleProfile(
+                        user: user,
+                        currentUserId: widget.userId,
+                        currentUser: _currentUser)));
+          },
+          icon: Icon(Icons.arrow_drop_up,
+              color: Colors.white.withOpacity(0.9), size: 20),
+        ),
+      ),
+    );
+  }
+}
+
+class BottomBarClipper extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) {
+    Path path = Path();
+    var width = size.width;
+    var height = size.height;
+
+    path.moveTo(0, height);
+    path.lineTo(0, height - 20);
+    path.lineTo((width / 2 - 15) - 60, height - 20);
+
+    var fcp = new Offset((width / 2 - 15) - 20, height - 20);
+    var fep = new Offset((width / 2 - 15) - 10, height / 2);
+    path.quadraticBezierTo(fcp.dx, fcp.dy, fep.dx, fep.dy);
+
+    var scp = new Offset((width / 2 - 15) + 10, 0);
+    var sep = new Offset((width / 2 - 15) + 30, height / 2);
+    path.quadraticBezierTo(scp.dx, scp.dy, sep.dx, sep.dy);
+
+    var tcp = new Offset((width / 2 - 15) + 40, height - 20);
+    var tep = new Offset((width / 2 - 15) + 100, height - 20);
+    path.quadraticBezierTo(tcp.dx, tcp.dy, tep.dx, tep.dy);
+
+    path.lineTo(width, height - 20);
+    path.lineTo(width, height);
+    path.close();
+    return path;
+  }
+
+  @override
+  bool shouldReclip(CustomClipper<Path> oldClipper) => false;
 }

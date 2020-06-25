@@ -58,6 +58,16 @@ class UserRepository {
       String name,
       String gender,
       String interestedIn,
+      String country, 
+      String heightP,
+      String community,
+      String salary,
+      String gotra,
+      String bio,
+      String job,
+      String religion,
+      String education,
+
       DateTime age,
       GeoPoint location) async {
     StorageUploadTask storageUploadTask;
@@ -77,7 +87,18 @@ class UserRepository {
           "location": location,
           'gender': gender,
           'interestedIn': interestedIn,
-          'age': age
+          'age': age,
+          'country': country,
+          'height': heightP,
+          'community':community,
+          'job':job,
+          'gotra': gotra,
+          'religion': religion,
+          'salary': salary,
+          'bio':bio,
+          'education':education
+
+
         });
       });
     });
