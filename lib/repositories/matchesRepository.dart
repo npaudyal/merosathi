@@ -34,6 +34,15 @@ class MatchesRepository {
       _user.location = user['location'];
       _user.gender = user['gender'];
       _user.interestedIn = user['interestedIn'];
+      _user.bio = user['bio'];
+      _user.country = user['country'];
+      _user.community = user['community'];
+      _user.heightP = user['height'];
+      _user.gotra = user['gotra'];
+      _user.religion = user['religion'];
+      _user.salary = user['salary'];
+      _user.job = user['job'];
+      _user.education = user['education'];
     });
 
     return _user;

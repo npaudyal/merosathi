@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
+import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -9,15 +11,24 @@ import 'package:liquid_swipe/liquid_swipe.dart';
 import 'package:merosathi/bloc/search/bloc.dart';
 import 'package:merosathi/models/user.dart';
 import 'package:merosathi/repositories/searchRepository.dart';
+import 'package:merosathi/ui/pages/matches.dart';
 import 'package:merosathi/ui/pages/people_profile.dart';
 import 'package:merosathi/ui/widgets/iconWidget.dart';
 import 'package:merosathi/ui/widgets/profile.dart';
-import 'package:merosathi/ui/widgets/userGender.dart';
+import 'package:smart_flare/smart_flare.dart';
+import 'package:merosathi/ui/pages/my_profile.dart';
+import 'package:merosathi/ui/pages/heart.dart';
+
+class MenuItem {
+  final String name;
+  final Color color;
+  final double x;
+  MenuItem({this.name, this.color, this.x});
+}
 
 
 class Search extends StatefulWidget {
   final String userId;
-
   const Search({this.userId});
 
   @override
@@ -27,11 +38,20 @@ class Search extends StatefulWidget {
 class _SearchState extends State<Search> {
   final SearchRepository _searchRepository = SearchRepository();
   SearchBloc _searchBloc;
-  User _currentUser;
+  User currentUser;
   int difference;
   Firestore _firestore;
 
   List<Container> feed = [];
+   List items = [
+    MenuItem(x: -1.0, name: 'search_to_close', color: Colors.red),
+    MenuItem(x: -0.3, name: 'message', color: Colors.purple),
+   
+    MenuItem(x: 0.3, name: 'heart', color: Colors.pink),
+    MenuItem(x: 1.0, name: 'head', color: Colors.yellow),
+  ];
+
+  MenuItem active;
 
   getDifference(GeoPoint userLocation) async {
     Position position;
@@ -49,12 +69,14 @@ class _SearchState extends State<Search> {
   @override
   void initState() {
     _searchBloc = SearchBloc(searchRepository: _searchRepository);
-
+    active = items[0];
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+   
+   
     Size size = MediaQuery.of(context).size;
 
     return BlocBuilder<SearchBloc, SearchState>(
@@ -78,10 +100,10 @@ class _SearchState extends State<Search> {
           );
         }
         if (state is LoadUserState) {
-          _currentUser = state.currentUser;
+          currentUser = state.currentUser;
 
           return FutureBuilder(
-              future: buildContainer(_searchRepository.userList, _currentUser),
+              future: buildContainer(_searchRepository.userList, currentUser),
               builder: (context, snapshot) {
                 switch (snapshot.connectionState) {
                   case ConnectionState.none:
@@ -91,12 +113,61 @@ class _SearchState extends State<Search> {
                     return Center(child: CircularProgressIndicator());
                   case ConnectionState.done:
                     return Scaffold(
-                        body: _searchRepository.userList.length > 0
-                            ? LiquidSwipe(
-                                enableLoop: false,
-                                pages: feed,
-                              )
-                            : Text("No users"));
+                      
+                     bottomNavigationBar: Container(
+      
+      height: 50,
+      width:size. width,
+      color: Colors.black,
+      child: Stack(
+        children: [
+          AnimatedContainer(
+            duration: Duration(milliseconds: 200),
+            alignment: Alignment(active.x, -1),
+            child: AnimatedContainer(
+              duration: Duration(milliseconds: 1000),
+              height: 8,
+              width: size.width * 0.2,
+              color: active.color,
+            ),
+          ),
+          Container(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: items.map((k) {
+                return _flare(k, currentUser);
+              }).toList(),
+            ),
+          )
+        ],
+      ),
+    )
+,
+                         
+                         body: _searchRepository.userList.length > 0
+                           ?
+                                   Stack(
+                                 children: <Widget>[
+                                     LiquidSwipe(
+                                     enableLoop: false,
+                                    pages: feed,
+                                    
+                                 ),
+                          
+                              
+                                 
+                                  
+                                 
+                                  ],
+                
+
+
+
+                                    ):Text("No users"),                          
+                            
+
+                            );
 
                   default:
                     return Text("Default");
@@ -106,8 +177,44 @@ class _SearchState extends State<Search> {
       },
     );
   }
+  Widget _flare(MenuItem item, User currentUser) {
+    
+    return GestureDetector(
+      child: AspectRatio(
+        aspectRatio: 1,
+        child: Padding(
+          padding: EdgeInsets.only(top: 20),
+          child: FlareActor(
+            'assets/${item.name}.flr',
+            alignment: Alignment.center,
+            fit: BoxFit.contain,
+            animation: item.name == active.name ? 'go' : 'idle',
+          ),
+        ),
+      ),
+      onTap: () {
+        setState(() {
+          active = item;
+        });
+        if(item.name == "head") {
+         Navigator.push(context, MaterialPageRoute(
+           builder: (context) => MyProfile(currentUserId: widget.userId, currentUser: currentUser, userId: widget.userId)));
+        }
+        if(item.name == "heart") {
+          Navigator.push(context, MaterialPageRoute(builder: (context) => Heart(userId: widget.userId,currentUserId: widget.userId, currentUser: currentUser, )));//Matches(userId: widget.userId,)));
+        }
+        if(item.name =="message") {
+
+        }
+      },
+    );
+  }
+
 
   buildContainer(List<User> usersaa, User _currentUser) async {
+
+  
+   
     Size size = MediaQuery.of(context).size;
 
     for (User usera in usersaa) {
@@ -132,43 +239,63 @@ class _SearchState extends State<Search> {
             containerHeight: size.height * 0.3,
             containerWidth: size.width,
             child: Stack(
+              
               children: <Widget>[
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: size.width * 0.01),
+                  padding: EdgeInsets.symmetric(horizontal: size.width * 0.03),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       SizedBox(
-                        height: size.height * 0.11,
+                        height: size.height * 0.15,
                       ),
                       Row(
                         children: <Widget>[
-                          userGender(usera.gender),
-                          Expanded(
-                            child: Text(
-                              " " +
-                                  usera.name +
-                                  ", " +
-                                  (DateTime.now().year -
-                                          usera.age.toDate().year)
-                                      .toString(),
-                              style: GoogleFonts.roboto(
+                          //userGender(usera.gender),
+                          
+                          RichText(
+                              text: TextSpan(
+                                  text: " ${usera.name}, ",
+                                  style: GoogleFonts.roboto(
+                                  fontWeight: FontWeight.bold,
+                                  
                                   color: Colors.white,
-                                  fontSize: size.height * 0.04),
+                                  fontSize: size.height * 0.04,),
+
+                                  children: <TextSpan> [
+                                    TextSpan(text:  (DateTime.now().year -
+                                           usera.age.toDate().year).toString(),
+                                            style: GoogleFonts.roboto(
+                                            color:Colors.white,
+                                            
+                                            fontWeight: FontWeight.w400,
+                                            fontSize: size.height * 0.035,), ),
+
+
+                                  ],
+                              
+
+                                 
+                                 
+                                  // (DateTime.now().year -
+                                  //         usera.age.toDate().year)
+                                  //     .toString(),
+                              
                             ),
-                          )
+                          ),
+                          
                         ],
                       ),
                       Row(
                         children: <Widget>[
                           Icon(
                             Icons.location_on,
-                            color: Colors.white,
+                            color: Colors.blue,
                           ),
                           Text(
                             difference != null
                                 ? (difference / 1000).floor().toString() +
-                                    "km away"
+                                    " km away"
                                 : "away",
                             style: TextStyle(color: Colors.white),
                           )
@@ -177,33 +304,47 @@ class _SearchState extends State<Search> {
                       SizedBox(
                         height: size.height * 0.01,
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: <Widget>[
-                          iconWidget(FontAwesomeIcons.commentDots, () {},
-                              size.height * 0.02, Colors.white),
-                          iconWidget(Icons.clear, () {
-                            _searchBloc
-                                .add(PassUserEvent(widget.userId, usera.uid));
-                          }, size.height * 0.02, Colors.blue),
-                          iconWidget(FontAwesomeIcons.solidHeart, () {
-                            _searchBloc.add(
-                              SelectUserEvent(
-                                  name: _currentUser.name,
-                                  photoUrl: _currentUser.photo,
-                                  currentUserId: widget.userId,
-                                  selectedUserId: usera.uid),
-                            );
-                          }, size.height * 0.02, Colors.red),
-                          iconWidget(EvaIcons.options2, () {},
-                              size.height * 0.02, Colors.white),
-                        ],
-                      ),
+                      // Row(
+                      //   mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      //   children: <Widget>[
+                      //     iconWidget(FontAwesomeIcons.solidCommentDots, () {},
+                      //         size.height * 0.06, Colors.white),
+                      //     iconWidget(Icons.clear, () {
+                      //       _searchBloc
+                      //           .add(PassUserEvent(widget.userId, usera.uid));
+                      //     }, size.height * 0.02, Colors.blue),
+                      //     iconWidget(FontAwesomeIcons.solidHeart, () {
+                      //       _searchBloc.add(
+                      //         SelectUserEvent(
+                      //             name: _currentUser.name,
+                      //             photoUrl: _currentUser.photo,
+                      //             currentUserId: widget.userId,
+                      //             selectedUserId: usera.uid),
+                      //       );
+                      //     }, size.height * 0.02, Colors.red),
+                      //     iconWidget(EvaIcons.options2, () {},
+                      //         size.height * 0.02, Colors.white),
+                      //   ],
+                      // ),
+                      
+
+                
                     ],
                   ),
                 ),
+               
+                 
+                
+           
+             
+
                 CustomBottomBar(usera, _currentUser),
+               
                 PlayButton(usera, _currentUser),
+
+                 
+                    
+                
               ],
             ),
           ),
@@ -213,62 +354,50 @@ class _SearchState extends State<Search> {
   }
 
   Widget CustomBottomBar(User user, User _currentUser) {
-    return Positioned(
-      bottom: 0,
-      width: MediaQuery.of(context).size.width,
-      child: IgnorePointer(
-        child: Stack(
-          alignment: Alignment.bottomCenter,
-          children: <Widget>[
-            ClipPath(
-              clipper: BottomBarClipper(),
-              child: Container(
-                height: 60,
-                width: MediaQuery.of(context).size.width,
-                alignment: Alignment.bottomCenter,
-                padding: EdgeInsets.only(top: 4),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.centerLeft,
-                    end: Alignment.centerRight,
-                    colors: [
-                      Colors.black,
-                      // Colors.black87,
-                      // Colors.black54,
-                      Colors.black
-                      // Colors.blueGrey.shade800,
-                      // Colors.blue.shade800,
-                      // Colors.blue.shade300,
-                      // Colors.white,
-                      // Colors.white,
-                    ],
+   
+  
+    return  Positioned(
+        bottom: 0,
+        width: MediaQuery.of(context).size.width,
+        child: IgnorePointer(
+          child: Stack(
+            alignment: Alignment.bottomCenter,
+            children: <Widget>[
+              ClipPath(
+                clipper: BottomBarClipper(),
+                child: Container(
+                  height: 60,
+                  width: MediaQuery.of(context).size.width,
+                  alignment: Alignment.bottomCenter,
+                  padding: EdgeInsets.only(top: 4),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.bottomCenter,
+                      end: Alignment.topCenter,
+                      colors: [
+                        Colors.black,
+                        
+                        Colors.black87,
+                        Colors.black54,
+                        Colors.black45,
+                        Colors.black38,
+                        Colors.black26,
+                        Colors.black12
+                        
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-
-            //  Container(
-            //    padding: EdgeInsets.only(bottom:10, right: 10),
-            //   //  child: GestureDetector
-            //   //  (
-            //   //    onTap: () {
-            //   //  Navigator.push(context, MaterialPageRoute(builder: (context) => PeopleProfile(user: user, currentUserId: widget.userId, currentUser: _currentUser)));
-
-            //   //    },
-            //      child: IconButton(
-            //        icon: Icon(Icons.arrow_upward, color: Colors.white,),
-            //        onPressed: () {
-
-            //           Navigator.push(context, MaterialPageRoute(builder: (context) => PeopleProfile(user: user, currentUserId: widget.userId, currentUser: _currentUser)));
-            //        },
-            //         ),
-
-            //      ),
-          ],
+         
+             
+            ],
+          ),
         ),
-      ),
+      
     );
   }
+
 
   Widget PlayButton(User user, User _currentUser) {
     return Positioned(

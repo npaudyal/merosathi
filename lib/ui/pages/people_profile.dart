@@ -1,9 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -32,8 +30,8 @@ class _PeopleProfileState extends State<PeopleProfile> {
 
  
   final SearchRepository _searchRepository = SearchRepository();
-  SearchBloc _searchBloc;
-  FirebaseAuth _auth;
+  SearchBloc searchBloc;
+  FirebaseAuth auth;
 
  
  
@@ -44,16 +42,16 @@ class _PeopleProfileState extends State<PeopleProfile> {
 
   int count1;
 
-  User get _user => widget.user;
-  User get _currentUser => widget.currentUser;
+  User get user => widget.user;
+  User get currentUser => widget.currentUser;
 
-  String get _currentUserId => widget.currentUserId;
+  String get currentUserId => widget.currentUserId;
   bool liked = false;
   
 
 
 getCurrentUser() async{ 
-  final FirebaseUser user = await _auth.currentUser();
+  final FirebaseUser user = await auth.currentUser();
   print(user.uid);
 }
 
@@ -61,7 +59,7 @@ getCurrentUser() async{
 
   
 getImageURL() async {
-    String uid = _user.uid;
+    String uid = user.uid;
 
     for(int i=1; i<=4; i++)
     {
@@ -83,13 +81,10 @@ getImageURL() async {
 
 } 
 
-  
 
-  
-  
   @override
   void initState() {
-    _searchBloc = SearchBloc(searchRepository: _searchRepository);
+    searchBloc = SearchBloc(searchRepository: _searchRepository);
     getCount();
     super.initState();
   }
@@ -235,29 +230,29 @@ Widget CustomBody() {
                     
                 ListTile(
                   leading: Icon(Icons.work),
-                  title: Text("Works at ${_user.job}"),
+                  title: Text("Works at ${user.job}"),
                 ),
 
                 ListTile(
                   leading: Icon(Icons.school),
-                  title: Text("Studied ${_user.education}"),
+                  title: Text("Studied ${user.education}"),
                 ),
 
                  ListTile(
                   leading: Icon(FontAwesomeIcons.church),
-                  title: Text("${_user.religion}"),
+                  title: Text("${user.religion}"),
                 ),
                  ListTile(
                   leading: Icon(FontAwesomeIcons.moneyBill),
-                  title: Text("Earns ${_user.salary}"),
+                  title: Text("Earns ${user.salary}"),
                 ),
                  ListTile(
                   leading: Icon(Icons.star),
-                  title: Text("${_user.gotra} Gotra"),
+                  title: Text("${user.gotra} Gotra"),
                 ),
                  ListTile(
                   leading: Icon(Icons.group),
-                  title: Text("${_user.community}"),
+                  title: Text("${user.community}"),
                 ),
                 
                 
@@ -421,7 +416,7 @@ Widget CustomBody() {
               RichText(
                 textAlign: TextAlign.center,
                 text: TextSpan(
-                    text: _user.bio,
+                    text: user.bio,
                     style: GoogleFonts.roboto(fontSize: 24, fontStyle: FontStyle.italic),
                     children: <TextSpan>[
                       TextSpan(
@@ -433,7 +428,7 @@ Widget CustomBody() {
               SizedBox(height:MediaQuery.of(context).size.height * 0.25),
               Text(
                 //TODO
-                _user.name,
+                user.name,
                 style: TextStyle(
                     color: Colors.black45, fontWeight: FontWeight.w500),
               ),
@@ -451,12 +446,12 @@ Widget CustomBody() {
                        SizedBox(width:MediaQuery.of(context).size.width*0.18),
                        GestureDetector(
                          onTap: () {
-                         _searchBloc.add(
+                         searchBloc.add(
                                   SelectUserEvent(
-                                      name: _currentUser.name,
-                                      photoUrl: _currentUser.photo,
-                                      currentUserId: _currentUserId,
-                                      selectedUserId: _user.uid),
+                                      name: currentUser.name,
+                                      photoUrl: currentUser.photo,
+                                      currentUserId: currentUserId,
+                                      selectedUserId: user.uid),
                                 );
 
                          setState(() {
@@ -515,7 +510,7 @@ Widget CustomBody() {
           margin: EdgeInsets.only(top: 275),
           decoration: BoxDecoration(
             image: DecorationImage(
-              image: ExtendedNetworkImageProvider(_user.photo),
+              image: ExtendedNetworkImageProvider(user.photo),
               fit: BoxFit.cover
             ),
             borderRadius: BorderRadius.circular(40),
