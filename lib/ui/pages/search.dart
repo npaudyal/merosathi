@@ -11,6 +11,7 @@ import 'package:liquid_swipe/liquid_swipe.dart';
 import 'package:merosathi/bloc/search/bloc.dart';
 import 'package:merosathi/models/user.dart';
 import 'package:merosathi/repositories/searchRepository.dart';
+import 'package:merosathi/ui/pages/chatRoom.dart';
 import 'package:merosathi/ui/pages/matches.dart';
 import 'package:merosathi/ui/pages/people_profile.dart';
 import 'package:merosathi/ui/widgets/iconWidget.dart';
@@ -204,7 +205,7 @@ class _SearchState extends State<Search> {
           Navigator.push(context, MaterialPageRoute(builder: (context) => Heart(userId: widget.userId,currentUserId: widget.userId, currentUser: currentUser, )));//Matches(userId: widget.userId,)));
         }
         if(item.name =="message") {
-
+          Navigator.push(context, MaterialPageRoute(builder: (context) => ChatRoom(userId: widget.userId, currentUser: currentUser, currentUserId: currentUser.uid)));
         }
       },
     );

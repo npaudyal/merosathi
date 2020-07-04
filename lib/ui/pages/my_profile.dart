@@ -9,8 +9,10 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:merosathi/bloc/authentication/bloc.dart';
 import 'package:merosathi/models/user.dart';
+import 'package:merosathi/ui/pages/chatRoom.dart';
 import 'package:merosathi/ui/pages/heart.dart';
 import 'package:merosathi/ui/pages/search.dart';
+import 'package:merosathi/ui/pages/edit_profile.dart';
 
 Color mainColor = Color(0xff774a63);
 Color secondColor = Color(0xffd6a5c0);
@@ -72,6 +74,7 @@ class _MyProfileState extends State<MyProfile> {
       }
     }
   }
+  
 
   getCount() async {
     try {
@@ -130,6 +133,7 @@ class _MyProfileState extends State<MyProfile> {
 
         }
         if(item.name =="message") {
+          Navigator.push(context, MaterialPageRoute(builder: (context) => ChatRoom(userId: widget.userId, currentUser: currentUser, currentUserId: widget.currentUserId)));
 
         }
       },
@@ -241,6 +245,7 @@ class _MyProfileState extends State<MyProfile> {
         child: GestureDetector(
           onTap: () {
             BlocProvider.of<AuthenticationBloc>(context).add(LoggedOut());
+            Navigator.pop(context);
           },
           child: Center(
             child: Text(
@@ -267,24 +272,28 @@ class _MyProfileState extends State<MyProfile> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.end,
             children: <Widget>[
               GestureDetector(
-                  onTap: () {
-                    Navigator.pop(context);
-                  },
-                  child: Icon(Icons.arrow_back, color: mainColor)),
-              Icon(Icons.edit, color: mainColor),
+                onTap: () {
+
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => EditProfile( widget.currentUser, widget.currentUserId,images)));
+                  //TODO
+                },
+                  
+                  child: Icon(Icons.edit, color: mainColor),
+                  ),
+              
             ],
           ),
           Container(
-            width: 200,
-            height: 200,
+            width: 150,
+            height: 150,
             decoration: BoxDecoration(
+              
               shape: BoxShape.circle,
-              image: DecorationImage(
-                image: NetworkImage(currentUser.photo),
-              ),
+             
+              
               boxShadow: [
                 BoxShadow(
                   color: secondColor,
@@ -292,6 +301,9 @@ class _MyProfileState extends State<MyProfile> {
                   offset: Offset(0, 10),
                 ),
               ],
+            ),
+            child: CircleAvatar(
+              backgroundImage: NetworkImage(currentUser.photo),
             ),
           ),
           Container(),

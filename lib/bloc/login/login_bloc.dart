@@ -5,9 +5,12 @@ import 'package:merosathi/ui/validators.dart';
 import 'package:meta/meta.dart';
 import './bloc.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:merosathi/services/helper_functions.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
   UserRepository _userRepository;
+  HelperFunctions helperFunctions = new HelperFunctions();
+  
 
   LoginBloc({@required UserRepository userRepository})
       : assert(userRepository != null),
@@ -67,10 +70,11 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
 
     try {
       await _userRepository.signInWithEmail(email, password);
-
+      HelperFunctions.saveUserEmailSharedPref(email);
       yield LoginState.success();
     } catch (_) {
       LoginState.failure();
     }
+    
   }
 }

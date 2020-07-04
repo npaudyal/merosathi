@@ -10,6 +10,7 @@ import 'package:merosathi/ui/pages/search.dart';
 import 'package:merosathi/ui/pages/signUp.dart';
 import 'package:merosathi/ui/pages/splash.dart';
 import 'package:merosathi/ui/widgets/tabs.dart';
+import 'package:merosathi/ui/widgets/button_tapped.dart';
 
 
 class Home extends StatelessWidget {
@@ -30,19 +31,17 @@ class Home extends StatelessWidget {
             return Splash();
           }
           if (state is Authenticated) {
-            // return Tabs(userId: state.userId,
-             
-            // );
-
-           
-
-             return Search(userId: state.userId);
+            return Search(userId: state.userId);
           }
           if (state is AuthenticatedButNotSet) {
             return Profile(
               userRepository: _userRepository,
               userId: state.userId,
             );
+
+            
+
+           
           }
           if (state is Unauthenticated) {
             return Login(

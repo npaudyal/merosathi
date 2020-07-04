@@ -5,6 +5,7 @@ import 'package:merosathi/ui/validators.dart';
 import 'package:meta/meta.dart';
 import './bloc.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:merosathi/services/helper_functions.dart';
 
 class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
   UserRepository _userRepository;
@@ -67,7 +68,7 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
 
     try {
       await _userRepository.signUpWithEmail(email, password);
-
+      HelperFunctions.saveUserEmailSharedPref(email);
       yield SignUpState.success();
     } catch (_) {
       SignUpState.failure();

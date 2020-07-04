@@ -2,6 +2,7 @@ import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:merosathi/models/user.dart';
+import 'package:merosathi/ui/pages/chatRoom.dart';
 import 'package:merosathi/ui/pages/matchTab.dart';
 import 'package:merosathi/ui/pages/likesTab.dart';
 import 'package:merosathi/ui/pages/my_profile.dart';
@@ -72,7 +73,7 @@ class _HeartState extends State<Heart> {
         }
         
         if(item.name =="message") {
-
+          Navigator.push(context, MaterialPageRoute(builder: (context) => ChatRoom(userId: widget.userId, currentUser: currentUser, currentUserId: currentUser.uid)));
         }
       },
     );

@@ -1,6 +1,8 @@
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
@@ -10,8 +12,13 @@ import 'package:merosathi/bloc/search/search_bloc.dart';
 import 'package:merosathi/bloc/search/search_event.dart';
 import 'package:merosathi/models/user.dart';
 import 'package:merosathi/repositories/searchRepository.dart';
-
- 
+import 'package:merosathi/services/database.dart';
+import 'package:merosathi/services/constants.dart';
+import 'package:merosathi/ui/pages/chatRoom.dart';
+import 'package:merosathi/ui/pages/conversation_screen.dart';
+import 'package:merosathi/ui/pages/map.dart';
+import 'package:provider/provider.dart';
+import 'package:merosathi/services/geolocator_service.dart';
 
 class PeopleProfile extends StatefulWidget {
   final User user;
@@ -28,11 +35,11 @@ class PeopleProfile extends StatefulWidget {
 
 class _PeopleProfileState extends State<PeopleProfile> {
 
- 
+  final geoService = GeolocatorService();
   final SearchRepository _searchRepository = SearchRepository();
   SearchBloc searchBloc;
   FirebaseAuth auth;
-
+  DatabaseMethods databaseMethod = new DatabaseMethods();
  
  
   int difference;
@@ -54,6 +61,8 @@ getCurrentUser() async{
   final FirebaseUser user = await auth.currentUser();
   print(user.uid);
 }
+
+ChatRoom chatRoom = new ChatRoom();
 
   
 
@@ -85,6 +94,7 @@ getImageURL() async {
   @override
   void initState() {
     searchBloc = SearchBloc(searchRepository: _searchRepository);
+   
     getCount();
     super.initState();
   }
@@ -169,8 +179,9 @@ getImageURL() async {
               child: Stack(
               children: <Widget>[
             CustomBody(),        
-            CustomBottomBar(),
+           // CustomBottomBar(),
             PlayButton(),
+
           ],
         ),
       ),
@@ -210,6 +221,7 @@ getImageURL() async {
   }
 
 Widget CustomBody() {
+  
     double listheight = (45 * 7).toDouble();
     return SingleChildScrollView(
       child: Column(
@@ -329,7 +341,50 @@ Widget CustomBody() {
                 }
        }
       
-      )
+      ),
+
+      SizedBox(height:25),
+
+      Padding(
+        padding: EdgeInsets.all(10),
+              child: Align(
+          alignment: Alignment.centerLeft,
+          child: Text("Maps", style: GoogleFonts.varelaRound(color: Colors.deepPurple, fontWeight: FontWeight.bold, fontSize: 20,),),
+        ),
+      ),
+
+      
+      GestureDetector(
+        onTap: () {
+           
+            Navigator.push(context, MaterialPageRoute(
+              builder: (context) => GMap(user.location.latitude, user.location.longitude)));
+              
+          },
+        
+        child: Container(
+        padding: EdgeInsets.all(5),
+        height:180,
+        width:MediaQuery.of(context).size.width/1.05,
+        decoration: BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage("assets/images/maps.png"),
+              fit: BoxFit.cover,
+            ),
+            borderRadius: BorderRadius.circular(40),
+          ),
+
+          
+        ),
+        
+      ),
+      SizedBox(height:80),
+
+      Center(
+        child: Text("Joined during Covid-19", style: GoogleFonts.roboto(color:Colors.grey),
+      ),),
+            SizedBox(height:40),
+
         
         ],
       ),
@@ -376,13 +431,29 @@ Widget CustomBody() {
       );
 
   }
+  createChatRoomAndStartConvo(User currentUser, User user )  {
+    String chatRoomId = currentUserId + user.uid;
+    List<String> users = [currentUser.name, user.name];
+    Map<String, dynamic> chatRoomMap = {
+      "users": users,
+      "chatRoomId": chatRoomId,
+      "name":user.name,
+      "photoUrl":user.photo,
+      
+      
+    };
+    databaseMethod.createChatRoom(chatRoomId, chatRoomMap);
+    
+    
+          Navigator.push(context, MaterialPageRoute(builder: (context) => ConversationScreen(chatRoomId:chatRoomId, userName: widget.user.name, currentUser: widget.currentUser, photoUrl: widget.user.photo,)));
 
+  }
+ 
 
 
   Widget CustomHeader() {
-   
+  
 
-   
    
     return Stack(
       alignment: Alignment.topCenter,
@@ -456,6 +527,7 @@ Widget CustomBody() {
 
                          setState(() {
                            liked = !liked;
+                           count = count+1;
                          });
 
                             
@@ -465,8 +537,11 @@ Widget CustomBody() {
                        SizedBox(width:MediaQuery.of(context).size.width*0.18),
 
                          GestureDetector(
-                           onTap: () => print("Tapped on chat"),
-                           child: Icon(FontAwesomeIcons.facebookMessenger),
+                           onTap: ()  {
+
+                             createChatRoomAndStartConvo(widget.currentUser,widget.user );
+                           },
+                           child: Icon(FontAwesomeIcons.solidPaperPlane),
                          ),
 
 
@@ -511,7 +586,7 @@ Widget CustomBody() {
           decoration: BoxDecoration(
             image: DecorationImage(
               image: ExtendedNetworkImageProvider(user.photo),
-              fit: BoxFit.cover
+              fit: BoxFit.cover,
             ),
             borderRadius: BorderRadius.circular(40),
           ),
@@ -612,6 +687,21 @@ getCount() async {
   .collection("chosenList")
   .getDocuments();
 
+
+
+  
+    // if(snapshot.documents.contains(currentUser.uid)) {
+    //   setState(() {
+    //      liked = true;
+    //   });
+     
+    // } else {
+    //   setState(() {
+    //     liked= false;
+    //   });
+      
+    // }
+  
 
   count1=snapshot1.documents.length;
   count = snapshot.documents.length;
