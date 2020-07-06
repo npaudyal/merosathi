@@ -53,12 +53,14 @@ class _MyProfileState extends State<MyProfile> {
 
   @override
   void initState() {
+
     active = items[3];
+    
     super.initState();
   }
 
   Future getImageURL() async {
-    for (int i = 1; i <= 4; i++) {
+    for (int i = 1; i <= 5; i++) {
       try {
         final StorageReference storageReference = FirebaseStorage.instance
             .ref()
@@ -143,6 +145,8 @@ class _MyProfileState extends State<MyProfile> {
 
   @override
   Widget build(BuildContext context) {
+
+    images.clear();
     Size size = MediaQuery.of(context).size;
     return FutureBuilder(
         future: getImageURL(),
@@ -187,7 +191,7 @@ class _MyProfileState extends State<MyProfile> {
                 backgroundColor: backgroundColor,
                 body: ListView(
                   children: <Widget>[
-                    CustomSocialHeader(currentUser),
+                    CustomSocialHeader(currentUser, images),
                     SocialInfo(),
                     Container(
                       padding: EdgeInsets.all(25),
@@ -228,8 +232,10 @@ class _MyProfileState extends State<MyProfile> {
 
           return Container();
         }
+        
       
         );
+        
   }
 
   Widget signoutButton() {
@@ -261,7 +267,7 @@ class _MyProfileState extends State<MyProfile> {
     );
   }
 
-  Widget CustomSocialHeader(User currentUser) {
+  Widget CustomSocialHeader(User currentUser, images) {
     return Container(
       height: 350,
       padding: EdgeInsets.all(25),
@@ -277,7 +283,7 @@ class _MyProfileState extends State<MyProfile> {
               GestureDetector(
                 onTap: () {
 
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => EditProfile( widget.currentUser, widget.currentUserId,images)));
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => EditProfile( widget.currentUser, widget.currentUserId, images)));
                   //TODO
                 },
                   

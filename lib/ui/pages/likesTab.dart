@@ -29,6 +29,117 @@ class _LikesTabState extends State<LikesTab> {
     super.initState();
   }
 
+  _getModalBottomSheet(BuildContext context, User user, User currentUser, String currrentUserId) {
+
+      showModalBottomSheet(context: context, builder: (BuildContext bc) {
+        Size size = MediaQuery.of(context).size;
+        return Container(
+          
+          
+          color: Colors.grey.withOpacity(0.3),
+          height: MediaQuery.of(context).size.height * 0.1,
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              children: <Widget>[
+                  
+                  GestureDetector(
+                    onTap: () {
+
+                       Navigator.push(
+                       context,
+                      MaterialPageRoute(
+                           builder: (context) => PeopleProfile(
+                                 user: user,
+                                 currentUser: currentUser,
+                                currentUserId: currrentUserId,
+                               )));
+                    },
+                    child: CircleAvatar(
+                      radius: 35,
+                      backgroundImage: NetworkImage(user.photo)
+                    ),
+                  ),
+
+                  SizedBox(width: size.width/5.5),
+
+                 Container(
+                   height: MediaQuery.of(context).size.height * 0.05,
+                   width: MediaQuery.of(context).size.width/3.5,
+                   decoration: BoxDecoration(
+                     
+                   ),
+                   
+                   child: RaisedButton(
+                      onPressed: () {
+                          _matchesBloc.add(
+                            AcceptUserEvent(
+                              selectedUser: user.uid,
+                              currentUser: currrentUserId,
+                              currentUserPhotoUrl: currentUser.photo,
+                              currentUserName: currentUser.name,
+                              selectedUserPhotoUrl: user.photo,
+                              selectedUserName: user.name,
+                            )
+                          );
+
+                          Navigator.of(context).pop();
+                      },
+                      shape: RoundedRectangleBorder(
+                     borderRadius: BorderRadius.circular(80),
+                      ),
+                      color: Colors.lightGreen,
+                      child: Center(
+                        child: Text("Match", style: GoogleFonts.roboto(color: Colors.white),),
+
+                      ),
+                    
+                     ),
+                 ),
+
+                 SizedBox(width:10),
+
+                  Container(
+                   height: MediaQuery.of(context).size.height * 0.05,
+                   width: MediaQuery.of(context).size.width/3.5,
+                   decoration: BoxDecoration(
+                     
+                   ),
+                   
+                   child: RaisedButton(
+                      onPressed: () {
+
+                            _matchesBloc.add(
+                              DeleteUserEvent(
+                                currentUser: currrentUserId,
+                                selectedUser: user.uid
+                                 )
+                            );
+
+                            Navigator.of(context).pop();
+                      },
+                      shape: RoundedRectangleBorder(
+                     borderRadius: BorderRadius.circular(80),
+                      ),
+                      color: Colors.redAccent,
+                      child: Center(
+                        child: Text("Pass", style: GoogleFonts.roboto(color: Colors.white),),
+
+                      ),
+                    
+                     ),
+                 ),
+
+
+              ],
+            ),
+          ),
+        );
+      });
+         
+
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -68,14 +179,16 @@ class _LikesTabState extends State<LikesTab> {
                                         .getUserDetails(widget.userId);
                                     //await getDifference(selectedUser.location);
 
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => PeopleProfile(
-                                                  user: selectedUser,
-                                                  currentUser: currentUser,
-                                                  currentUserId: currentUser.uid,
-                                                )));
+                                    _getModalBottomSheet(context, selectedUser, currentUser, currentUser.uid);
+
+                                    // Navigator.push(
+                                    //     context,
+                                    //     MaterialPageRoute(
+                                    //         builder: (context) => PeopleProfile(
+                                    //               user: selectedUser,
+                                    //               currentUser: currentUser,
+                                    //               currentUserId: currentUser.uid,
+                                    //             )));
                                   },
                                   child: Padding(
                                     padding: EdgeInsets.only(top: size.height*0.01),

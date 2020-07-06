@@ -3,6 +3,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:merosathi/models/user.dart';
 import 'package:merosathi/services/database.dart';
+import 'package:merosathi/ui/pages/info_page.dart';
 
 class ConversationScreen extends StatefulWidget {
   final String chatRoomId;
@@ -10,7 +11,9 @@ class ConversationScreen extends StatefulWidget {
   final User user; 
   final String userName;
   final String photoUrl;
-  ConversationScreen({this.chatRoomId, this.user, this.currentUser, this.userName, this.photoUrl});
+  final String userId;
+  final String currentUserId;
+  ConversationScreen({this.chatRoomId, this.user, this.currentUser, this.userName, this.photoUrl, this.userId, this.currentUserId});
   @override
   _ConversationScreenState createState() => _ConversationScreenState();
 }
@@ -62,7 +65,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
     
   }
 
-  Widget customAppBar(context) {
+  Widget customAppBar(context, userId, currentUserId) {
     return AppBar(
       elevation: 0,
       automaticallyImplyLeading: false,
@@ -95,7 +98,12 @@ class _ConversationScreenState extends State<ConversationScreen> {
                   ],
                 ),
               ),
-              Icon(Icons.more_vert,color: Colors.grey.shade700,),
+              IconButton(
+                icon: Icon(Icons.more_vert,color: Colors.grey.shade700,),
+                onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => InfoPage(widget.userId, widget.currentUserId)));
+                },
+                ),
             ],
           ),
         ),
@@ -106,9 +114,11 @@ class _ConversationScreenState extends State<ConversationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    print(widget.userId);
+    print(widget.currentUserId);
     return Scaffold(
 
-      appBar: customAppBar(context),
+      appBar: customAppBar(context, widget.userId, widget.currentUserId),
       body: Container(
         
         child: Stack(
@@ -257,3 +267,4 @@ class MessageTile extends StatelessWidget {
     );
   }
 }
+

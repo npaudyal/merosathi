@@ -445,7 +445,7 @@ Widget CustomBody() {
     databaseMethod.createChatRoom(chatRoomId, chatRoomMap);
     
     
-          Navigator.push(context, MaterialPageRoute(builder: (context) => ConversationScreen(chatRoomId:chatRoomId, userName: widget.user.name, currentUser: widget.currentUser, photoUrl: widget.user.photo,)));
+          Navigator.push(context, MaterialPageRoute(builder: (context) => ConversationScreen(chatRoomId:chatRoomId, userName: widget.user.name, currentUser: widget.currentUser, photoUrl: widget.user.photo, currentUserId: currentUserId, userId: user.uid,)));
 
   }
  

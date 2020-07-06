@@ -15,6 +15,14 @@ class MatchesRepository {
         .snapshots();
   }
 
+  Stream<QuerySnapshot> getChosenList(userId) {
+    return _firestore
+    .collection("users")
+    .document(userId)
+    .collection("chosenList")
+    .snapshots();
+  }
+
   Stream<QuerySnapshot> getSelectedList(userId) {
     return _firestore
         .collection('users')

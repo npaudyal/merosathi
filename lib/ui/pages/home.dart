@@ -32,6 +32,8 @@ class Home extends StatelessWidget {
           }
           if (state is Authenticated) {
             return Search(userId: state.userId);
+
+            
           }
           if (state is AuthenticatedButNotSet) {
             return Profile(

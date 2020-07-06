@@ -1,19 +1,19 @@
 import 'dart:io';
-import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:merosathi/models/user.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:http/http.dart' as http;
+import 'package:merosathi/ui/pages/my_profile.dart';
+import 'package:merosathi/ui/widgets/button_untapped.dart';
 
 class EditProfile extends StatefulWidget {
   final User currentUser;
-  final String currentUserId;
   final List<String> images;
+  final String currentUserId;
 
   EditProfile(this.currentUser, this.currentUserId, this.images);
   @override
@@ -27,38 +27,53 @@ class _EditProfileState extends State<EditProfile> {
   File photo3;
   File photo4;
 
-
   File image1;
   File image2;
   File image3;
   File image4;
 
-
   List<File> replacedPhotos = [];
 
-// Future<File> urlToFile(String imageUrl) async {
-// var rng = new Random();
-// Directory tempDir = await getTemporaryDirectory();
-// String tempPath = tempDir.path;
-// File file = new File('$tempPath'+ (rng.nextInt(100)).toString() +'.png');
-// http.Response response = await http.get(imageUrl);
-// await file.writeAsBytes(response.bodyBytes);
+  Map<int, File> maps = {};
 
-// replacedPhotos.add(file);
-// return file;
-// }
+  List<String> images1 = [];
 
-// getreplacedImages() async {
-// for(int i =0; i<=widget.images.length; i++) {
-//   await urlToFile(widget.images[i]);
-// }
-// }
+  int index1;
+       File photoUrl;
+      String userId;
+      String name;
+      String gender;
+      String interestedIn;
+      String country; 
+      String heightP;
+      String community;
+      String salary;
+      String gotra;
+      String bio;
+      String job;
+      String religion;
+      String education;
+
+      DateTime age;
+      GeoPoint location;
+  
 
   @override
   void initState() {
-    // getreplacedImages();
+
+
     super.initState();
   }
+
+  Map<int, String> imageData = {};
+  List<int> requestedIndex = [];
+
+  TextEditingController _bioController = TextEditingController();
+  TextEditingController _jobController = TextEditingController();
+  TextEditingController _religionController = TextEditingController();
+  TextEditingController _salaryController = TextEditingController();
+  TextEditingController _educationController = TextEditingController();
+  TextEditingController _gotraController = TextEditingController();
 
   bool isTapped = false;
 
@@ -93,542 +108,723 @@ class _EditProfileState extends State<EditProfile> {
             .setData({
           'uid': widget.currentUserId,
           'photoUrl': url,
-          'name': widget.currentUser.name,
-          "location": widget.currentUser.location,
-          'gender': widget.currentUser.gender,
-          'interestedIn': widget.currentUser.interestedIn,
-          'age': widget.currentUser.age,
-          'country': widget.currentUser.country,
-          'height': widget.currentUser.heightP,
-          'community': widget.currentUser.community,
-          'job': widget.currentUser.job,
-          'gotra': widget.currentUser.gotra,
-          'religion': widget.currentUser.religion,
-          'salary': widget.currentUser.salary,
-          'bio': widget.currentUser.bio,
-          'education': widget.currentUser.education,
+          'name': name,
+          "location": location,
+          'gender': gender,
+          'interestedIn': interestedIn,
+          'age': age,
+          'country':country,
+          'height':heightP,
+          'community': community,
+          'job': job,
+          'gotra': gotra,
+          'religion': religion,
+          'salary': salary,
+          'bio': bio,
+          'education': education,
         });
       });
     });
   }
 
-  buildImageHolder(images) {
-    Size size = MediaQuery.of(context).size;
-    switch (widget.images.length) {
-      case 0:
-        return Container(
-          height: size.height,
-          width: size.width,
-          child: Wrap(
-            direction: Axis.vertical,
-            children: <Widget>[
-              Container(
-                height: size.height * 0.2,
-                width: size.width / 3,
-                child: GestureDetector(
-                  onTap: () async {
-                    File getPic = await FilePicker.getFile(type: FileType.image);
+  Future getImageURL() async {
+     {
+      for (int i = 1; i <= 5; i++) {
+        try {
+          final StorageReference storageReference = FirebaseStorage.instance
+              .ref()
+              .child("userPhotos")
+              .child(widget.currentUserId)
+              .child("photo$i");
 
-                    if (getPic != null ) {
-                      //await compressImage();
-                      image1 = getPic;
-                      setState(() {
-                        image1 = image1;
-                      });
+          final String url = await storageReference.getDownloadURL();
 
-                      await uploadImage(image1, "photo2");
-                      
-                    }
-                  },
-                  child: Container(
-                    height: size.height * 0.2,
-                    width: size.width / 3,
-                    child: Container(
-                      decoration: BoxDecoration(
-                       borderRadius: BorderRadius.circular(50),
-                       border: Border.all(
-                       color: Colors.deepOrange, width: 7)
-                     ),
-                      margin: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(50),
-                        ),
-                        child: image1 != null ? Image.file(
-                                image1,
-                                fit: BoxFit.cover,
-                              )
-                            : Image.asset("assets/images/addImage.jpg"),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-
-              Container(
-                height: size.height * 0.2,
-                width: size.width / 3,
-                child: GestureDetector(
-                  onTap: () async {
-                    File getPic = await FilePicker.getFile(type: FileType.image);
-
-                    if (getPic != null ) {
-                      //await compressImage();
-                      image2 = getPic;
-                      setState(() {
-                        image2 = image2;
-                      });
-
-                      await uploadImage(image2, "photo3");
-                      
-                    }
-                  },
-                  child: Container(
-                    height: size.height * 0.2,
-                    width: size.width / 3,
-                    child: Container(
-                      decoration: BoxDecoration(
-                       borderRadius: BorderRadius.circular(50),
-                       border: Border.all(
-                       color: Colors.deepOrange, width: 7)
-                     ),
-                      margin: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(50),
-                        ),
-                        child: image2 != null ? Image.file(
-                                image2,
-                                fit: BoxFit.cover,
-                              )
-                            : Image.asset("assets/images/addImage.jpg"),
-                      ),
-                    ),
-    
-                  ),
-
-          ),
-              ),
-
-              Container(
-                height: size.height * 0.2,
-                width: size.width / 3,
-                child: GestureDetector(
-                  onTap: () async {
-                    File getPic = await FilePicker.getFile(type: FileType.image);
-
-                    if (getPic != null ) {
-                      //await compressImage();
-                      image3 = getPic;
-                      setState(() {
-                        image3 = image3;
-                      });
-
-                      await uploadImage(image3, "photo3");
-                      
-                    }
-                  },
-                  child: Container(
-                    height: size.height * 0.2,
-                    width: size.width / 3,
-                    child: Container(
-                      decoration: BoxDecoration(
-                       borderRadius: BorderRadius.circular(50),
-                       border: Border.all(
-                       color: Colors.deepOrange, width: 7)
-                     ),
-                      margin: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(50),
-                        ),
-                        child: image3 != null ? Image.file(
-                                image3,
-                                fit: BoxFit.cover,
-                              )
-                            : Image.asset("assets/images/addImage.jpg"),
-                      ),
-                    ),
-    
-                  ),
-
-          ),
-              ),
-
-              Container(
-                height: size.height * 0.2,
-                width: size.width / 3,
-                child: GestureDetector(
-                  onTap: () async {
-                    File getPic = await FilePicker.getFile(type: FileType.image);
-
-                    if (getPic != null ) {
-                      //await compressImage();
-                      image4 = getPic;
-                      setState(() {
-                        image4 = image4;
-                      });
-
-                      await uploadImage(image4, "photo4");
-                      
-                    }
-                  },
-                  child: Container(
-                    height: size.height * 0.2,
-                    width: size.width / 3,
-                    child: Container(
-                      decoration: BoxDecoration(
-                       borderRadius: BorderRadius.circular(50),
-                       border: Border.all(
-                       color: Colors.deepOrange, width: 7)
-                     ),
-                      margin: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(50),
-                        ),
-                        child: image4 != null ? Image.file(
-                                image4,
-                                fit: BoxFit.cover,
-                              )
-                            : Image.asset("assets/images/addImage.jpg"),
-                      ),
-                    ),
-    
-                  ),
-
-          ),
-              ),
-            ],
-          ),
-        );
-
-
-
-      
-
-        break;
-
-      case 1:
-      return Container(
-          height: size.height,
-          width: size.width,
-          child: Wrap(
-            direction: Axis.vertical,
-            children: <Widget>[
-              Container(
-                height: size.height * 0.2,
-                width: size.width / 3,
-                child: GestureDetector(
-                  onTap: () async {
-                    File getPic = await FilePicker.getFile(type: FileType.image);
-
-                    if (getPic != null ) {
-                      //await compressImage();
-                      image1 = getPic;
-                      setState(() {
-                        image1 = image1;
-                      });
-
-                      await uploadImage(image1, "photo2");
-                      
-                    }
-                  },
-                  child: Container(
-                    height: size.height * 0.2,
-                    width: size.width / 3,
-                    child: Container(
-                      decoration: BoxDecoration(
-                       borderRadius: BorderRadius.circular(50),
-                       border: Border.all(
-                       color: Colors.deepOrange, width: 7)
-                     ),
-                      margin: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(50),
-                        ),
-                        child: image1 != null ? Image.file(
-                                image1,
-                                fit: BoxFit.cover,
-                              )
-                            : Image.asset("assets/images/addImage.jpg"),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-
-              Container(
-                height: size.height * 0.2,
-                width: size.width / 3,
-                child: GestureDetector(
-                  onTap: () async {
-                    File getPic = await FilePicker.getFile(type: FileType.image);
-
-                    if (getPic != null ) {
-                      //await compressImage();
-                      image2 = getPic;
-                      setState(() {
-                        image2 = image2;
-                      });
-
-                      await uploadImage(image2, "photo3");
-                      
-                    }
-                  },
-                  child: Container(
-                    height: size.height * 0.2,
-                    width: size.width / 3,
-                    child: Container(
-                      decoration: BoxDecoration(
-                       borderRadius: BorderRadius.circular(50),
-                       border: Border.all(
-                       color: Colors.deepOrange, width: 7)
-                     ),
-                      margin: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(50),
-                        ),
-                        child: image2 != null ? Image.file(
-                                image2,
-                                fit: BoxFit.cover,
-                              )
-                            : Image.asset("assets/images/addImage.jpg"),
-                      ),
-                    ),
-    
-                  ),
-
-          ),
-              ),
-
-              Container(
-                height: size.height * 0.2,
-                width: size.width / 3,
-                child: GestureDetector(
-                  onTap: () async {
-                    File getPic = await FilePicker.getFile(type: FileType.image);
-
-                    if (getPic != null ) {
-                      //await compressImage();
-                      image3 = getPic;
-                      setState(() {
-                        image3 = image3;
-                      });
-
-                      await uploadImage(image3, "photo3");
-                      
-                    }
-                  },
-                  child: Container(
-                    height: size.height * 0.2,
-                    width: size.width / 3,
-                    child: Container(
-                      decoration: BoxDecoration(
-                       borderRadius: BorderRadius.circular(50),
-                       border: Border.all(
-                       color: Colors.deepOrange, width: 7)
-                     ),
-                      margin: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(50),
-                        ),
-                        child: image3 != null ? Image.file(
-                                image3,
-                                fit: BoxFit.cover,
-                              )
-                            : Image.asset("assets/images/addImage.jpg"),
-                      ),
-                    ),
-    
-                  ),
-
-          ),
-              ),
-            ],
-          ),
-          );
-
-      break;
-
-      case 2: 
-      return Container(
-          height: size.height,
-          width: size.width,
-          child: Wrap(
-            direction: Axis.vertical,
-            children: <Widget>[
-              Container(
-                height: size.height * 0.2,
-                width: size.width / 3,
-                child: GestureDetector(
-                  onTap: () async {
-                    File getPic = await FilePicker.getFile(type: FileType.image);
-
-                    if (getPic != null ) {
-                      //await compressImage();
-                      image1 = getPic;
-                      setState(() {
-                        image1 = image1;
-                      });
-
-                      await uploadImage(image1, "photo2");
-                      
-                    }
-                  },
-                  child: Container(
-                    height: size.height * 0.2,
-                    width: size.width / 3,
-                    child: Container(
-                      decoration: BoxDecoration(
-                       borderRadius: BorderRadius.circular(50),
-                       border: Border.all(
-                       color: Colors.deepOrange, width: 7)
-                     ),
-                      margin: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(50),
-                        ),
-                        child: image1 != null ? Image.file(
-                                image1,
-                                fit: BoxFit.cover,
-                              )
-                            : Image.asset("assets/images/addImage.jpg"),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-
-              Container(
-                height: size.height * 0.2,
-                width: size.width / 3,
-                child: GestureDetector(
-                  onTap: () async {
-                    File getPic = await FilePicker.getFile(type: FileType.image);
-
-                    if (getPic != null ) {
-                      //await compressImage();
-                      image2 = getPic;
-                      setState(() {
-                        image2 = image2;
-                      });
-
-                      await uploadImage(image2, "photo3");
-                      
-                    }
-                  },
-                  child: Container(
-                    height: size.height * 0.2,
-                    width: size.width / 3,
-                    child: Container(
-                      decoration: BoxDecoration(
-                       borderRadius: BorderRadius.circular(50),
-                       border: Border.all(
-                       color: Colors.deepOrange, width: 7)
-                     ),
-                      margin: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(50),
-                        ),
-                        child: image2 != null ? Image.file(
-                                image2,
-                                fit: BoxFit.cover,
-                              )
-                            : Image.asset("assets/images/addImage.jpg"),
-                      ),
-                    ),
-    
-                  ),
-
-          ),
-              ),
-            ],
-          ),
-      );
-
-
-      break;
-      case 3:
-      return Container(
-          height: size.height,
-          width: size.width,
-          child: Wrap(
-            direction: Axis.vertical,
-            children: <Widget>[
-              Container(
-                height: size.height * 0.2,
-                width: size.width / 3,
-                child: GestureDetector(
-                  onTap: () async {
-                    File getPic = await FilePicker.getFile(type: FileType.image);
-
-                    if (getPic != null ) {
-                      //await compressImage();
-                      image1 = getPic;
-                      setState(() {
-                        image1 = image1;
-                      });
-
-                      await uploadImage(image1, "photo2");
-                      
-                    }
-                  },
-                  child: Container(
-                    height: size.height * 0.2,
-                    width: size.width / 3,
-                    child: Container(
-                     decoration: BoxDecoration(
-                       borderRadius: BorderRadius.circular(50),
-                       border: Border.all(
-                       color: Colors.deepOrange, width: 7)
-                     ),
-                      margin: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(50),
-                          
-                        
-                        ),
-                      
-                        
-                        child: image1 != null ? Image.file(
-                                image1,
-                                fit: BoxFit.cover,
-                              )
-                            : Image.asset("assets/images/addImage.jpg"),
-                      ),
-                                          
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-      );
-
-
-
-      break;
-      default:
-      return Container();
+          images1.add(url);
+        } catch (e) {
+          print(e);
+        }
+      }
     }
+  }
+
+  Future getUserInfo(currentUserId) async {
+
+    
+    await Firestore.instance
+        .collection("users")
+        .document(currentUserId)
+        .get()
+        .then((data) {
+        setState(() {
+        bio = data['bio'];
+        job = data['job'];
+        education = data['education'];
+        religion = data['religion'];
+        salary = data['salary'];
+        gotra = data['gotra'];
+        name = data['name'];
+        location = data['location'];
+        heightP = data['height'];
+        community = data['community'];
+        
+        gender = data['gender'];
+        interestedIn = data['interestedIn'];
+        photo = data['photoUrl'];
+        age = data['age'];
+        country = data['country'];
+             
+
+      });
+    });
+  }
+
+  List<String> temp = [];
+
+  
+  // buildImageHolder(images) {
+  //   Size size = MediaQuery.of(context).size;
+
+  //   switch (images.length) {
+  //     case 0:
+  //       return Container(
+  //         width: size.width,
+  //         child: Wrap(
+  //           direction: Axis.horizontal,
+  //           children: <Widget>[
+  //             Container(
+  //               height: size.height * 0.2,
+  //               width: size.width / 3,
+  //               child: GestureDetector(
+  //                 onTap: () async {
+  //                   File getPic =
+  //                       await FilePicker.getFile(type: FileType.image);
+
+  //                   if (getPic != null) {
+  //                     //await compressImage();
+  //                     image1 = getPic;
+  //                     setState(() {
+  //                       image1 = image1;
+  //                     });
+
+  //                     await uploadImage(image1, "photo2");
+  //                   }
+  //                 },
+  //                 child: Container(
+  //                   height: size.height * 0.2,
+  //                   width: size.width / 3,
+  //                   child: Container(
+  //                     decoration: BoxDecoration(
+  //                         borderRadius: BorderRadius.circular(50),
+  //                         border:
+  //                             Border.all(color: Colors.deepOrange, width: 7)),
+  //                     margin: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+  //                     child: ClipRRect(
+  //                       borderRadius: BorderRadius.all(
+  //                         Radius.circular(50),
+  //                       ),
+  //                       child: image1 != null
+  //                           ? Image.file(
+  //                               image1,
+  //                               fit: BoxFit.cover,
+  //                             )
+  //                           : Image.asset("assets/images/addImage.jpg"),
+  //                     ),
+  //                   ),
+  //                 ),
+  //               ),
+  //             ),
+  //             Container(
+  //               height: size.height * 0.2,
+  //               width: size.width / 3,
+  //               child: GestureDetector(
+  //                 onTap: () async {
+  //                   File getPic =
+  //                       await FilePicker.getFile(type: FileType.image);
+
+  //                   if (getPic != null) {
+  //                     //await compressImage();
+  //                     image2 = getPic;
+  //                     setState(() {
+  //                       image2 = image2;
+  //                     });
+
+  //                     await uploadImage(image2, "photo3");
+  //                   }
+  //                 },
+  //                 child: Container(
+  //                   height: size.height * 0.2,
+  //                   width: size.width / 3,
+  //                   child: Container(
+  //                     decoration: BoxDecoration(
+  //                         borderRadius: BorderRadius.circular(50),
+  //                         border:
+  //                             Border.all(color: Colors.deepOrange, width: 7)),
+  //                     margin: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+  //                     child: ClipRRect(
+  //                       borderRadius: BorderRadius.all(
+  //                         Radius.circular(50),
+  //                       ),
+  //                       child: image2 != null
+  //                           ? Image.file(
+  //                               image2,
+  //                               fit: BoxFit.cover,
+  //                             )
+  //                           : Image.asset("assets/images/addImage.jpg"),
+  //                     ),
+  //                   ),
+  //                 ),
+  //               ),
+  //             ),
+  //             Container(
+  //               height: size.height * 0.2,
+  //               width: size.width / 3,
+  //               child: GestureDetector(
+  //                 onTap: () async {
+  //                   File getPic =
+  //                       await FilePicker.getFile(type: FileType.image);
+
+  //                   if (getPic != null) {
+  //                     //await compressImage();
+  //                     image3 = getPic;
+  //                     setState(() {
+  //                       image3 = image3;
+  //                     });
+
+  //                     await uploadImage(image3, "photo3");
+  //                   }
+  //                 },
+  //                 child: Container(
+  //                   height: size.height * 0.2,
+  //                   width: size.width / 3,
+  //                   child: Container(
+  //                     decoration: BoxDecoration(
+  //                         borderRadius: BorderRadius.circular(50),
+  //                         border:
+  //                             Border.all(color: Colors.deepOrange, width: 7)),
+  //                     margin: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+  //                     child: ClipRRect(
+  //                       borderRadius: BorderRadius.all(
+  //                         Radius.circular(50),
+  //                       ),
+  //                       child: image3 != null
+  //                           ? Image.file(
+  //                               image3,
+  //                               fit: BoxFit.cover,
+  //                             )
+  //                           : Image.asset("assets/images/addImage.jpg"),
+  //                     ),
+  //                   ),
+  //                 ),
+  //               ),
+  //             ),
+  //             Container(
+  //               height: size.height * 0.2,
+  //               width: size.width / 3,
+  //               child: GestureDetector(
+  //                 onTap: () async {
+  //                   File getPic =
+  //                       await FilePicker.getFile(type: FileType.image);
+
+  //                   if (getPic != null) {
+  //                     //await compressImage();
+  //                     image4 = getPic;
+  //                     setState(() {
+  //                       image4 = image4;
+  //                     });
+
+  //                     await uploadImage(image4, "photo4");
+  //                   }
+  //                 },
+  //                 child: Container(
+  //                   height: size.height * 0.2,
+  //                   width: size.width / 3,
+  //                   child: Container(
+  //                     decoration: BoxDecoration(
+  //                         borderRadius: BorderRadius.circular(50),
+  //                         border:
+  //                             Border.all(color: Colors.deepOrange, width: 7)),
+  //                     margin: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+  //                     child: ClipRRect(
+  //                       borderRadius: BorderRadius.all(
+  //                         Radius.circular(50),
+  //                       ),
+  //                       child: image4 != null
+  //                           ? Image.file(
+  //                               image4,
+  //                               fit: BoxFit.cover,
+  //                             )
+  //                           : Image.asset("assets/images/addImage.jpg"),
+  //                     ),
+  //                   ),
+  //                 ),
+  //               ),
+  //             ),
+  //           ],
+  //         ),
+  //       );
+
+  //       break;
+
+  //     case 1:
+  //       return Container(
+  //         width: size.width,
+  //         child: Wrap(
+  //           direction: Axis.vertical,
+  //           children: <Widget>[
+  //             Container(
+  //               height: size.height * 0.2,
+  //               width: size.width / 3,
+  //               child: GestureDetector(
+  //                 onTap: () async {
+  //                   File getPic =
+  //                       await FilePicker.getFile(type: FileType.image);
+
+  //                   if (getPic != null) {
+  //                     //await compressImage();
+  //                     image1 = getPic;
+  //                     setState(() {
+  //                       image1 = image1;
+  //                     });
+
+  //                     await uploadImage(image1, "photo2");
+  //                   }
+  //                 },
+  //                 child: Container(
+  //                   height: size.height * 0.2,
+  //                   width: size.width / 3,
+  //                   child: Container(
+  //                     decoration: BoxDecoration(
+  //                         borderRadius: BorderRadius.circular(50),
+  //                         border:
+  //                             Border.all(color: Colors.deepOrange, width: 7)),
+  //                     margin: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+  //                     child: ClipRRect(
+  //                       borderRadius: BorderRadius.all(
+  //                         Radius.circular(50),
+  //                       ),
+  //                       child: image1 != null
+  //                           ? Image.file(
+  //                               image1,
+  //                               fit: BoxFit.cover,
+  //                             )
+  //                           : Image.asset("assets/images/addImage.jpg"),
+  //                     ),
+  //                   ),
+  //                 ),
+  //               ),
+  //             ),
+  //             Container(
+  //               height: size.height * 0.2,
+  //               width: size.width / 3,
+  //               child: GestureDetector(
+  //                 onTap: () async {
+  //                   File getPic =
+  //                       await FilePicker.getFile(type: FileType.image);
+
+  //                   if (getPic != null) {
+  //                     //await compressImage();
+  //                     image2 = getPic;
+  //                     setState(() {
+  //                       image2 = image2;
+  //                     });
+
+  //                     await uploadImage(image2, "photo3");
+  //                   }
+  //                 },
+  //                 child: Container(
+  //                   height: size.height * 0.2,
+  //                   width: size.width / 3,
+  //                   child: Container(
+  //                     decoration: BoxDecoration(
+  //                         borderRadius: BorderRadius.circular(50),
+  //                         border:
+  //                             Border.all(color: Colors.deepOrange, width: 7)),
+  //                     margin: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+  //                     child: ClipRRect(
+  //                       borderRadius: BorderRadius.all(
+  //                         Radius.circular(50),
+  //                       ),
+  //                       child: image2 != null
+  //                           ? Image.file(
+  //                               image2,
+  //                               fit: BoxFit.cover,
+  //                             )
+  //                           : Image.asset("assets/images/addImage.jpg"),
+  //                     ),
+  //                   ),
+  //                 ),
+  //               ),
+  //             ),
+  //             Container(
+  //               height: size.height * 0.2,
+  //               width: size.width / 3,
+  //               child: GestureDetector(
+  //                 onTap: () async {
+  //                   File getPic =
+  //                       await FilePicker.getFile(type: FileType.image);
+
+  //                   if (getPic != null) {
+  //                     //await compressImage();
+  //                     image3 = getPic;
+  //                     setState(() {
+  //                       image3 = image3;
+  //                     });
+
+  //                     await uploadImage(image3, "photo3");
+  //                   }
+  //                 },
+  //                 child: Container(
+  //                   height: size.height * 0.2,
+  //                   width: size.width / 3,
+  //                   child: Container(
+  //                     decoration: BoxDecoration(
+  //                         borderRadius: BorderRadius.circular(50),
+  //                         border:
+  //                             Border.all(color: Colors.deepOrange, width: 7)),
+  //                     margin: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+  //                     child: ClipRRect(
+  //                       borderRadius: BorderRadius.all(
+  //                         Radius.circular(50),
+  //                       ),
+  //                       child: image3 != null
+  //                           ? Image.file(
+  //                               image3,
+  //                               fit: BoxFit.cover,
+  //                             )
+  //                           : Image.asset("assets/images/addImage.jpg"),
+  //                     ),
+  //                   ),
+  //                 ),
+  //               ),
+  //             ),
+  //           ],
+  //         ),
+  //       );
+
+  //       break;
+
+  //     case 2:
+  //       return Container(
+  //         width: size.width,
+  //         child: Wrap(
+  //           direction: Axis.vertical,
+  //           children: <Widget>[
+  //             Container(
+  //               height: size.height * 0.2,
+  //               width: size.width / 3,
+  //               child: GestureDetector(
+  //                 onTap: () async {
+  //                   File getPic =
+  //                       await FilePicker.getFile(type: FileType.image);
+
+  //                   if (getPic != null) {
+  //                     //await compressImage();
+  //                     image1 = getPic;
+  //                     setState(() {
+  //                       image1 = image1;
+  //                     });
+
+  //                     await uploadImage(image1, "photo2");
+  //                   }
+  //                 },
+  //                 child: Container(
+  //                   height: size.height * 0.2,
+  //                   width: size.width / 3,
+  //                   child: Container(
+  //                     decoration: BoxDecoration(
+  //                         borderRadius: BorderRadius.circular(50),
+  //                         border:
+  //                             Border.all(color: Colors.deepOrange, width: 7)),
+  //                     margin: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+  //                     child: ClipRRect(
+  //                       borderRadius: BorderRadius.all(
+  //                         Radius.circular(50),
+  //                       ),
+  //                       child: image1 != null
+  //                           ? Image.file(
+  //                               image1,
+  //                               fit: BoxFit.cover,
+  //                             )
+  //                           : Image.asset("assets/images/addImage.jpg"),
+  //                     ),
+  //                   ),
+  //                 ),
+  //               ),
+  //             ),
+  //             Container(
+  //               height: size.height * 0.2,
+  //               width: size.width / 3,
+  //               child: GestureDetector(
+  //                 onTap: () async {
+  //                   File getPic =
+  //                       await FilePicker.getFile(type: FileType.image);
+
+  //                   if (getPic != null) {
+  //                     //await compressImage();
+  //                     image2 = getPic;
+  //                     setState(() {
+  //                       image2 = image2;
+  //                     });
+
+  //                     await uploadImage(image2, "photo3");
+  //                   }
+  //                 },
+  //                 child: Container(
+  //                   height: size.height * 0.2,
+  //                   width: size.width / 3,
+  //                   child: Container(
+  //                     decoration: BoxDecoration(
+  //                         borderRadius: BorderRadius.circular(50),
+  //                         border:
+  //                             Border.all(color: Colors.deepOrange, width: 7)),
+  //                     margin: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+  //                     child: ClipRRect(
+  //                       borderRadius: BorderRadius.all(
+  //                         Radius.circular(50),
+  //                       ),
+  //                       child: image2 != null
+  //                           ? Image.file(
+  //                               image2,
+  //                               fit: BoxFit.cover,
+  //                             )
+  //                           : Image.asset("assets/images/addImage.jpg"),
+  //                     ),
+  //                   ),
+  //                 ),
+  //               ),
+  //             ),
+  //           ],
+  //         ),
+  //       );
+
+  //       break;
+  //     case 3:
+  //       return Container(
+  //         width: size.width,
+  //         child: Wrap(
+  //           direction: Axis.vertical,
+  //           children: <Widget>[
+  //             Container(
+  //               height: size.height * 0.2,
+  //               width: size.width / 3,
+  //               child: GestureDetector(
+  //                 onTap: () async {
+  //                   File getPic =
+  //                       await FilePicker.getFile(type: FileType.image);
+
+  //                   if (getPic != null) {
+  //                     //await compressImage();
+  //                     image1 = getPic;
+  //                     setState(() {
+  //                       image1 = image1;
+  //                     });
+
+  //                     await uploadImage(image1, "photo2");
+  //                   }
+  //                 },
+  //                 child: Container(
+  //                   height: size.height * 0.2,
+  //                   width: size.width / 3,
+  //                   child: Container(
+  //                     decoration: BoxDecoration(
+  //                         borderRadius: BorderRadius.circular(50),
+  //                         border:
+  //                             Border.all(color: Colors.deepOrange, width: 7)),
+  //                     margin: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+  //                     child: ClipRRect(
+  //                       borderRadius: BorderRadius.all(
+  //                         Radius.circular(50),
+  //                       ),
+  //                       child: image1 != null
+  //                           ? Image.file(
+  //                               image1,
+  //                               fit: BoxFit.cover,
+  //                             )
+  //                           : Image.asset("assets/images/addImage.jpg"),
+  //                     ),
+  //                   ),
+  //                 ),
+  //               ),
+  //             ),
+  //           ],
+  //         ),
+  //       );
+
+  //       break;
+  //     default:
+  //       return Text("");
+
+  //       break;
+  //   }
+  // }
+
+  buildPhotosContainer(images, currentUser) {
+    
+    
+    Size size = MediaQuery.of(context).size;
+    return Column(
+      children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.only(top: 8),
+          child: Container(
+            height: size.height * 0.4,
+            width: size.width,
+            child: GestureDetector(
+              onTap: () async {
+                File getPic = await FilePicker.getFile(type: FileType.image);
+                if (getPic != null) {
+                  photo = getPic;
+                  setState(
+                    () {
+                      photo = photo;
+                      isTapped = !isTapped;
+                    },
+                  );
+                  await uploadProfilePicture(photo);
+                }
+              },
+              child: Container(
+                margin: EdgeInsets.symmetric(horizontal: 5),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(50),
+                  ),
+                  child: isTapped == false
+                      ? Image.network(
+                          currentUser.photo,
+                          fit: BoxFit.cover,
+                        )
+                      : Image.file(photo),
+                ),
+              ),
+            ),
+          ),
+        ),
+        GridView.builder(
+            gridDelegate:
+                SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3),
+            shrinkWrap: true,
+            itemCount: 4,
+            itemBuilder: (context, index) {
+               
+              return GestureDetector(
+                onTap: () async {
+                  File getPic = await FilePicker.getFile(type: FileType.image);
+
+                  if (getPic != null ) {
+                    //await compressImage();
+                    if (index == 0) {
+                      photo1 = getPic;
+                      setState(() {
+                        tapped[0] = !tapped[0];
+                      });
+                      
+                      replacedPhotos.add(photo1);
+                      maps.putIfAbsent(0, () => photo1);
+                      await uploadImage(photo1, "photo2");
+                      
+                    } else if (index == 1) {
+                      photo2 = getPic;
+                      setState(() {
+                        tapped[1] = !tapped[1];
+                      });
+                      replacedPhotos.add(photo2);
+                      maps.putIfAbsent(1, () => photo2);
+                      await uploadImage(photo2, "photo3");
+                    } else if (index == 2) {
+                      photo3 = getPic;
+
+                      setState(() {
+                        tapped[2] = !tapped[2];
+                      });
+                      
+                      replacedPhotos.add(photo3);
+                      maps.putIfAbsent(2, () => photo3);
+                      await uploadImage(photo3, "photo4");
+                    } else if(index ==3){
+                      photo4 = getPic;
+                      setState(() {
+                        tapped[3] = !tapped[3];
+                      });
+                       
+                      replacedPhotos.add(photo3);
+                      maps.putIfAbsent(3, () => photo4);
+                      await uploadImage(photo4, "photo5");
+                    } else return;
+                  }
+                },
+                child: Container(
+                  height: size.height * 0.2,
+                  width: size.width / 3,
+                  child: Container(
+                    margin: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(50),
+                      ),
+                      child: (index > (images.length-1)) ? Image.asset("assets/images/addImage.jpg"): tapped[index] == false
+                          ? Image.network(
+                              images[index],
+                              fit: BoxFit.cover,
+                            )
+                          : (Image.file(maps[index])),
+                          
+                    ),
+                    
+                  ),
+                  
+                ),
+                
+              );
+              
+                
+
+              
+            }
+            
+            ),
+            
+      ],
+    
+    );
+   
+  }
+
+  updateChanges(currentUserId) async {
+    await Firestore.instance
+        .collection("users")
+        .document(currentUserId)
+        .updateData({
+      "bio": _bioController.text.isEmpty ? bio : _bioController.text,
+      "job": _jobController.text.isEmpty ? job : _jobController.text,
+      "education": _educationController.text.isEmpty
+          ? education
+          : _educationController.text,
+      "salary":
+          _salaryController.text.isEmpty ? salary : _salaryController.text,
+      "religion": _religionController.text.isEmpty
+          ? religion
+          : _religionController.text,
+      "gotra": _gotraController.text.isEmpty ? gotra : _gotraController.text,
+      
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    
+
+    
+    images1.clear();
+    print(temp);
+
     Size size = MediaQuery.of(context).size;
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
           "Edit Profile",
-          style: GoogleFonts.roboto(
-              color: Colors.black, fontWeight: FontWeight.bold),
+          style: GoogleFonts.roboto(color: Colors.black),
         ),
         backgroundColor: Colors.white,
         centerTitle: true,
@@ -642,14 +838,12 @@ class _EditProfileState extends State<EditProfile> {
           },
         ),
       ),
-      body: Container(
-        height: size.height,
-        width: size.width,
-        child: SingleChildScrollView(
-                  child: Column(
+      body: SingleChildScrollView(
+        child: Container(
+          child: Column(
             children: <Widget>[
               Padding(
-                padding: EdgeInsets.only(top: 15, right: 300),
+                padding: EdgeInsets.only(top: 20, right: 310),
                 child: Text(
                   "Photos",
                   style: GoogleFonts.roboto(
@@ -658,111 +852,309 @@ class _EditProfileState extends State<EditProfile> {
                       fontWeight: FontWeight.bold),
                 ),
               ),
-              Container(
-                height: size.height * 0.2,
-                width: size.width / 3,
-                child: GestureDetector(
-                  onTap: () async {
-                    File getPic = await FilePicker.getFile(type: FileType.image);
-                    if (getPic != null) {
-                      photo = getPic;
-                      setState(
-                        () {
-                          photo = photo;
-                          isTapped = !isTapped;
-                        },
-                      );
-                      await uploadProfilePicture(photo);
-                    }
-                  },
-                  child: Container(
-                    margin: EdgeInsets.symmetric(horizontal: 5),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(50),
+              Padding(
+                padding: const EdgeInsets.only(top: 10.0, left: 5, right: 5),
+                child: FutureBuilder(
+                    future: Future.wait([getImageURL(), getUserInfo(widget.currentUserId)]),
+                    builder: (context, snapshot) {
+                      switch (snapshot.connectionState) {
+                        case ConnectionState.none:
+                          return Text('none');
+                        case ConnectionState.active:
+                        case ConnectionState.waiting:
+                          return Center(child: CircularProgressIndicator());
+                        case ConnectionState.done:
+                       
+                          return Column(
+                            children: <Widget>[
+                              buildPhotosContainer(images1, widget.currentUser),
+                             // buildImageHolder(images1),
+                           
+             
+              Padding(
+                padding: const EdgeInsets.only(right: 340, top: 25),
+                child: Text("Bio",
+                    style: GoogleFonts.roboto(
+                        color: Colors.deepOrange,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold)),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 10.0),
+                child: Container(
+                  height: size.height * 0.15,
+                  width: size.width / 1.1,
+                  decoration: BoxDecoration(
+                      color: Colors.black12,
+                      borderRadius: BorderRadius.circular(30)),
+                  child: Padding(
+                    padding: const EdgeInsets.only(),
+                    child: TextField(
+                      controller: _bioController,
+                      maxLines: 5,
+                      
+                    
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        contentPadding: EdgeInsets.symmetric(horizontal:15, vertical: 15),
+
+                        labelStyle: GoogleFonts.roboto(
+                          color: Colors.black,
+                          fontSize: 20,
+                        ),
+
+                        hintText : bio,
+                        hintStyle: GoogleFonts.roboto(
+                          color: Colors.black38,
+                          
+                        ),
+                      
+                        fillColor: Colors.black,
+                        focusedBorder:OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.deepOrange, width:2.0),
+                          borderRadius: BorderRadius.circular(30)
+                        ),
+
+                        focusColor: Colors.orangeAccent,
                       ),
-                      child: isTapped == false
-                          ? Image.network(
-                              widget.currentUser.photo,
-                              fit: BoxFit.cover,
-                            )
-                          : Image.file(photo),
+                      cursorColor: Colors.black,
+                      textAlign: TextAlign.left,
                     ),
                   ),
                 ),
               ),
-              GridView.builder(
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 3),
-                  shrinkWrap: true,
-                  itemCount: widget.images.length,
-                  itemBuilder: (context, index) {
-                    return GestureDetector(
-                      onTap: () async {
-                        File getPic =
-                            await FilePicker.getFile(type: FileType.image);
+              Padding(
+                padding: const EdgeInsets.only(top: 25, right: 220),
+                child: Text(
+                  "What do you do?",
+                  style: GoogleFonts.roboto(
+                      color: Colors.deepOrange,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20),
+                ),
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              Container(
+                height: size.height * 0.06,
+                width: size.width / 1.1,
+                decoration: BoxDecoration(
+                    color: Colors.black12,
+                    borderRadius: BorderRadius.circular(30)),
+                child: Padding(
+                  padding: const EdgeInsets.only(),
+                  child: TextField(
+                    
+                    controller: _jobController,
+                    decoration: InputDecoration(
+                 contentPadding: EdgeInsets.symmetric(horizontal:15, vertical: 15),
 
-                        if (getPic != null && widget.images[index] != null) {
-                          //await compressImage();
-                          if (index == 0) {
-                            photo1 = getPic;
-                            setState(() {
-                              tapped[0] = !tapped[0];
-                            });
-                            replacedPhotos.add(photo1);
-                            await uploadImage(photo1, "photo2");
-                          } else if (index == 1) {
-                            photo2 = getPic;
-                            setState(() {
-                              tapped[1] = !tapped[1];
-                            });
-                            replacedPhotos.add(photo2);
-                            await uploadImage(photo2, "photo3");
-                          } else if (index == 2) {
-                            photo3 = getPic;
-
-                            setState(() {
-                              tapped[2] = !tapped[2];
-                            });
-                            replacedPhotos.add(photo3);
-                            await uploadImage(photo3, "photo4");
-                          } else {
-                            photo4 = getPic;
-                            setState(() {
-                              tapped[3] = !tapped[3];
-                            });
-                            replacedPhotos.add(photo4);
-                            await uploadImage(photo4, "photo5");
-                          }
-                        }
-                      },
-                      child: Container(
-                        height: size.height * 0.2,
-                        width: size.width / 3,
-                        child: Container(
-                          margin:
-                              EdgeInsets.symmetric(vertical: 5, horizontal: 5),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(50),
-                            ),
-                            child: tapped[index] == false
-                                ? Image.network(
-                                    widget.images[index],
-                                    fit: BoxFit.cover,
-                                  )
-                                : Image.file(replacedPhotos[index]),
-                          ),
-                        ),
+                      border: InputBorder.none,
+                      labelStyle: GoogleFonts.roboto(
+                        color: Colors.black,
+                        fontSize: 20,
                       ),
-                    );
-                  }),
+                      hintText: job,
+                      fillColor: Colors.black,
+                        focusedBorder:OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.deepOrange, width:2.0),
+                          borderRadius: BorderRadius.circular(30)
+                        ),
+                    ),
+                    cursorColor: Colors.black,
+                    textAlign: TextAlign.left,
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 25, right: 290),
+                child: Text(
+                  "Religion",
+                  style: GoogleFonts.roboto(
+                      color: Colors.deepOrange,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20),
+                ),
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              Container(
+                height: size.height * 0.06,
+                width: size.width / 1.1,
+                decoration: BoxDecoration(
+                    color: Colors.black12,
+                    borderRadius: BorderRadius.circular(30)),
+                child: Padding(
+                  padding: const EdgeInsets.only(),
+                  child: TextField(
+                    controller: _religionController,
+                    decoration: InputDecoration(
+                     contentPadding: EdgeInsets.symmetric(horizontal:15, vertical: 15),
 
-                  buildImageHolder(widget.images),
+                      border: InputBorder.none,
+                      labelStyle: GoogleFonts.roboto(
+                        color: Colors.black,
+                        fontSize: 20,
+                      ),
+                      hintText: religion,
+                      fillColor: Colors.black,
+                        focusedBorder:OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.deepOrange, width:2.0),
+                          borderRadius: BorderRadius.circular(30)
+                        ),
+                    ),
+                    cursorColor: Colors.black,
+                    textAlign: TextAlign.left,
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 25, right: 150),
+                child: Text(
+                  "How much do you make?",
+                  style: GoogleFonts.roboto(
+                      color: Colors.deepOrange,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20),
+                ),
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              Container(
+                height: size.height * 0.06,
+                width: size.width / 1.1,
+                decoration: BoxDecoration(
+                    color: Colors.black12,
+                    borderRadius: BorderRadius.circular(30)),
+                child: Padding(
+                  padding: const EdgeInsets.only(),
+                  child: TextField(
+                    controller: _salaryController,
+                    decoration: InputDecoration(
+                      contentPadding: EdgeInsets.symmetric(horizontal:15, vertical: 15),
+                      border: InputBorder.none,
+                      labelStyle: GoogleFonts.roboto(
+                        color: Colors.black,
+                        fontSize: 20,
+                      ),
+                      hintText: salary,
+                      fillColor: Colors.black,
+                        focusedBorder:OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.deepOrange, width:2.0),
+                          borderRadius: BorderRadius.circular(30)
+                        ),
+                    ),
+                    cursorColor: Colors.black,
+                    textAlign: TextAlign.left,
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 25, right: 280),
+                child: Text(
+                  "Education",
+                  style: GoogleFonts.roboto(
+                      color: Colors.deepOrange,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20),
+                ),
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              Container(
+                height: size.height * 0.06,
+                width: size.width / 1.1,
+                decoration: BoxDecoration(
+                    color: Colors.black12,
+                    borderRadius: BorderRadius.circular(30)),
+                child: Padding(
+                  padding: const EdgeInsets.only(),
+                  child: TextField(
+                    controller: _educationController,
+                    decoration: InputDecoration(
+                       contentPadding: EdgeInsets.symmetric(horizontal:15, vertical: 15),
+                      border: InputBorder.none,
+                      labelStyle: GoogleFonts.roboto(
+                        color: Colors.black,
+                        fontSize: 20,
+                      ),
+                      hintText: education,
+                      fillColor: Colors.black,
+                        focusedBorder:OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.deepOrange, width:2.0),
+                          borderRadius: BorderRadius.circular(30)
+                        ),
+                    ),
+                    cursorColor: Colors.black,
+                    textAlign: TextAlign.left,
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 25, right: 320),
+                child: Text(
+                  "Gotra",
+                  style: GoogleFonts.roboto(
+                      color: Colors.deepOrange,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20),
+                ),
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              Container(
+                height: size.height * 0.06,
+                width: size.width / 1.1,
+                decoration: BoxDecoration(
+                    color: Colors.black12,
+                    borderRadius: BorderRadius.circular(30)),
+                child: Padding(
+                  padding: const EdgeInsets.only(),
+                  child: TextField(
+                    controller: _gotraController,
+                    decoration: InputDecoration(
+                       contentPadding: EdgeInsets.symmetric(horizontal:15, vertical: 15),
+                      fillColor: Colors.black,
+                        focusedBorder:OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.deepOrange, width:2.0),
+                          borderRadius: BorderRadius.circular(30)
+                        ),
+                      border: InputBorder.none,
+                      labelStyle: GoogleFonts.roboto(
+                        color: Colors.black,
+                        fontSize: 20,
+                      ),
+                      hintText: gotra,
+                      focusColor: Colors.orangeAccent,
+                    ),
+                    cursorColor: Colors.black,
+                    textAlign: TextAlign.left,
+                  ),
+                ),
+              ),
+                           
+
+              buttonUnTappedWithText(context, Colors.deepOrange,
+                  Colors.deepOrange, () {
+                    updateChanges(widget.currentUserId);
+                    Navigator.pop(context);
+                  }, "Save Changes"),
+              SizedBox(height: 70),
             ],
+                          );
+                }},
+                ),
+              ),
+            ],
+              ),
           ),
         ),
-      ),
-    );
+      );
+    
   }
 }

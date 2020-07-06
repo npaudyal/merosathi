@@ -1,12 +1,18 @@
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:merosathi/models/user.dart';
+import 'package:merosathi/services/database.dart';
 import 'package:merosathi/ui/pages/chatRoom.dart';
 import 'package:merosathi/ui/pages/matchTab.dart';
 import 'package:merosathi/ui/pages/likesTab.dart';
 import 'package:merosathi/ui/pages/my_profile.dart';
 import 'package:merosathi/ui/pages/search.dart';
+import 'package:rxdart/rxdart.dart';
+import 'package:merosathi/repositories/matchesRepository.dart';
 
 class MenuItem {
   final String name;
@@ -26,7 +32,12 @@ class Heart extends StatefulWidget {
   _HeartState createState() => _HeartState();
 }
 
+
+
+
 class _HeartState extends State<Heart> {
+
+  
 
  List<Container> feed = [];
    List items = [
@@ -38,12 +49,18 @@ class _HeartState extends State<Heart> {
   ];
 
   MenuItem active;
+  DatabaseMethods databaseMethods = new DatabaseMethods();
 
   @override
   void initState() {
     active = items[2];
+    getMatches(widget.userId);
     super.initState();
   }
+
+  MatchesRepository _matchesRepository ;
+
+
   Widget _flare(MenuItem item, User currentUser) {
     
     return GestureDetector(
@@ -80,9 +97,47 @@ class _HeartState extends State<Heart> {
 
   }
 
+  getMatches(String userId) async {
+
+    return StreamBuilder(
+      stream: Firestore.instance.collection("users")
+      .document(userId).collection("chosenList").snapshots(),
+      builder: (context, snapshot) {
+        return StreamBuilder(
+          stream: Firestore.instance.collection("users")
+      .document(userId).collection("selectedList").snapshots(),
+          builder: (context, snapshot1) {
+            if(!snapshot.hasData || !snapshot1.hasData) {
+              return CircularProgressIndicator();
+
+            }
+            for (DocumentSnapshot doc in snapshot.data.documents) {
+              for(DocumentSnapshot docs in snapshot1.data.documents) {
+                if(doc.documentID == docs.documentID) {
+                  print(docs.documentID);
+                }
+              }
+            }
+
+          });
+
+      }
+      
+      );
+
+
+  }
+ 
+      
+   
+   
+  
 
   @override
   Widget build(BuildContext context) {
+
+   
+
     List<Widget> pages = [
      MatchTab(userId: widget.userId,),
      LikesTab(userId: widget.userId,)

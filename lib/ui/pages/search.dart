@@ -305,28 +305,7 @@ class _SearchState extends State<Search> {
                       SizedBox(
                         height: size.height * 0.01,
                       ),
-                      // Row(
-                      //   mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      //   children: <Widget>[
-                      //     iconWidget(FontAwesomeIcons.solidCommentDots, () {},
-                      //         size.height * 0.06, Colors.white),
-                      //     iconWidget(Icons.clear, () {
-                      //       _searchBloc
-                      //           .add(PassUserEvent(widget.userId, usera.uid));
-                      //     }, size.height * 0.02, Colors.blue),
-                      //     iconWidget(FontAwesomeIcons.solidHeart, () {
-                      //       _searchBloc.add(
-                      //         SelectUserEvent(
-                      //             name: _currentUser.name,
-                      //             photoUrl: _currentUser.photo,
-                      //             currentUserId: widget.userId,
-                      //             selectedUserId: usera.uid),
-                      //       );
-                      //     }, size.height * 0.02, Colors.red),
-                      //     iconWidget(EvaIcons.options2, () {},
-                      //         size.height * 0.02, Colors.white),
-                      //   ],
-                      // ),
+                     
                       
 
                 

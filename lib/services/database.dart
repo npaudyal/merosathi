@@ -1,6 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+
 class DatabaseMethods{
+
+  
 
 createChatRoom(String chatRoomId, chatRoomMap) {
   Firestore.instance.collection("chatRoom")
@@ -40,4 +43,22 @@ getChatRooms(String userName) async {
 
 
 
+
+blockUsers(userId, currentUserId) async {
+
+  await Firestore.instance
+  .collection("users")
+  .document(currentUserId)
+  .collection("blocked")
+  .document(userId)
+  .setData({
+
+  });
+
 }
+
+
+
+
+}
+

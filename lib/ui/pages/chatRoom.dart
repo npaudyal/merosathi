@@ -60,6 +60,7 @@ class _ChatRoomState extends State<ChatRoom> {
               widget.currentUser,
               
               snapshot.data.documents[index].data['photoUrl'],
+              widget.userId
               
               
               
@@ -198,24 +199,7 @@ class _ChatRoomState extends State<ChatRoom> {
               )
 
               
-    //           ListView.builder(
-    //             itemCount: chatUsers.length,
-    //             shrinkWrap: true,
-    //             padding: EdgeInsets.only(top: 16),
-    //             physics: NeverScrollableScrollPhysics(),
-    //             itemBuilder: (context, index){
-    //               return ChatUsersList(
-    //                 text: chatUsers[index].text,
-    //                 secondaryText: chatUsers[index].secondaryText,
-    //                 image: chatUsers[index].image,
-    //                 time: chatUsers[index].time,
-    //                 isMessageRead: (index == 0 || index == 3)?true:false,
-    //               );
-    //             },
-    //         ],
-    //  ),
-        
-      
+ 
       
              ],
               ),
@@ -266,14 +250,15 @@ class ChatRoomTile extends StatelessWidget {
   final String userName;
   final String chatRoomId;
   final User currentUser;
+  final String userId;
   final String photoUrl;
-  ChatRoomTile(this.userName, this.chatRoomId, this.currentUser, this.photoUrl);
+  ChatRoomTile(this.userName, this.chatRoomId, this.currentUser, this.photoUrl, this.userId);
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
         onTap: () {
           Navigator.push(context, MaterialPageRoute(
-            builder: (context) => ConversationScreen(chatRoomId:chatRoomId, currentUser: currentUser, userName: userName, photoUrl: photoUrl, )));
+            builder: (context) => ConversationScreen(chatRoomId:chatRoomId, currentUser: currentUser, userName: userName, photoUrl: photoUrl,userId: userId, )));
         },
           child: Container(
             padding: EdgeInsets.symmetric(horizontal:24, vertical :12),
