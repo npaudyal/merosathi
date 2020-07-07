@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -23,22 +25,68 @@ class _ConversationScreenState extends State<ConversationScreen> {
   TextEditingController messageController = new TextEditingController();
 
   Stream chatMessageStream;
+  String uid;
+   bool blocked;
+
+   Future getUserInfo() async {
+
+    await Firestore.instance
+    .collection("chatRoom")
+    .document(widget.chatRoomId)
+    .get()
+    .then((data) {
+     
+        uid = data['uid'];
+        try{
+        blocked = data['blocked'];
+        } catch (e) {
+
+        }
+       
+    });
+    
+
+  }
+  FirebaseAuth auth;
+  String myId;
 
   Widget chatMessageList() {
 
-    return StreamBuilder(
+    return FutureBuilder(
+      future: getUserInfo(),
+      builder: (context, snapshot) {
+        switch (snapshot.connectionState) {
+                  case ConnectionState.none:
+                    return Text('none');
+                  case ConnectionState.active:
+                  case ConnectionState.waiting:
+                    return Center(child: CircularProgressIndicator());
+                  case ConnectionState.done:
+                   return StreamBuilder(
       stream: chatMessageStream,
       builder: (context, snapshot) {
         return snapshot.hasData ? ListView.builder(
           itemCount: snapshot.data.documents.length,
           itemBuilder: (context, index) {
-            return MessageTile(snapshot.data.documents[index].data['message'],
+            return ( blocked == null || blocked == false) ? MessageTile(snapshot.data.documents[index].data['message'],
             snapshot.data.documents[index].data['sentBy'] == widget.currentUser.name
+            ): Padding(
+              padding: EdgeInsets.only(top:300,left:90),
+              child: Text("The conversation is no more available.", style: GoogleFonts.roboto(color: Colors.grey),),
             );
 
           }):Container();
       });
-  }
+                   
+
+      }
+    });
+      }
+  
+      
+
+   
+  
 
 
   sendMessage() {
@@ -54,6 +102,9 @@ class _ConversationScreenState extends State<ConversationScreen> {
   }
   @override
   void initState() { 
+
+    
+    
     databaseMethods.getConversationMessages(widget.chatRoomId)
     .then((value) {
       setState(() {
@@ -66,6 +117,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
   }
 
   Widget customAppBar(context, userId, currentUserId) {
+    
     return AppBar(
       elevation: 0,
       automaticallyImplyLeading: false,
@@ -98,12 +150,29 @@ class _ConversationScreenState extends State<ConversationScreen> {
                   ],
                 ),
               ),
-              IconButton(
+              FutureBuilder(
+                future: getUserInfo(),
+                builder: (context, snapshot) {
+                   switch (snapshot.connectionState) {
+                  case ConnectionState.none:
+                    return Text('none');
+                  case ConnectionState.active:
+                  case ConnectionState.waiting:
+                    return Center(child: CircularProgressIndicator());
+                  case ConnectionState.done:
+                   
+                return  ( blocked == null || blocked == false) ? IconButton(
                 icon: Icon(Icons.more_vert,color: Colors.grey.shade700,),
                 onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => InfoPage(widget.userId, widget.currentUserId)));
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => InfoPage(uid, widget.currentUser.uid, widget.chatRoomId)));
                 },
-                ),
+                ) : Text("");
+
+                
+            
+              
+                }})
+              
             ],
           ),
         ),
@@ -114,126 +183,93 @@ class _ConversationScreenState extends State<ConversationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print(widget.userId);
-    print(widget.currentUserId);
-    return Scaffold(
+    return FutureBuilder(
+        future: getUserInfo(),
+        builder: (context, snapshot) {
+         switch(snapshot.connectionState){
+          case ConnectionState.none:
+                    return Text('none');
+                  case ConnectionState.active:
+                  case ConnectionState.waiting:
+                    return Center(child: CircularProgressIndicator());
+                  case ConnectionState.done:
+                    return Scaffold(
 
-      appBar: customAppBar(context, widget.userId, widget.currentUserId),
-      body: Container(
-        
-        child: Stack(
-          children: <Widget>[
-            chatMessageList(),
-             Align(
-            alignment: Alignment.bottomLeft,
-            child: Container(
-              padding: EdgeInsets.only(left: 16,bottom: 10),
-              height: 80,
-              width: double.infinity,
-              color: Colors.white,
-              child: Row(
-                children: <Widget>[
+        appBar: customAppBar(context, widget.userId, widget.currentUserId),
+        body: Container(
+          
+          child: Stack(
+            children: <Widget>[
+              chatMessageList(),
+               Align(
+              alignment: Alignment.bottomLeft,
+              child:  Container(
+                padding: EdgeInsets.only(left: 16,bottom: 10),
+                height: 80,
+                width: double.infinity,
+                color: Colors.white,
+                child:(blocked ==null || blocked ==false) ? Row(
+                  children: <Widget>[
+                    GestureDetector(
+                      onTap: (){
+                        
+                      },
+                      child: Container(
+                        height: 40,
+                        width: 40,
+                        decoration: BoxDecoration(
+                          color: Colors.blueGrey,
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        child: Icon(Icons.add,color: Colors.white,size: 21,),
+                      ),
+                    ),
+                    SizedBox(width: 16,),
+                    Expanded(
+                      child: TextField(
+                         controller: messageController,
+                        decoration: InputDecoration(
+                          hintText: "Type message...",
+                          hintStyle: TextStyle(color: Colors.grey.shade500),
+                          border: InputBorder.none
+                        ),
+                      ),
+                    ),
                   GestureDetector(
-                    onTap: (){
-                      
+                    onTap: () {
+                      sendMessage();
                     },
-                    child: Container(
-                      height: 40,
-                      width: 40,
-                      decoration: BoxDecoration(
-                        color: Colors.blueGrey,
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      child: Icon(Icons.add,color: Colors.white,size: 21,),
-                    ),
-                  ),
-                  SizedBox(width: 16,),
-                  Expanded(
-                    child: TextField(
-                       controller: messageController,
-                      decoration: InputDecoration(
-                        hintText: "Type message...",
-                        hintStyle: TextStyle(color: Colors.grey.shade500),
-                        border: InputBorder.none
-                      ),
-                    ),
-                  ),
-                GestureDetector(
-                  onTap: () {
-                    sendMessage();
-                  },
-                                  child: Container(
-                            height: 40,
-                            width: 40,
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                colors: [const Color(0x36FFFFFF), const Color(0x0FFFFFF)]
-                                ),
-                                borderRadius: BorderRadius.circular(40),
+                                    child: Container(
+                              height: 40,
+                              width: 40,
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: [const Color(0x36FFFFFF), const Color(0x0FFFFFF)]
+                                  ),
+                                  borderRadius: BorderRadius.circular(40),
+                              ),
+                              padding: EdgeInsets.only(right:20, top:4, bottom: 4),
+                              child: Icon(FontAwesomeIcons.solidPaperPlane),
                             ),
-                            padding: EdgeInsets.only(right:20, top:4, bottom: 4),
-                            child: Icon(FontAwesomeIcons.solidPaperPlane),
-                          ),
-                ),
-              
-                      
+                  ),
+                
+                        
 
-                ],
+                  ],
+                ): Text(""),
+                
               ),
               
             ),
-            
+
+          
+            ],
           ),
-
-            // Container(
-            //   alignment: Alignment.bottomCenter,
-            //   child: Container(
-            //     color: Colors.white,
-            //     padding: EdgeInsets.symmetric(horizontal:24, vertical:16),
-            //     child: Row(
-            //       children: <Widget>[
-            //         Expanded(
-            //           child: TextField(
-            //             controller: messageController,
-            //             style: TextStyle(color: Colors.white),
-            //             decoration: InputDecoration(
-            //               hintText: "Message...",
-            //               hintStyle: TextStyle(
-            //                 color: Colors.white54,
-                            
-            //               ),
-            //               border: InputBorder.none,
-            //             ),
-            //           ),
-            //           ),
-            //           GestureDetector(
-            //             onTap: () {
-
-            //                 sendMessage();
-            //             },
-            //             child: Container(
-            //               height: 40,
-            //               width: 40,
-            //               decoration: BoxDecoration(
-            //                 gradient: LinearGradient(
-            //                   colors: [const Color(0x36FFFFFF), const Color(0x0FFFFFF)]
-            //                   ),
-            //                   borderRadius: BorderRadius.circular(40),
-            //               ),
-            //               padding: EdgeInsets.all(12),
-            //               child: Image.asset("assets/images/send.png"),
-            //             ),
-            //           ),
-            //       ],
-            //     ),
-            //   ),
-
-
-            
-            // ),
-          ],
         ),
-      ),
+      );
+         }
+        },
+         
     );
   }
 }

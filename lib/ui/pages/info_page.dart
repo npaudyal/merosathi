@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:merosathi/models/user.dart';
@@ -7,9 +8,10 @@ import 'package:merosathi/ui/pages/people_profile.dart';
 class InfoPage extends StatefulWidget {
   final String currentUserId;
   final String userId;
+  final String chatRoomId;
   
 
-  InfoPage(this.userId, this.currentUserId);
+  InfoPage(this.userId, this.currentUserId, this.chatRoomId);
   @override
   _InfoPageState createState() => _InfoPageState();
 }
@@ -21,11 +23,79 @@ class _InfoPageState extends State<InfoPage> {
   DatabaseMethods databaseMethods = new DatabaseMethods();
   PeopleProfile userProfile = new PeopleProfile();
 
+  FirebaseAuth auth;
+   String uid;
+    
+     
+    // here you write the codes to input the data into firestore
+  
+
+
+_blockUsers(String userId, String currentUserId, String chatRoomId) {
+  showModalBottomSheet(context: context, builder: (BuildContext bc) {
+        Size size = MediaQuery.of(context).size;
+        return Container(
+            
+            
+            color: Colors.grey.withOpacity(0.3),
+            height: MediaQuery.of(context).size.height * 0.1,
+            child: Container(
+              height: size.height*0.3,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  children: <Widget>[
+                    Center(
+                      child: Text("Are you sure you want to block?", style: GoogleFonts.roboto(color:Colors.black45, fontSize: 17),),
+
+                    ),
+
+                    SizedBox(height:15),
+
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                      
+                      GestureDetector(
+                        onTap:  () {
+                           databaseMethods.blockUsers(userId, currentUserId, widget.chatRoomId);
+                           Navigator.pop(context);
+                           Navigator.pop(context);
+                           Navigator.pop(context);
+                        },
+                        child: Text("Yes", style: GoogleFonts.roboto(color: Colors.red, fontSize: 15),),
+                     
+                      ),
+
+                      SizedBox(width:40),
+                      
+                      GestureDetector(
+                        onTap:  () {
+
+                            Navigator.of(context).pop();
+                            setState(() {
+                              _blocked = false;
+                            });
+                        },
+                        child: Text("No", style: GoogleFonts.roboto(color: Colors.green, fontSize: 15),),
+                      ),
+
+
+                    ],),
+                  ],
+                ),
+              ),
+            ),
+              );
+
+});
+}
 
   @override
   Widget build(BuildContext context) {
    
-    print(widget.userId);
+   
+   
     return Scaffold(
       appBar: AppBar(
         title: Text("Details", style: GoogleFonts.roboto(color:Colors.black)),
@@ -64,9 +134,10 @@ class _InfoPageState extends State<InfoPage> {
                         setState(() {
                           _blocked = val;
                         });
-                        // Put the user Id in currentUsers block list
                         
-                        //databaseMethods.blockUsers(userId, currentUserId)
+                        
+                        _blockUsers( uid, widget.currentUserId, widget.chatRoomId);
+                        
                       },
 
                       )

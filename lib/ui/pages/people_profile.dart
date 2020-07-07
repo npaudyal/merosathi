@@ -1,4 +1,3 @@
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -25,27 +24,23 @@ class PeopleProfile extends StatefulWidget {
   final User currentUser;
   final String currentUserId;
 
-  const PeopleProfile({this.user, this.currentUser,this.currentUserId});
+  const PeopleProfile({this.user, this.currentUser, this.currentUserId});
 
   @override
   _PeopleProfileState createState() => _PeopleProfileState();
-
-  
 }
 
 class _PeopleProfileState extends State<PeopleProfile> {
-
   final geoService = GeolocatorService();
   final SearchRepository _searchRepository = SearchRepository();
   SearchBloc searchBloc;
   FirebaseAuth auth;
   DatabaseMethods databaseMethod = new DatabaseMethods();
- 
- 
+
   int difference;
   List<String> images = [];
 
-  int count ;
+  int count;
 
   int count1;
 
@@ -54,52 +49,44 @@ class _PeopleProfileState extends State<PeopleProfile> {
 
   String get currentUserId => widget.currentUserId;
   bool liked = false;
-  
+  ConversationScreen convo = new ConversationScreen();
 
+  getCurrentUser() async {
+    final FirebaseUser user = await auth.currentUser();
 
-getCurrentUser() async{ 
-  final FirebaseUser user = await auth.currentUser();
-  print(user.uid);
-}
+    print(user.uid);
+  }
 
-ChatRoom chatRoom = new ChatRoom();
+  ChatRoom chatRoom = new ChatRoom();
 
-  
-
-  
-getImageURL() async {
+  getImageURL() async {
     String uid = user.uid;
 
-    for(int i=1; i<=4; i++)
-    {
-      try{
-     final StorageReference storageReference = FirebaseStorage.instance
-        .ref()
-        .child("userPhotos")
-        .child(uid)
-        .child("photo$i");
+    for (int i = 1; i <= 4; i++) {
+      try {
+        final StorageReference storageReference = FirebaseStorage.instance
+            .ref()
+            .child("userPhotos")
+            .child(uid)
+            .child("photo$i");
 
-      final String url = await storageReference.getDownloadURL();
-     
-      images.add(url);
-      }
-      catch (e) {
+        final String url = await storageReference.getDownloadURL();
+
+        images.add(url);
+      } catch (e) {
         print(e);
       }
     }
-
-} 
-
+  }
 
   @override
   void initState() {
     searchBloc = SearchBloc(searchRepository: _searchRepository);
-   
+
     getCount();
     super.initState();
   }
 
-  
   Widget CustomBottomBar() {
     return Positioned(
       bottom: 0,
@@ -144,7 +131,6 @@ getImageURL() async {
                     ],
                   ),
                 ),
-                
               ),
             )
           ],
@@ -153,43 +139,38 @@ getImageURL() async {
     );
   }
 
-
   @override
   Widget build(BuildContext context) {
-    
-   
-    
+    images.clear();
     Size size = MediaQuery.of(context).size;
 
     return new FutureBuilder(
-
-      future: getCount(),
-       builder: (context, snapshot,) {
-                switch (snapshot.connectionState) {
-                  case ConnectionState.none:
-                    return Text('none');
-                  case ConnectionState.active:
-                  case ConnectionState.waiting:
-                    return Center(child: CircularProgressIndicator());
-                  case ConnectionState.done:
-                   return 
-
-                   Scaffold(
-              body: Container(
-              child: Stack(
-              children: <Widget>[
-            CustomBody(),        
-           // CustomBottomBar(),
-            PlayButton(),
-
-          ],
-        ),
-      ),
-    );
+        future: getCount(),
+        builder: (
+          context,
+          snapshot,
+        ) {
+          switch (snapshot.connectionState) {
+            case ConnectionState.none:
+              return Text('none');
+            case ConnectionState.active:
+            case ConnectionState.waiting:
+              return Center(child: CircularProgressIndicator());
+            case ConnectionState.done:
+              return Scaffold(
+                body: Container(
+                  child: Stack(
+                    children: <Widget>[
+                      CustomBody(),
+                      // CustomBottomBar(),
+                      PlayButton(),
+                    ],
+                  ),
+                ),
+              );
+          }
+        });
   }
-       });
-  }
-
 
   Widget PlayButton() {
     return Positioned(
@@ -220,8 +201,7 @@ getImageURL() async {
     );
   }
 
-Widget CustomBody() {
-  
+  Widget CustomBody() {
     double listheight = (45 * 7).toDouble();
     return SingleChildScrollView(
       child: Column(
@@ -232,51 +212,48 @@ Widget CustomBody() {
             padding: EdgeInsets.symmetric(horizontal: 35),
             margin: EdgeInsets.only(bottom: 10),
             child: ListView(
-              
               physics: ScrollPhysics(),
-
-              
-                    
-                  children: <Widget>[
-
-                    
-                ListTile(
+              children: <Widget>[
+                 ListTile(
+                  
+                  leading: Icon(Icons.format_quote),
+                  title: user.bio !=null? Text("${user.bio}"):
+                 Text("I don't have a bio"), ),
+               ListTile(
                   leading: Icon(Icons.work),
-                  title: Text("Works at ${user.job}"),
-                ),
-
-                ListTile(
+                  title:  user.job!= null ? Text("Works at ${user.job}")
+                : Text("Job"),),
+               ListTile(
                   leading: Icon(Icons.school),
-                  title: Text("Studied ${user.education}"),
-                ),
-
+                  title: user.education != null ? Text("Studied ${user.education}")
+                 : Text("University"),),
                  ListTile(
                   leading: Icon(FontAwesomeIcons.church),
-                  title: Text("${user.religion}"),
-                ),
+                  title: user.religion !=null ? Text("${user.religion}")
+                  : Text("Religion"),),
                  ListTile(
                   leading: Icon(FontAwesomeIcons.moneyBill),
-                  title: Text("Earns ${user.salary}"),
-                ),
+                  title:user.salary !=null ? Text("Earns ${user.salary}")
+                 : Text("Enough"),),
                  ListTile(
                   leading: Icon(Icons.star),
-                  title: Text("${user.gotra} Gotra"),
-                ),
-                 ListTile(
+                  title: user.gotra!=null ? Text("${user.gotra} Gotra")
+                    : Text("Who knows?"),),
+                     ListTile(
                   leading: Icon(Icons.group),
-                  title: Text("${user.community}"),
-                ),
-                
-                
+                  title:  user.community !=null ? Text("${user.community}")
+                : Text("Community"),),
 
-                  ],
-                  
-                ),
-          
+                ListTile(
+                  leading: Icon(FontAwesomeIcons.ruler),
+                  title: user.heightP!=null ? Text("${user.heightP} ")
+                    : Text("Height"),),
+                    
+              ],
             ),
-          
-          //  getImages(),
+          ),
 
+          //  getImages(),
 
           // StaggeredGridView.countBuilder(
           //   shrinkWrap: true,
@@ -299,14 +276,9 @@ Widget CustomBody() {
           //    },
           //   )
 
-
-
           FutureBuilder(
-            
-    
-             future: getImageURL(), 
-      
-           builder: (context, snapshot) {
+              future: getImageURL(),
+              builder: (context, snapshot) {
                 switch (snapshot.connectionState) {
                   case ConnectionState.none:
                     return Text('none');
@@ -314,147 +286,162 @@ Widget CustomBody() {
                   case ConnectionState.waiting:
                     return Center(child: CircularProgressIndicator());
                   case ConnectionState.done:
-                   return SingleChildScrollView(
-                 child: StaggeredGridView.countBuilder(
-            physics: ScrollPhysics(),
-            shrinkWrap: true,
-            crossAxisCount:2,
-            crossAxisSpacing: 12,
-            mainAxisSpacing: 12,
-            itemCount: images.length,
-
-             itemBuilder: (context, index) {
-              
-               return Container(
-                
-                 child: ClipRRect(
-                     borderRadius: BorderRadius.all(Radius.circular(50)),
-                     child: Image.network(images[index], fit: BoxFit.cover),
-                 ),
-               );
-             },
-             staggeredTileBuilder: (index) {
-               return StaggeredTile.count(1, index.isEven ? 2:1);
-             },
-            ),
-                   );
+                    return SingleChildScrollView(
+                      child: StaggeredGridView.countBuilder(
+                        physics: ScrollPhysics(),
+                        shrinkWrap: true,
+                        crossAxisCount: 2,
+                        crossAxisSpacing: 12,
+                        mainAxisSpacing: 12,
+                        itemCount: images.length,
+                        itemBuilder: (context, index) {
+                          return Container(
+                            child: ClipRRect(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(50)),
+                              child: images !=null ? Image.network(images[index],
+                                  fit: BoxFit.cover) : Text(""),
+                            ),
+                          );
+                        },
+                        staggeredTileBuilder: (index) {
+                          return StaggeredTile.count(1, index.isEven ? 2 : 1);
+                        },
+                      ),
+                    );
                 }
-       }
-      
-      ),
+              }),
 
-      SizedBox(height:25),
 
-      Padding(
-        padding: EdgeInsets.all(10),
-              child: Align(
-          alignment: Alignment.centerLeft,
-          child: Text("Maps", style: GoogleFonts.varelaRound(color: Colors.deepPurple, fontWeight: FontWeight.bold, fontSize: 20,),),
-        ),
-      ),
+          SizedBox(height: 25),
 
-      
-      GestureDetector(
-        onTap: () {
-           
-            Navigator.push(context, MaterialPageRoute(
-              builder: (context) => GMap(user.location.latitude, user.location.longitude)));
-              
-          },
-        
-        child: Container(
-        padding: EdgeInsets.all(5),
-        height:180,
-        width:MediaQuery.of(context).size.width/1.05,
-        decoration: BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage("assets/images/maps.png"),
-              fit: BoxFit.cover,
+          Padding(
+            padding: EdgeInsets.all(25),
+            child: Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+            "Maps",
+            style: GoogleFonts.varelaRound(
+            color: Colors.black54,
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
+                ),
+              ),
             ),
-            borderRadius: BorderRadius.circular(40),
           ),
 
-          
-        ),
-        
-      ),
-      SizedBox(height:80),
+          GestureDetector(
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => GMap(
+                          user.location.latitude, user.location.longitude)));
+            },
+            child: Container(
+              padding: EdgeInsets.all(5),
+              height: 180,
+              width: MediaQuery.of(context).size.width / 1.05,
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage("assets/images/maps.png"),
+                  fit: BoxFit.cover,
+                ),
+                borderRadius: BorderRadius.circular(40),
+              ),
+            ),
+          ),
+          SizedBox(height: 80),
 
-      Center(
-        child: Text("Joined during Covid-19", style: GoogleFonts.roboto(color:Colors.grey),
-      ),),
-            SizedBox(height:40),
-
-        
+          Center(
+            child: Text(
+              "Joined during Covid-19",
+              style: GoogleFonts.roboto(color: Colors.grey),
+            ),
+          ),
+          SizedBox(height: 40),
         ],
       ),
     );
   }
 
-   getImages() async {
-
+  getImages() async {
     return FutureBuilder(
-    
-      future: getImageURL(),
-      
-       builder: (context, snapshot) {
-                switch (snapshot.connectionState) {
-                  case ConnectionState.none:
-                    return Text('none');
-                  case ConnectionState.active:
-                  case ConnectionState.waiting:
-                    return Center(child: CircularProgressIndicator());
-                  case ConnectionState.done:
-                   return StaggeredGridView.countBuilder(
-            shrinkWrap: true,
-            crossAxisCount:2,
-            crossAxisSpacing: 12,
-            mainAxisSpacing: 12,
-            itemCount: images.length,
-
-             itemBuilder: (context, index) {
-               
-               return Container(
-                 child: ClipRRect(
-                   borderRadius: BorderRadius.all(Radius.circular(50)),
-                   child: Image.network(images[index], fit: BoxFit.cover),
-                 ),
-               );
-             },
-             staggeredTileBuilder: (index) {
-               return StaggeredTile.count(1, index.isEven ? 2:1);
-             },
-            );
-                }
-       }
-      
-      );
-
+        future: getImageURL(),
+        builder: (context, snapshot) {
+          switch (snapshot.connectionState) {
+            case ConnectionState.none:
+              return Text('none');
+            case ConnectionState.active:
+            case ConnectionState.waiting:
+              return Center(child: CircularProgressIndicator());
+            case ConnectionState.done:
+              return StaggeredGridView.countBuilder(
+                shrinkWrap: true,
+                crossAxisCount: 2,
+                crossAxisSpacing: 12,
+                mainAxisSpacing: 12,
+                itemCount: images.length,
+                itemBuilder: (context, index) {
+                  return Container(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.all(Radius.circular(50)),
+                      child: images != null ?  Image.network(images[index], fit: BoxFit.cover): Text(""),
+                    ),
+                  );
+                },
+                staggeredTileBuilder: (index) {
+                  return StaggeredTile.count(1, index.isEven ? 2 : 1);
+                },
+              );
+          }
+        });
   }
-  createChatRoomAndStartConvo(User currentUser, User user )  {
+
+  createChatRoomAndStartConvo(User currentUser, User user) async {
     String chatRoomId = currentUserId + user.uid;
     List<String> users = [currentUser.name, user.name];
+    bool exists = await databaseMethod.chatRoomExists(chatRoomId);
+
     Map<String, dynamic> chatRoomMap = {
       "users": users,
       "chatRoomId": chatRoomId,
-      "name":user.name,
-      "photoUrl":user.photo,
-      
-      
+      "name": user.name,
+      "photoUrl": user.photo,
+      "uid": user.uid,
+      "blocked" : false,
     };
-    databaseMethod.createChatRoom(chatRoomId, chatRoomMap);
-    
-    
-          Navigator.push(context, MaterialPageRoute(builder: (context) => ConversationScreen(chatRoomId:chatRoomId, userName: widget.user.name, currentUser: widget.currentUser, photoUrl: widget.user.photo, currentUserId: currentUserId, userId: user.uid,)));
 
+    if (exists == false) {
+      databaseMethod.createChatRoom(chatRoomId, chatRoomMap);
+
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => ConversationScreen(
+                    chatRoomId: chatRoomId,
+                    userName: widget.user.name,
+                    currentUser: widget.currentUser,
+                    photoUrl: widget.user.photo,
+                    currentUserId: currentUserId,
+                    userId: user.uid,
+                  )));
+    } else {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => ConversationScreen(
+                    chatRoomId: chatRoomId,
+                    userName: widget.user.name,
+                    currentUser: widget.currentUser,
+                    photoUrl: widget.user.photo,
+                    currentUserId: currentUserId,
+                    userId: user.uid,
+                  )));
+    }
   }
- 
-
 
   Widget CustomHeader() {
-  
-
-   
     return Stack(
       alignment: Alignment.topCenter,
       children: <Widget>[
@@ -474,86 +461,76 @@ Widget CustomBody() {
                       Icons.arrow_back,
                       color: Colors.white,
                     ),
-                    onPressed: (
-                      
-                    ) {
+                    onPressed: () {
                       Navigator.pop(context);
                     },
                   ),
-                 
                 ],
               ),
               SizedBox(height: 25),
               RichText(
                 textAlign: TextAlign.center,
                 text: TextSpan(
-                    text: user.bio,
-                    style: GoogleFonts.roboto(fontSize: 24, fontStyle: FontStyle.italic),
+                    text: (user.bio != null) ?  user.bio : Text(""),
+                    style: GoogleFonts.roboto(
+                        fontSize: 24, fontStyle: FontStyle.italic),
                     children: <TextSpan>[
                       TextSpan(
-                          text:
-                              '\n \n@instagram  @facebook',
+                          text: '\n \n@instagram  @facebook',
                           style: TextStyle(fontSize: 16, color: Colors.white70))
                     ]),
               ),
-              SizedBox(height:MediaQuery.of(context).size.height * 0.25),
+              SizedBox(height: MediaQuery.of(context).size.height * 0.25),
               Text(
                 //TODO
                 user.name,
                 style: TextStyle(
-                    color: Colors.black45, fontWeight: FontWeight.w500),
+                    color: Colors.black45, fontWeight: FontWeight.w500, fontSize: 16),
               ),
-
-
-           
-             Container(
-               padding: EdgeInsets.only(top:5, left:20),
-               child: Row(
-                 
+              Container(
+                padding: EdgeInsets.only(top: 5, left: 20),
+                child: Row(
                   children: <Widget>[
-                      buildCountColumn('Likes', count),
-                      SizedBox(width:MediaQuery.of(context).size.width*0.18),
-                       buildCountColumn('Liked', count1),
-                       SizedBox(width:MediaQuery.of(context).size.width*0.18),
-                       GestureDetector(
-                         onTap: () {
-                         searchBloc.add(
-                                  SelectUserEvent(
-                                      name: currentUser.name,
-                                      photoUrl: currentUser.photo,
-                                      currentUserId: currentUserId,
-                                      selectedUserId: user.uid),
-                                );
+                    buildCountColumn('Likes', count),
+                    SizedBox(width: MediaQuery.of(context).size.width * 0.18),
+                    buildCountColumn('Liked', count1),
+                    SizedBox(width: MediaQuery.of(context).size.width * 0.18),
+                    GestureDetector(
+                        onTap: () {
+                          searchBloc.add(
+                            SelectUserEvent(
+                                name: currentUser.name,
+                                photoUrl: currentUser.photo,
+                                currentUserId: currentUserId,
+                                selectedUserId: user.uid),
+                          );
 
-                         setState(() {
-                           liked = !liked;
-                           count = count+1;
-                         });
-
-                            
-                         },
-                         child:
-                          liked == false ? Icon(FontAwesomeIcons.heart, size: 20,): Icon(FontAwesomeIcons.solidHeart, size: 20, color: Colors.red, )),
-                       SizedBox(width:MediaQuery.of(context).size.width*0.18),
-
-                         GestureDetector(
-                           onTap: ()  {
-
-                             createChatRoomAndStartConvo(widget.currentUser,widget.user );
-                           },
-                           child: Icon(FontAwesomeIcons.solidPaperPlane),
-                         ),
-
-
-
+                          setState(() {
+                            liked = !liked;
+                            count = count + 1;
+                          });
+                        },
+                        child: liked == false
+                            ? Icon(
+                                FontAwesomeIcons.heart,
+                                size: 20,
+                              )
+                            : Icon(
+                                FontAwesomeIcons.solidHeart,
+                                size: 20,
+                                color: Colors.red,
+                              )),
+                    SizedBox(width: MediaQuery.of(context).size.width * 0.18),
+                    GestureDetector(
+                      onTap: () {
+                        createChatRoomAndStartConvo(
+                            widget.currentUser, widget.user);
+                      },
+                      child: Icon(FontAwesomeIcons.solidPaperPlane),
+                    ),
                   ],
                 ),
-             ),
-              
-             
-
-            
-              
+              ),
               Container(
                 margin: EdgeInsets.only(top: 25),
                 width: 150,
@@ -568,17 +545,11 @@ Widget CustomBody() {
                       Colors.grey.withOpacity(0.05),
                     ],
                   ),
-
                 ),
-                
               ),
             ],
           ),
         ),
-
-         
-        
-        
         Container(
           width: 150,
           height: 150,
@@ -590,18 +561,10 @@ Widget CustomBody() {
             ),
             borderRadius: BorderRadius.circular(40),
           ),
-         
         ),
-       
-        
       ],
-     
-         
     );
-
   }
-
-
 
   Widget HeaderBackground() {
     return Stack(
@@ -632,14 +595,11 @@ Widget CustomBody() {
             height: 450,
             decoration: BoxDecoration(
               image: DecorationImage(
-                  image: AssetImage('assets/images/cover.jpg'),
-                  colorFilter: new ColorFilter.mode(Colors.black.withOpacity(0.8), BlendMode.dstATop),
-
-                   fit: BoxFit.cover,
-                   
-                  
-                  ),
-
+                image: AssetImage('assets/images/cover.jpg'),
+                colorFilter: new ColorFilter.mode(
+                    Colors.black.withOpacity(0.8), BlendMode.dstATop),
+                fit: BoxFit.cover,
+              ),
             ),
           ),
         ),
@@ -647,79 +607,49 @@ Widget CustomBody() {
     );
   }
 
-  buildCountColumn(String label, int count)  {
-  
+  buildCountColumn(String label, int count) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         Text(
           count.toString(),
-          style: TextStyle(
-            fontSize:22.0,
-            fontWeight: FontWeight.bold
-          ),
+          style: TextStyle(fontSize: 22.0, fontWeight: FontWeight.bold),
         ),
         Container(
-          margin:EdgeInsets.only(top: 4.0),
-          child: Text(
-            label,
-            style:TextStyle(fontWeight: FontWeight.w400,
-            fontSize: 15.0,
-            color: Colors.grey,),
-          )
-        ),
+            margin: EdgeInsets.only(top: 4.0),
+            child: Text(
+              label,
+              style: TextStyle(
+                fontWeight: FontWeight.w400,
+                fontSize: 15.0,
+                color: Colors.grey,
+              ),
+            )),
       ],
     );
+  }
 
+  getCount() async {
+    try {
+      QuerySnapshot snapshot = await Firestore.instance
+          .collection("users")
+          .document(widget.user.uid)
+          .collection("selectedList")
+          .getDocuments();
 
-}
+      QuerySnapshot snapshot1 = await Firestore.instance
+          .collection("users")
+          .document(widget.user.uid)
+          .collection("chosenList")
+          .getDocuments();
 
-getCount() async {
-  try {
-  QuerySnapshot snapshot = await Firestore.instance.collection("users")
-  .document(widget.user.uid)
-  .collection("selectedList")
-  .getDocuments();
-
-  QuerySnapshot snapshot1 = await Firestore.instance.collection("users")
-  .document(widget.user.uid)
-  .collection("chosenList")
-  .getDocuments();
-
-
-
-  
-    // if(snapshot.documents.contains(currentUser.uid)) {
-    //   setState(() {
-    //      liked = true;
-    //   });
      
-    // } else {
-    //   setState(() {
-    //     liked= false;
-    //   });
-      
-    // }
-  
-
-  count1=snapshot1.documents.length;
-  count = snapshot.documents.length;
-  
-  } catch (e){
-
+      count1 = snapshot1.documents.length;
+      count = snapshot.documents.length;
+    } catch (e) {}
   }
 }
-
-
-
-}
-
- 
-
-
-
-  
 
 class HeaderClipper extends CustomClipper<Path> {
   @override
@@ -740,7 +670,7 @@ class HeaderClipper extends CustomClipper<Path> {
   bool shouldReclip(CustomClipper<Path> oldClipper) => false;
 }
 
-class BottomBarClipper extends CustomClipper<Path>{
+class BottomBarClipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
     Path path = Path();
@@ -766,7 +696,6 @@ class BottomBarClipper extends CustomClipper<Path>{
     // path.lineTo(width, height-20);
     // path.lineTo(width, height);
 
-
     path.lineTo(4 * sw / 12, 0);
     path.cubicTo(
         5 * sw / 12, 0, 5 * sw / 12, 2 * sh / 5, 6 * sw / 12, 2 * sh / 5);
@@ -780,11 +709,10 @@ class BottomBarClipper extends CustomClipper<Path>{
 
   @override
   bool shouldReclip(CustomClipper<Path> oldClipper) => false;
-
 }
+
 class Items {
   final String name;
-  
 
   Items(this.name);
 }

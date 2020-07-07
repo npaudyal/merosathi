@@ -54,11 +54,9 @@ class _HeartState extends State<Heart> {
   @override
   void initState() {
     active = items[2];
-    getMatches(widget.userId);
     super.initState();
   }
 
-  MatchesRepository _matchesRepository ;
 
 
   Widget _flare(MenuItem item, User currentUser) {
@@ -97,41 +95,6 @@ class _HeartState extends State<Heart> {
 
   }
 
-  getMatches(String userId) async {
-
-    return StreamBuilder(
-      stream: Firestore.instance.collection("users")
-      .document(userId).collection("chosenList").snapshots(),
-      builder: (context, snapshot) {
-        return StreamBuilder(
-          stream: Firestore.instance.collection("users")
-      .document(userId).collection("selectedList").snapshots(),
-          builder: (context, snapshot1) {
-            if(!snapshot.hasData || !snapshot1.hasData) {
-              return CircularProgressIndicator();
-
-            }
-            for (DocumentSnapshot doc in snapshot.data.documents) {
-              for(DocumentSnapshot docs in snapshot1.data.documents) {
-                if(doc.documentID == docs.documentID) {
-                  print(docs.documentID);
-                }
-              }
-            }
-
-          });
-
-      }
-      
-      );
-
-
-  }
- 
-      
-   
-   
-  
 
   @override
   Widget build(BuildContext context) {
