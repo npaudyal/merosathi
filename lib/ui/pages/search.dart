@@ -1,10 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:curved_navigation_bar/curved_navigation_bar.dart';
-import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:liquid_swipe/liquid_swipe.dart';
@@ -12,11 +9,8 @@ import 'package:merosathi/bloc/search/bloc.dart';
 import 'package:merosathi/models/user.dart';
 import 'package:merosathi/repositories/searchRepository.dart';
 import 'package:merosathi/ui/pages/chatRoom.dart';
-import 'package:merosathi/ui/pages/matches.dart';
 import 'package:merosathi/ui/pages/people_profile.dart';
-import 'package:merosathi/ui/widgets/iconWidget.dart';
 import 'package:merosathi/ui/widgets/profile.dart';
-import 'package:smart_flare/smart_flare.dart';
 import 'package:merosathi/ui/pages/my_profile.dart';
 import 'package:merosathi/ui/pages/heart.dart';
 

@@ -824,7 +824,7 @@ class _EditProfileState extends State<EditProfile> {
       appBar: AppBar(
         title: Text(
           "Edit Profile",
-          style: GoogleFonts.roboto(color: Colors.black),
+          style: GoogleFonts.ubuntu(color: Colors.black),
         ),
         backgroundColor: Colors.white,
         centerTitle: true,
@@ -846,7 +846,7 @@ class _EditProfileState extends State<EditProfile> {
                 padding: EdgeInsets.only(top: 20, right: 310),
                 child: Text(
                   "Photos",
-                  style: GoogleFonts.roboto(
+                  style: GoogleFonts.ubuntu(
                       color: Colors.deepOrange,
                       fontSize: 20,
                       fontWeight: FontWeight.bold),
@@ -874,7 +874,7 @@ class _EditProfileState extends State<EditProfile> {
               Padding(
                 padding: const EdgeInsets.only(right: 340, top: 25),
                 child: Text("Bio",
-                    style: GoogleFonts.roboto(
+                    style: GoogleFonts.ubuntu(
                         color: Colors.deepOrange,
                         fontSize: 20,
                         fontWeight: FontWeight.bold)),
@@ -898,13 +898,13 @@ class _EditProfileState extends State<EditProfile> {
                         border: InputBorder.none,
                         contentPadding: EdgeInsets.symmetric(horizontal:15, vertical: 15),
 
-                        labelStyle: GoogleFonts.roboto(
+                        labelStyle: GoogleFonts.ubuntu(
                           color: Colors.black,
                           fontSize: 20,
                         ),
 
                         hintText : bio,
-                        hintStyle: GoogleFonts.roboto(
+                        hintStyle: GoogleFonts.ubuntu(
                           color: Colors.black38,
                           
                         ),
@@ -927,7 +927,7 @@ class _EditProfileState extends State<EditProfile> {
                 padding: const EdgeInsets.only(top: 25, right: 220),
                 child: Text(
                   "What do you do?",
-                  style: GoogleFonts.roboto(
+                  style: GoogleFonts.ubuntu(
                       color: Colors.deepOrange,
                       fontWeight: FontWeight.bold,
                       fontSize: 20),
@@ -951,7 +951,7 @@ class _EditProfileState extends State<EditProfile> {
                  contentPadding: EdgeInsets.symmetric(horizontal:15, vertical: 15),
 
                       border: InputBorder.none,
-                      labelStyle: GoogleFonts.roboto(
+                      labelStyle: GoogleFonts.ubuntu(
                         color: Colors.black,
                         fontSize: 20,
                       ),
@@ -971,7 +971,7 @@ class _EditProfileState extends State<EditProfile> {
                 padding: const EdgeInsets.only(top: 25, right: 290),
                 child: Text(
                   "Religion",
-                  style: GoogleFonts.roboto(
+                  style: GoogleFonts.ubuntu(
                       color: Colors.deepOrange,
                       fontWeight: FontWeight.bold,
                       fontSize: 20),
@@ -994,7 +994,7 @@ class _EditProfileState extends State<EditProfile> {
                      contentPadding: EdgeInsets.symmetric(horizontal:15, vertical: 15),
 
                       border: InputBorder.none,
-                      labelStyle: GoogleFonts.roboto(
+                      labelStyle: GoogleFonts.ubuntu(
                         color: Colors.black,
                         fontSize: 20,
                       ),
@@ -1014,7 +1014,7 @@ class _EditProfileState extends State<EditProfile> {
                 padding: const EdgeInsets.only(top: 25, right: 150),
                 child: Text(
                   "How much do you make?",
-                  style: GoogleFonts.roboto(
+                  style: GoogleFonts.ubuntu(
                       color: Colors.deepOrange,
                       fontWeight: FontWeight.bold,
                       fontSize: 20),
@@ -1036,7 +1036,7 @@ class _EditProfileState extends State<EditProfile> {
                     decoration: InputDecoration(
                       contentPadding: EdgeInsets.symmetric(horizontal:15, vertical: 15),
                       border: InputBorder.none,
-                      labelStyle: GoogleFonts.roboto(
+                      labelStyle: GoogleFonts.ubuntu(
                         color: Colors.black,
                         fontSize: 20,
                       ),
@@ -1056,7 +1056,7 @@ class _EditProfileState extends State<EditProfile> {
                 padding: const EdgeInsets.only(top: 25, right: 280),
                 child: Text(
                   "Education",
-                  style: GoogleFonts.roboto(
+                  style: GoogleFonts.ubuntu(
                       color: Colors.deepOrange,
                       fontWeight: FontWeight.bold,
                       fontSize: 20),
@@ -1078,7 +1078,7 @@ class _EditProfileState extends State<EditProfile> {
                     decoration: InputDecoration(
                        contentPadding: EdgeInsets.symmetric(horizontal:15, vertical: 15),
                       border: InputBorder.none,
-                      labelStyle: GoogleFonts.roboto(
+                      labelStyle: GoogleFonts.ubuntu(
                         color: Colors.black,
                         fontSize: 20,
                       ),
@@ -1098,7 +1098,7 @@ class _EditProfileState extends State<EditProfile> {
                 padding: const EdgeInsets.only(top: 25, right: 320),
                 child: Text(
                   "Gotra",
-                  style: GoogleFonts.roboto(
+                  style: GoogleFonts.ubuntu(
                       color: Colors.deepOrange,
                       fontWeight: FontWeight.bold,
                       fontSize: 20),
@@ -1125,7 +1125,7 @@ class _EditProfileState extends State<EditProfile> {
                           borderRadius: BorderRadius.circular(30)
                         ),
                       border: InputBorder.none,
-                      labelStyle: GoogleFonts.roboto(
+                      labelStyle: GoogleFonts.ubuntu(
                         color: Colors.black,
                         fontSize: 20,
                       ),

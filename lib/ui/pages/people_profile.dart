@@ -5,6 +5,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:focused_menu/focused_menu.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:merosathi/bloc/search/search_bloc.dart';
@@ -214,68 +215,57 @@ class _PeopleProfileState extends State<PeopleProfile> {
             child: ListView(
               physics: ScrollPhysics(),
               children: <Widget>[
-                 ListTile(
-                  
+                ListTile(
                   leading: Icon(Icons.format_quote),
-                  title: user.bio !=null? Text("${user.bio}"):
-                 Text("I don't have a bio"), ),
-               ListTile(
+                  title: user.bio != null
+                      ? Text("${user.bio}")
+                      : Text("I don't have a bio"),
+                ),
+                ListTile(
                   leading: Icon(Icons.work),
-                  title:  user.job!= null ? Text("Works at ${user.job}")
-                : Text("Job"),),
-               ListTile(
+                  title: user.job != null
+                      ? Text("Works at ${user.job}")
+                      : Text("Job"),
+                ),
+                ListTile(
                   leading: Icon(Icons.school),
-                  title: user.education != null ? Text("Studied ${user.education}")
-                 : Text("University"),),
-                 ListTile(
+                  title: user.education != null
+                      ? Text("Studied ${user.education}")
+                      : Text("University"),
+                ),
+                ListTile(
                   leading: Icon(FontAwesomeIcons.church),
-                  title: user.religion !=null ? Text("${user.religion}")
-                  : Text("Religion"),),
-                 ListTile(
+                  title: user.religion != null
+                      ? Text("${user.religion}")
+                      : Text("Religion"),
+                ),
+                ListTile(
                   leading: Icon(FontAwesomeIcons.moneyBill),
-                  title:user.salary !=null ? Text("Earns ${user.salary}")
-                 : Text("Enough"),),
-                 ListTile(
+                  title: user.salary != null
+                      ? Text("Earns ${user.salary}")
+                      : Text("Enough"),
+                ),
+                ListTile(
                   leading: Icon(Icons.star),
-                  title: user.gotra!=null ? Text("${user.gotra} Gotra")
-                    : Text("Who knows?"),),
-                     ListTile(
+                  title: user.gotra != null
+                      ? Text("${user.gotra} Gotra")
+                      : Text("Who knows?"),
+                ),
+                ListTile(
                   leading: Icon(Icons.group),
-                  title:  user.community !=null ? Text("${user.community}")
-                : Text("Community"),),
-
+                  title: user.community != null
+                      ? Text("${user.community}")
+                      : Text("Community"),
+                ),
                 ListTile(
                   leading: Icon(FontAwesomeIcons.ruler),
-                  title: user.heightP!=null ? Text("${user.heightP} ")
-                    : Text("Height"),),
-                    
+                  title: user.heightP != null
+                      ? Text("${user.heightP} ")
+                      : Text("Height"),
+                ),
               ],
             ),
           ),
-
-          //  getImages(),
-
-          // StaggeredGridView.countBuilder(
-          //   shrinkWrap: true,
-          //   physics: NeverScrollableScrollPhysics(),
-          //   crossAxisCount:2,
-          //   crossAxisSpacing: 12,
-          //   mainAxisSpacing: 12,
-          //   itemCount: images.length,
-
-          //    itemBuilder: (context, index) {
-          //      return Container(
-          //        child: ClipRRect(
-          //          borderRadius: BorderRadius.all(Radius.circular(50)),
-          //          child: Image(image: images[index], fit: BoxFit.cover),
-          //        ),
-          //      );
-          //    },
-          //    staggeredTileBuilder: (index) {
-          //      return StaggeredTile.count(1, index.isEven ? 2:1);
-          //    },
-          //   )
-
           FutureBuilder(
               future: getImageURL(),
               builder: (context, snapshot) {
@@ -295,12 +285,31 @@ class _PeopleProfileState extends State<PeopleProfile> {
                         mainAxisSpacing: 12,
                         itemCount: images.length,
                         itemBuilder: (context, index) {
-                          return Container(
-                            child: ClipRRect(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(50)),
-                              child: images !=null ? Image.network(images[index],
-                                  fit: BoxFit.cover) : Text(""),
+                          return FocusedMenuHolder(
+                            blurSize: 4,
+                            blurBackgroundColor: Colors.white,
+                            menuWidth: MediaQuery.of(context).size.width,
+                            menuItemExtent: 50,
+                            menuBoxDecoration: BoxDecoration(
+                              color: Colors.blue,
+                              boxShadow: [
+                                BoxShadow(
+                                    color: Colors.black,
+                                    blurRadius: 5,
+                                    spreadRadius: 1)
+                              ],
+                            ),
+                            onPressed: () {},
+                            menuItems: [],
+                            child: Container(
+                              child: ClipRRect(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(50)),
+                                child: images != null
+                                    ? Image.network(images[index],
+                                        fit: BoxFit.cover)
+                                    : Text(""),
+                              ),
                             ),
                           );
                         },
@@ -311,25 +320,21 @@ class _PeopleProfileState extends State<PeopleProfile> {
                     );
                 }
               }),
-
-
           SizedBox(height: 25),
-
           Padding(
             padding: EdgeInsets.all(25),
             child: Align(
-            alignment: Alignment.centerLeft,
-            child: Text(
-            "Maps",
-            style: GoogleFonts.varelaRound(
-            color: Colors.black54,
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
+              alignment: Alignment.centerLeft,
+              child: Text(
+                "Maps",
+                style: GoogleFonts.varelaRound(
+                  color: Colors.black54,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
                 ),
               ),
             ),
           ),
-
           GestureDetector(
             onTap: () {
               Navigator.push(
@@ -352,7 +357,6 @@ class _PeopleProfileState extends State<PeopleProfile> {
             ),
           ),
           SizedBox(height: 80),
-
           Center(
             child: Text(
               "Joined during Covid-19",
@@ -386,7 +390,9 @@ class _PeopleProfileState extends State<PeopleProfile> {
                   return Container(
                     child: ClipRRect(
                       borderRadius: BorderRadius.all(Radius.circular(50)),
-                      child: images != null ?  Image.network(images[index], fit: BoxFit.cover): Text(""),
+                      child: images != null
+                          ? Image.network(images[index], fit: BoxFit.cover)
+                          : Text(""),
                     ),
                   );
                 },
@@ -409,7 +415,7 @@ class _PeopleProfileState extends State<PeopleProfile> {
       "name": user.name,
       "photoUrl": user.photo,
       "uid": user.uid,
-      "blocked" : false,
+      "blocked": false,
     };
 
     if (exists == false) {
@@ -471,7 +477,7 @@ class _PeopleProfileState extends State<PeopleProfile> {
               RichText(
                 textAlign: TextAlign.center,
                 text: TextSpan(
-                    text: (user.bio != null) ?  user.bio : Text(""),
+                    text: (user.bio != null) ? user.bio : Text(""),
                     style: GoogleFonts.roboto(
                         fontSize: 24, fontStyle: FontStyle.italic),
                     children: <TextSpan>[
@@ -485,7 +491,9 @@ class _PeopleProfileState extends State<PeopleProfile> {
                 //TODO
                 user.name,
                 style: TextStyle(
-                    color: Colors.black45, fontWeight: FontWeight.w500, fontSize: 16),
+                    color: Colors.black45,
+                    fontWeight: FontWeight.w500,
+                    fontSize: 16),
               ),
               Container(
                 padding: EdgeInsets.only(top: 5, left: 20),
@@ -644,7 +652,6 @@ class _PeopleProfileState extends State<PeopleProfile> {
           .collection("chosenList")
           .getDocuments();
 
-     
       count1 = snapshot1.documents.length;
       count = snapshot.documents.length;
     } catch (e) {}

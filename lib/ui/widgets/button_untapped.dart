@@ -27,7 +27,7 @@ Widget buttonUnTapped(context, color1, color2, onTap) {
             constraints: BoxConstraints(maxWidth: 300, minHeight: 100),
             child: Center(
               child: Text(
-                "Continue",
+                "Save",
                 textAlign: TextAlign.center,
                 style: GoogleFonts.roboto(color:Colors.black, fontSize: 20, ),
               ),
@@ -67,7 +67,7 @@ Widget buttonUnTappedWithText(context, color1, color2, onTap, text) {
               child: Text(
                 text,
                 textAlign: TextAlign.center,
-                style: GoogleFonts.roboto(color:Colors.black, fontSize: 20, ),
+                style: GoogleFonts.ubuntu(color:Colors.white, fontSize: 20, ),
               ),
             ),
           ),

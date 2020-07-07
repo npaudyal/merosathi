@@ -1,13 +1,11 @@
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
 import 'package:focused_menu/modals.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:merosathi/models/user.dart';
-import 'package:merosathi/services/constants.dart';
 import 'package:merosathi/services/database.dart';
-import 'package:merosathi/services/helper_functions.dart';
 import 'package:merosathi/ui/pages/conversation_screen.dart';
 import 'package:merosathi/ui/pages/heart.dart';
 import 'package:merosathi/ui/pages/my_profile.dart';
@@ -49,7 +47,8 @@ class _ChatRoomState extends State<ChatRoom> {
   DatabaseMethods databaseMethods = new DatabaseMethods();
   Stream chatRoomStream;
 
-List filter =[];
+List filter = [];
+List filtered = [];
 
   
 
@@ -61,6 +60,17 @@ List filter =[];
           itemCount: snapshot.data.documents.length,
           itemBuilder: (context, index) {
 
+            filter.add(ChatRoomTile(
+                snapshot.data.documents[index].data['name'],
+                snapshot.data.documents[index].data['chatRoomId'],
+                widget.currentUser,
+                
+                snapshot.data.documents[index].data['photoUrl'],
+                snapshot.data.documents[index].data['uid'],
+
+              ));
+
+              filtered = filter;
               
             return  FocusedMenuHolder(
           blurSize: 4,
@@ -88,15 +98,7 @@ List filter =[];
              ),
           ],
            
-              child: ChatRoomTile(
-                snapshot.data.documents[index].data['name'],
-                snapshot.data.documents[index].data['chatRoomId'],
-                widget.currentUser,
-                
-                snapshot.data.documents[index].data['photoUrl'],
-                snapshot.data.documents[index].data['uid'],
-
-              ) ,
+              child: filtered[index]
             );
 
           }
@@ -104,6 +106,11 @@ List filter =[];
       }
         );
       }
+
+  // void _filter(value) {
+
+  //   filter.where((element) => false)
+  // }
       
 
 
@@ -136,6 +143,7 @@ List filter =[];
 
   @override
   Widget build(BuildContext context) {
+    
     Size size = MediaQuery.of(context).size;
       
    return Scaffold(
@@ -193,9 +201,8 @@ List filter =[];
                         ),
                         child: Row(
                           children: <Widget>[
-                            Icon(Icons.add,color: Colors.pink,size: 20,),
+                            Icon(FontAwesomeIcons.heart,color: Colors.pink,size: 20,),
                             SizedBox(width: 2,),
-                            Text("New",style: TextStyle(fontSize: 14,fontWeight: FontWeight.bold),),
                           ],
                         ),
                       )
@@ -293,51 +300,10 @@ class ChatRoomTile extends StatefulWidget {
 
 class _ChatRoomTileState extends State<ChatRoomTile> {
 
-  _deleteTile(String userId) {
-
-
   
-
-  }
-
-  _deleteMessages(String userId) {
-
-
-  }
   @override
   Widget build(BuildContext context) {
-     return //FocusedMenuHolder(
-    //       blurSize: 4,
-    //       blurBackgroundColor: Colors.white,
-    //       menuWidth: MediaQuery.of(context).size.width*0.4,
-    //       menuItemExtent: 50,
-          
-    //       menuBoxDecoration: BoxDecoration(
-    //         color: Colors.blue,
-    //         boxShadow: [BoxShadow(color:Colors.black, blurRadius:5, spreadRadius: 1)],
-    //       ),
-    //       onPressed: () {
-              
-    //       },
-    //       menuItems: <FocusedMenuItem>[
-    //         FocusedMenuItem(title: Center(child: Text("Delete", style: GoogleFonts.roboto(color: Colors.white),)),
-    //          onPressed: () {
-               
-    //          },
-             
-    //          trailingIcon: Icon(Icons.delete),
-    //          backgroundColor: Colors.redAccent
-    //          ),
-
-    //          FocusedMenuItem(title: Center(child: Text("Clear messages", style: GoogleFonts.roboto(color: Colors.black),)),
-    //          onPressed: () {
-    //            _deleteMessages(widget.userId);
-    //          },
-    //          trailingIcon: Icon(Icons.clear),
-    //           backgroundColor: Colors.white
-    //          ),
-    //       ],
-            GestureDetector(
+     return  GestureDetector(
           
           onTap: () {
             Navigator.push(context, MaterialPageRoute(

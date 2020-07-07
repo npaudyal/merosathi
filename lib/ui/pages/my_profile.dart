@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -6,6 +7,7 @@ import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:focused_menu/focused_menu.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:merosathi/bloc/authentication/bloc.dart';
 import 'package:merosathi/models/user.dart';
@@ -53,9 +55,8 @@ class _MyProfileState extends State<MyProfile> {
 
   @override
   void initState() {
-
     active = items[3];
-    
+
     super.initState();
   }
 
@@ -76,7 +77,6 @@ class _MyProfileState extends State<MyProfile> {
       }
     }
   }
-  
 
   getCount() async {
     try {
@@ -107,8 +107,8 @@ class _MyProfileState extends State<MyProfile> {
       count2 = snapshot2.documents.length;
     } catch (e) {}
   }
-   Widget _flare(MenuItem item, User currentUser) {
-    
+
+  Widget _flare(MenuItem item, User currentUser) {
     return GestureDetector(
       child: AspectRatio(
         aspectRatio: 1,
@@ -126,26 +126,38 @@ class _MyProfileState extends State<MyProfile> {
         setState(() {
           active = item;
         });
-        if(item.name == "heart") {
-          Navigator.push(context, MaterialPageRoute(builder: (context) => Heart(userId: widget.userId,currentUserId: widget.currentUserId, currentUser: currentUser, )));//Matches(userId: widget.userId,)));
+        if (item.name == "heart") {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => Heart(
+                        userId: widget.userId,
+                        currentUserId: widget.currentUserId,
+                        currentUser: currentUser,
+                      ))); //Matches(userId: widget.userId,)));
         }
-        
-        if(item.name == "search_to_close"){
-        Navigator.push(context, MaterialPageRoute(builder: (context) =>Search(userId: widget.userId)));
 
+        if (item.name == "search_to_close") {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => Search(userId: widget.userId)));
         }
-        if(item.name =="message") {
-          Navigator.push(context, MaterialPageRoute(builder: (context) => ChatRoom(userId: widget.userId, currentUser: currentUser, currentUserId: widget.currentUserId)));
-
+        if (item.name == "message") {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => ChatRoom(
+                      userId: widget.userId,
+                      currentUser: currentUser,
+                      currentUserId: widget.currentUserId)));
         }
       },
     );
   }
 
-
   @override
   Widget build(BuildContext context) {
-
     images.clear();
     Size size = MediaQuery.of(context).size;
     return FutureBuilder(
@@ -209,13 +221,30 @@ class _MyProfileState extends State<MyProfile> {
                         mainAxisSpacing: 12,
                         itemCount: images.length,
                         itemBuilder: (context, index) {
-                          return Container(
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(50),
+                          return FocusedMenuHolder(
+                            blurSize: 4,
+                            blurBackgroundColor: Colors.white,
+                            menuWidth: MediaQuery.of(context).size.width,
+                            menuItemExtent: 50,
+                            menuBoxDecoration: BoxDecoration(
+                              color: Colors.blue,
+                              boxShadow: [
+                                BoxShadow(
+                                    color: Colors.black,
+                                    blurRadius: 5,
+                                    spreadRadius: 1)
+                              ],
+                            ),
+                            onPressed: () {},
+                            menuItems: [],
+                            child: Container(
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(50),
+                                ),
+                                child: Image.network(images[index],
+                                    fit: BoxFit.cover),
                               ),
-                              child: Image.network(images[index],
-                                  fit: BoxFit.cover),
                             ),
                           );
                         },
@@ -231,18 +260,14 @@ class _MyProfileState extends State<MyProfile> {
           }
 
           return Container();
-        }
-        
-      
-        );
-        
+        });
   }
 
   Widget signoutButton() {
     return Container(
       padding: EdgeInsets.only(bottom: 5),
       height: 50.0,
-      width: MediaQuery.of(context).size.width / 3,
+      width: MediaQuery.of(context).size.width / 9,
       child: Material(
         borderRadius: BorderRadius.circular(20.0),
         shadowColor: Colors.greenAccent,
@@ -282,29 +307,26 @@ class _MyProfileState extends State<MyProfile> {
             children: <Widget>[
               GestureDetector(
                 onTap: () {
-
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => EditProfile( widget.currentUser, widget.currentUserId, images)));
-                  //TODO
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => EditProfile(widget.currentUser,
+                              widget.currentUserId, images)));
                 },
-                  
-                  child: Icon(Icons.edit, color: mainColor),
-                  ),
-              
+                child: Icon(EvaIcons.edit2Outline, color: mainColor),
+              ),
             ],
           ),
           Container(
             width: 150,
             height: 150,
             decoration: BoxDecoration(
-              
               shape: BoxShape.circle,
-             
-              
               boxShadow: [
                 BoxShadow(
-                  color: secondColor,
-                  blurRadius: 40,
-                  offset: Offset(0, 10),
+                  color: Colors.black,
+                  blurRadius: 80,
+                  offset: Offset(0, 20),
                 ),
               ],
             ),
