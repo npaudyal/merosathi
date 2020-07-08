@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flare_flutter/flare_actor.dart';
+import 'package:flare_flutter/flare_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
@@ -14,6 +15,8 @@ import 'package:merosathi/ui/pages/spash_screen.dart';
 import 'package:merosathi/ui/widgets/profile.dart';
 import 'package:merosathi/ui/pages/my_profile.dart';
 import 'package:merosathi/ui/pages/heart.dart';
+import 'package:merosathi/ui/widgets/animations/slide_tansition.dart';
+import 'package:merosathi/ui/widgets/animations/slide_up.dart';
 
 class MenuItem {
   final String name;
@@ -48,6 +51,8 @@ class _SearchState extends State<Search> {
   ];
 
   MenuItem active;
+
+  bool animation = false;
 
   getDifference(GeoPoint userLocation) async {
     Position position;
@@ -189,18 +194,21 @@ class _SearchState extends State<Search> {
           active = item;
         });
         if(item.name == "head") {
-         Navigator.push(context, MaterialPageRoute(
-           builder: (context) => MyProfile(currentUserId: widget.userId, currentUser: currentUser, userId: widget.userId)));
+         Navigator.push(context, SlideRightRoute(
+           page:  MyProfile(currentUserId: widget.userId, currentUser: currentUser, userId: widget.userId)));
         }
         if(item.name == "heart") {
-          Navigator.push(context, MaterialPageRoute(builder: (context) => Heart(userId: widget.userId,currentUserId: widget.userId, currentUser: currentUser, )));//Matches(userId: widget.userId,)));
+          Navigator.push(context, SlideRightRoute(page: Heart(userId: widget.userId,currentUserId: widget.userId, currentUser: currentUser, )));//Matches(userId: widget.userId,)));
         }
         if(item.name =="message") {
-          Navigator.push(context, MaterialPageRoute(builder: (context) => ChatRoom(userId: widget.userId, currentUser: currentUser, currentUserId: currentUser.uid)));
+          Navigator.push(context, SlideRightRoute(page: ChatRoom(userId: widget.userId, currentUser: currentUser, currentUserId: currentUser.uid)));
         }
       },
     );
   }
+
+  
+  
 
 
   buildContainer(List<User> usersaa, User _currentUser) async {
@@ -222,104 +230,115 @@ class _SearchState extends State<Search> {
       } else {
         feed.add(Container(
           width: MediaQuery.of(context).size.width,
-          child: ProfileWidget(
-            padding: 0.0,
-            photoHeight: size.height,
-            photoWidth: size.width,
-            photo: usera.photo,
-            clipRadius: size.height * 0.02,
-            containerHeight: size.height * 0.3,
-            containerWidth: size.width,
-            child: Stack(
+          child: GestureDetector(
+              onDoubleTap: () {
               
-              children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: size.width * 0.03),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      SizedBox(
-                        height: size.height * 0.15,
-                      ),
-                      Row(
-                        children: <Widget>[
-                          //userGender(usera.gender),
-                          
-                          RichText(
-                              text: TextSpan(
-                                  text: " ${usera.name}, ",
-                                  style: GoogleFonts.roboto(
-                                  fontWeight: FontWeight.bold,
-                                  
-                                  color: Colors.white,
-                                  fontSize: size.height * 0.04,),
+               
 
-                                  children: <TextSpan> [
-                                    TextSpan(text:  (DateTime.now().year -
-                                           usera.age.toDate().year).toString(),
-                                            style: GoogleFonts.roboto(
-                                            color:Colors.white,
-                                            
-                                            fontWeight: FontWeight.w400,
-                                            fontSize: size.height * 0.035,), ),
+              },
+              child: ProfileWidget(
+              padding: 0.0,
+              photoHeight: size.height,
+              photoWidth: size.width,
+              photo: usera.photo,
+              clipRadius: size.height * 0.02,
+              containerHeight: size.height * 0.3,
+              containerWidth: size.width,
+              child: Stack(
+                
+                children: <Widget>[
+
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: size.width * 0.03),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                            
+                        SizedBox(
+                          height: size.height * 0.15,
+                        ),
+                        Row(
+                          children: <Widget>[
+                            //userGender(usera.gender),
+                            
+                            RichText(
+                                text: TextSpan(
+                                    text: " ${usera.name}, ",
+                                    style: GoogleFonts.roboto(
+                                    fontWeight: FontWeight.bold,
+                                    
+                                    color: Colors.white,
+                                    fontSize: size.height * 0.04,),
+
+                                    children: <TextSpan> [
+                                      TextSpan(text:  (DateTime.now().year -
+                                             usera.age.toDate().year).toString(),
+                                              style: GoogleFonts.roboto(
+                                              color:Colors.white,
+                                              
+                                              fontWeight: FontWeight.w400,
+                                              fontSize: size.height * 0.035,), ),
 
 
-                                  ],
-                              
+                                    ],
+                                
 
-                                 
-                                 
-                                  // (DateTime.now().year -
-                                  //         usera.age.toDate().year)
-                                  //     .toString(),
-                              
+                                   
+                                   
+                                    // (DateTime.now().year -
+                                    //         usera.age.toDate().year)
+                                    //     .toString(),
+                                
+                              ),
                             ),
-                          ),
-                          
-                        ],
-                      ),
-                      Row(
-                        children: <Widget>[
-                          Icon(
-                            Icons.location_on,
-                            color: Colors.blue,
-                          ),
-                          Text(
-                            difference != null
-                                ? (difference / 1000).floor().toString() +
-                                    " km away"
-                                : "away",
-                            style: TextStyle(color: Colors.white),
-                          )
-                        ],
-                      ),
-                      SizedBox(
-                        height: size.height * 0.01,
-                      ),
-                     
-                      
+                            
+                          ],
+                        ),
+                        Row(
+                          children: <Widget>[
+                            Icon(
+                              Icons.location_on,
+                              color: Colors.blue,
+                            ),
+                            Text(
+                              difference != null
+                                  ? (difference / 1000).floor().toString() +
+                                      " km away"
+                                  : "away",
+                              style: TextStyle(color: Colors.white),
+                            )
+                          ],
+                        ),
+                        SizedBox(
+                          height: size.height * 0.01,
+                        ),
+                       
+                        
 
-                
-                    ],
+                  
+                      ],
+                    ),
                   ),
-                ),
-               
                  
-                
-           
+                   
+                  
              
-
-                CustomBottomBar(usera, _currentUser),
                
-                PlayButton(usera, _currentUser),
 
+                  CustomBottomBar(usera, _currentUser),
                  
-                    
-                
-              ],
+                  PlayButton(usera, _currentUser),
+
+                   
+                      
+                  
+                ],
+              ),
             ),
           ),
-        ));
+          
+        ), 
+        );
       }
     }
   }
@@ -395,8 +414,8 @@ class _SearchState extends State<Search> {
           onPressed: () {
             Navigator.push(
                 context,
-                MaterialPageRoute(
-                    builder: (context) => PeopleProfile(
+                SlideUpRoute(
+                    page:  PeopleProfile(
                         user: user,
                         currentUserId: widget.userId,
                         currentUser: _currentUser)));

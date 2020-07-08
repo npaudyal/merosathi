@@ -11,6 +11,7 @@ import 'package:merosathi/ui/pages/heart.dart';
 import 'package:merosathi/ui/pages/my_profile.dart';
 import 'package:merosathi/ui/pages/search.dart';
 import 'package:focused_menu/focused_menu.dart';
+import 'package:merosathi/ui/widgets/animations/slide_tansition.dart';
 
 class MenuItem {
   final String name;
@@ -271,14 +272,14 @@ List filtered = [];
           active = item;
         });
         if(item.name == "head") {
-         Navigator.push(context, MaterialPageRoute(
-           builder: (context) => MyProfile(currentUserId: widget.userId, currentUser: currentUser, userId: widget.userId)));
+         Navigator.push(context, SlideRightRoute(
+           page: MyProfile(currentUserId: widget.userId, currentUser: currentUser, userId: widget.userId)));
         }
         if(item.name == "heart") {
-          Navigator.push(context, MaterialPageRoute(builder: (context) => Heart(userId: widget.userId,currentUserId: widget.userId, currentUser: currentUser, )));//Matches(userId: widget.userId,)));
+          Navigator.push(context, SlideRightRoute(page: Heart(userId: widget.userId,currentUserId: widget.userId, currentUser: currentUser, )));//Matches(userId: widget.userId,)));
         }
         if(item.name == "search_to_close"){
-        Navigator.push(context, MaterialPageRoute(builder: (context) =>Search(userId: widget.userId)));
+        Navigator.push(context, SlideRightRoute(page: Search(userId: widget.userId)));
 
         }
       },

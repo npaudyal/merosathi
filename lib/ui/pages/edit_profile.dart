@@ -7,6 +7,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_native_image/flutter_native_image.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:merosathi/models/user.dart';
 import 'package:merosathi/ui/pages/my_profile.dart';
 import 'package:merosathi/ui/pages/spash_screen.dart';
@@ -72,11 +73,11 @@ class _EditProfileState extends State<EditProfile> {
   bool isTapped = false;
 
   List<bool> tapped = [false, false, false, false];
+  ImagePicker imagePicker = ImagePicker();
 
   uploadImage(File photo, String name) async {
 
-     File compressedFile = await FlutterNativeImage.compressImage(photo.path,
-    quality: 75);
+    
     String uid = (await FirebaseAuth.instance.currentUser()).uid;
 
     final StorageReference storageReference = FirebaseStorage.instance
@@ -85,7 +86,7 @@ class _EditProfileState extends State<EditProfile> {
         .child(uid)
         .child(name);
 
-    storageReference.putFile(compressedFile);
+    storageReference.putFile(photo);
   }
 
   uploadProfilePicture(photo) async {
@@ -123,6 +124,7 @@ class _EditProfileState extends State<EditProfile> {
       });
     });
   }
+
 
   Future getImageURL() async {
     {
@@ -188,7 +190,9 @@ class _EditProfileState extends State<EditProfile> {
             width: size.width,
             child: GestureDetector(
               onTap: () async {
-                File getPic = await FilePicker.getFile(type: FileType.image);
+                 File getPic = await ImagePicker.pickImage(source: ImageSource.gallery,
+                imageQuality: 100
+                 );
                 if (getPic != null) {
                   photo = getPic;
                   
@@ -246,8 +250,9 @@ class _EditProfileState extends State<EditProfile> {
             itemBuilder: (context, index) {
               return GestureDetector(
                 onTap: () async {
-                  File getPic = await FilePicker.getFile(type: FileType.image);
-
+                File getPic = await ImagePicker.pickImage(source: ImageSource.gallery,
+                imageQuality: 40
+                 );
                   if (getPic != null) {
                     //await compressImage();
                     if (index == 0) {
@@ -698,7 +703,7 @@ class _EditProfileState extends State<EditProfile> {
                         return Text('none');
                       case ConnectionState.active:
                       case ConnectionState.waiting:
-                        return SplashScreen();
+                        return CircularProgressIndicator();
                       case ConnectionState.done:
                         return Column(
                           children: <Widget>[

@@ -16,6 +16,7 @@ import 'package:merosathi/ui/pages/heart.dart';
 import 'package:merosathi/ui/pages/search.dart';
 import 'package:merosathi/ui/pages/edit_profile.dart';
 import 'package:merosathi/ui/pages/spash_screen.dart';
+import 'package:merosathi/ui/widgets/animations/slide_tansition.dart';
 
 Color mainColor = Color(0xff774a63);
 Color secondColor = Color(0xffd6a5c0);
@@ -130,8 +131,8 @@ class _MyProfileState extends State<MyProfile> {
         if (item.name == "heart") {
           Navigator.push(
               context,
-              MaterialPageRoute(
-                  builder: (context) => Heart(
+              SlideRightRoute(
+                  page: Heart(
                         userId: widget.userId,
                         currentUserId: widget.currentUserId,
                         currentUser: currentUser,
@@ -141,14 +142,14 @@ class _MyProfileState extends State<MyProfile> {
         if (item.name == "search_to_close") {
           Navigator.push(
               context,
-              MaterialPageRoute(
-                  builder: (context) => Search(userId: widget.userId)));
+              SlideRightRoute(
+                  page: Search(userId: widget.userId)));
         }
         if (item.name == "message") {
           Navigator.push(
               context,
-              MaterialPageRoute(
-                  builder: (context) => ChatRoom(
+              SlideRightRoute(
+                  page: ChatRoom(
                       userId: widget.userId,
                       currentUser: currentUser,
                       currentUserId: widget.currentUserId)));
@@ -169,7 +170,7 @@ class _MyProfileState extends State<MyProfile> {
               return Text('none');
             case ConnectionState.active:
             case ConnectionState.waiting:
-              return SplashScreen();
+              return Text("");
             case ConnectionState.done:
               return Scaffold(
                 bottomNavigationBar: Container(
@@ -360,7 +361,7 @@ class _MyProfileState extends State<MyProfile> {
               return Text('none');
             case ConnectionState.active:
             case ConnectionState.waiting:
-              return SplashScreen();
+              return Text("");
             case ConnectionState.done:
               return Stack(
                 children: <Widget>[

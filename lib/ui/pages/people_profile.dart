@@ -3,6 +3,7 @@ import 'package:extended_image/extended_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:focused_menu/focused_menu.dart';
@@ -16,6 +17,7 @@ import 'package:merosathi/services/database.dart';
 import 'package:merosathi/services/constants.dart';
 import 'package:merosathi/ui/pages/chatRoom.dart';
 import 'package:merosathi/ui/pages/conversation_screen.dart';
+import 'package:merosathi/ui/pages/flare.dart';
 import 'package:merosathi/ui/pages/map.dart';
 import 'package:merosathi/ui/pages/spash_screen.dart';
 import 'package:provider/provider.dart';
@@ -88,6 +90,22 @@ class _PeopleProfileState extends State<PeopleProfile> {
     getCount();
     super.initState();
   }
+  Widget likeAnimation() {
+    
+    return Container(
+        height: 200,
+        width: 200,
+        child: FlareActor(
+          "assets/Heart (2).flr",
+          alignment: Alignment.center,
+          fit: BoxFit.contain,
+          animation: "Like",
+                    
+          ),
+      
+    );
+  }
+ 
 
   Widget CustomBottomBar() {
     return Positioned(
@@ -157,7 +175,7 @@ class _PeopleProfileState extends State<PeopleProfile> {
               return Text('none');
             case ConnectionState.active:
             case ConnectionState.waiting:
-              return SplashScreen();
+              return Center(child: Flare());
             case ConnectionState.done:
               return Scaffold(
                 body: Container(
@@ -275,7 +293,7 @@ class _PeopleProfileState extends State<PeopleProfile> {
                     return Text('none');
                   case ConnectionState.active:
                   case ConnectionState.waiting:
-                    return SplashScreen();
+                    return Center(child: CircularProgressIndicator());
                   case ConnectionState.done:
                     return SingleChildScrollView(
                       child: StaggeredGridView.countBuilder(
@@ -379,7 +397,7 @@ class _PeopleProfileState extends State<PeopleProfile> {
               return Text('none');
             case ConnectionState.active:
             case ConnectionState.waiting:
-              return SplashScreen();
+              return Center(child: CircularProgressIndicator());
             case ConnectionState.done:
               return StaggeredGridView.countBuilder(
                 shrinkWrap: true,
@@ -513,6 +531,8 @@ class _PeopleProfileState extends State<PeopleProfile> {
                                 currentUserId: currentUserId,
                                 selectedUserId: user.uid),
                           );
+
+                          
 
                           setState(() {
                             liked = !liked;

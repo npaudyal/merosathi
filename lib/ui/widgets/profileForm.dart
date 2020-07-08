@@ -12,6 +12,7 @@ import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:flutter_native_image/flutter_native_image.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:liquid_swipe/liquid_swipe.dart';
 import 'package:merosathi/bloc/authentication/authentication_bloc.dart';
 import 'package:merosathi/bloc/authentication/authentication_event.dart';
@@ -244,8 +245,6 @@ class _ProfileFormState extends State<ProfileForm> {
  
   uploadImage(File photo, String name) async {
     
-    File compressedFile = await FlutterNativeImage.compressImage(photo.path,
-    quality: 75);
     String uid = (await FirebaseAuth.instance.currentUser()).uid;
 
     final StorageReference storageReference = FirebaseStorage.instance
@@ -254,7 +253,7 @@ class _ProfileFormState extends State<ProfileForm> {
         .child(uid)
         .child(name);
 
-     storageReference.putFile(compressedFile);
+     storageReference.putFile(photo);
   }
 
   TextEditingController _jobController = TextEditingController();
@@ -1175,8 +1174,9 @@ Widget bioPage() {
                     padding:  EdgeInsets.only(top:size.width/2.27, left:size.width/20),
                     child: GestureDetector(
                                 onTap: () async {
-                                  File getPic = await FilePicker.getFile(
-                                      type: FileType.image);
+                                   File getPic = await ImagePicker.pickImage(source: ImageSource.gallery,
+                                           imageQuality: 100
+                                           );
                                   if (getPic != null) {
                                     // await compressImage();
                                     photo = getPic;
@@ -1374,8 +1374,9 @@ Widget bioPage() {
 
                             GestureDetector(
                               onTap: () async {
-                                File getPic = await FilePicker.getFile(
-                                    type: FileType.image);
+                                File getPic = await ImagePicker.pickImage(source: ImageSource.gallery,
+                                              imageQuality: 40
+                                               );
                                 if (getPic != null) {
                                   //await compressImage();
                                    
@@ -1417,8 +1418,9 @@ Widget bioPage() {
 
                             GestureDetector(
                               onTap: () async {
-                                File getPic = await FilePicker.getFile(
-                                    type: FileType.image);
+                                 File getPic = await ImagePicker.pickImage(source: ImageSource.gallery,
+                                              imageQuality: 40
+                                              );
                                 if (getPic != null) {
                                   //await compressImage();
                                   
@@ -1470,8 +1472,9 @@ Widget bioPage() {
 
                                 GestureDetector(
                                   onTap: () async {
-                                    File getPic = await FilePicker.getFile(
-                                        type: FileType.image);
+                                     File getPic = await ImagePicker.pickImage(source: ImageSource.gallery,
+                                                  imageQuality: 40
+                                                   );
                                     if (getPic != null) {
                                       //await compressImage();
                                      
@@ -1513,8 +1516,9 @@ Widget bioPage() {
 
                                 GestureDetector(
                                   onTap: () async {
-                                    File getPic = await FilePicker.getFile(
-                                        type: FileType.image);
+                                     File getPic = await ImagePicker.pickImage(source: ImageSource.gallery,
+                                                    imageQuality: 40
+                                                    );
                                     if (getPic != null) {
                                       //await compressImage();
                                       

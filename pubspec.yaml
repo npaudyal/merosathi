@@ -65,7 +65,7 @@ dependencies:
   focused_menu: ^1.0.1
   flutter_native_image: ^0.0.5
   animated_text_kit: ^2.2.0
-
+  image_picker: ^0.6.7+4
   
   http: ^0.12.1
 

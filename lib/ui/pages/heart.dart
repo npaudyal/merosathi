@@ -13,7 +13,7 @@ import 'package:merosathi/ui/pages/my_profile.dart';
 import 'package:merosathi/ui/pages/search.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:merosathi/repositories/matchesRepository.dart';
-
+import 'package:merosathi/ui/widgets/animations/slide_tansition.dart';
 class MenuItem {
   final String name;
   final Color color;
@@ -79,16 +79,16 @@ class _HeartState extends State<Heart> {
           active = item;
         });
         if(item.name == "head") {
-         Navigator.push(context, MaterialPageRoute(
-           builder: (context) => MyProfile(userId: widget.userId, currentUserId: widget.currentUserId, currentUser: currentUser,)));
+         Navigator.push(context, SlideRightRoute(
+           page: MyProfile(userId: widget.userId, currentUserId: widget.currentUserId, currentUser: currentUser,)));
         }
          if(item.name == "search_to_close"){
-        Navigator.push(context, MaterialPageRoute(builder: (context) =>Search(userId: widget.userId)));
+        Navigator.push(context, SlideRightRoute(page: Search(userId: widget.userId)));
 
         }
         
         if(item.name =="message") {
-          Navigator.push(context, MaterialPageRoute(builder: (context) => ChatRoom(userId: widget.userId, currentUser: currentUser, currentUserId: currentUser.uid)));
+          Navigator.push(context, SlideRightRoute(page: ChatRoom(userId: widget.userId, currentUser: currentUser, currentUserId: currentUser.uid)));
         }
       },
     );
