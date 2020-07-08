@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:merosathi/models/user.dart';
 import 'package:merosathi/services/database.dart';
 import 'package:merosathi/ui/pages/info_page.dart';
+import 'package:merosathi/ui/pages/spash_screen.dart';
 
 class ConversationScreen extends StatefulWidget {
   final String chatRoomId;
@@ -60,7 +61,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
                     return Text('none');
                   case ConnectionState.active:
                   case ConnectionState.waiting:
-                    return Center(child: CircularProgressIndicator());
+                    return SplashScreen();
                   case ConnectionState.done:
                    return StreamBuilder(
       stream: chatMessageStream,
@@ -158,7 +159,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
                     return Text('none');
                   case ConnectionState.active:
                   case ConnectionState.waiting:
-                    return Center(child: CircularProgressIndicator());
+                    return SplashScreen();
                   case ConnectionState.done:
                    
                 return  ( blocked == null || blocked == false) ? IconButton(
@@ -191,7 +192,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
                     return Text('none');
                   case ConnectionState.active:
                   case ConnectionState.waiting:
-                    return Center(child: CircularProgressIndicator());
+                    return SplashScreen();
                   case ConnectionState.done:
                     return Scaffold(
 

@@ -10,6 +10,7 @@ import 'package:merosathi/models/user.dart';
 import 'package:merosathi/repositories/searchRepository.dart';
 import 'package:merosathi/ui/pages/chatRoom.dart';
 import 'package:merosathi/ui/pages/people_profile.dart';
+import 'package:merosathi/ui/pages/spash_screen.dart';
 import 'package:merosathi/ui/widgets/profile.dart';
 import 'package:merosathi/ui/pages/my_profile.dart';
 import 'package:merosathi/ui/pages/heart.dart';
@@ -82,16 +83,12 @@ class _SearchState extends State<Search> {
             LoadUserEvent(userId: widget.userId),
           );
           return Center(
-            child: CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation(Colors.blueGrey),
-            ),
+            child: SplashScreen(),
           );
         }
         if (state is LoadingState) {
           return Center(
-            child: CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation(Colors.blueGrey),
-            ),
+            child: SplashScreen(),
           );
         }
         if (state is LoadUserState) {
@@ -105,7 +102,7 @@ class _SearchState extends State<Search> {
                     return Text('none');
                   case ConnectionState.active:
                   case ConnectionState.waiting:
-                    return Center(child: CircularProgressIndicator());
+                    return SplashScreen();
                   case ConnectionState.done:
                     return Scaffold(
                       

@@ -11,11 +11,10 @@ import 'package:merosathi/bloc/matches/matches_bloc.dart';
 import 'package:merosathi/bloc/matches/matches_state.dart';
 import 'package:merosathi/bloc/matches/matches_event.dart';
 import 'package:merosathi/ui/pages/people_profile.dart';
+import 'package:merosathi/ui/pages/spash_screen.dart';
 import 'package:merosathi/ui/widgets/iconWidget.dart';
 import 'package:merosathi/ui/widgets/profile.dart';
 import 'package:merosathi/ui/widgets/userGender.dart';
-import 'package:merosathi/ui/widgets/pageTurn.dart';
-import 'package:merosathi/ui/pages/messaging.dart';
 
 class Matches extends StatefulWidget {
   final String userId;
@@ -59,7 +58,7 @@ class _MatchesState extends State<Matches> {
         builder: (BuildContext context, MatchesState state) {
           if (state is LoadingMState) {
             _matchesBloc.add(LoadListsEvent(userId: widget.userId));
-            return CircularProgressIndicator();
+            return SplashScreen();
           }
           if (state is LoadUserMState) {
             return DefaultTabController(

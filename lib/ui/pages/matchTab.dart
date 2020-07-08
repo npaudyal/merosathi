@@ -7,8 +7,8 @@ import 'package:merosathi/bloc/matches/matches_event.dart';
 import 'package:merosathi/bloc/matches/matches_state.dart';
 import 'package:merosathi/models/user.dart';
 import 'package:merosathi/repositories/matchesRepository.dart';
-import 'package:merosathi/ui/constants.dart';
 import 'package:merosathi/ui/pages/people_profile.dart';
+import 'package:merosathi/ui/pages/spash_screen.dart';
 import 'package:merosathi/ui/widgets/profile.dart';
 
 class MatchTab extends StatefulWidget {
@@ -43,7 +43,7 @@ class _MatchTabState extends State<MatchTab> {
           
           if (state is LoadingMState) {
             _matchesBloc.add(LoadListsEvent(userId: widget.userId));
-            return CircularProgressIndicator();
+            return SplashScreen();
           }
           if (state is LoadUserMState) {
 

@@ -5,9 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:merosathi/bloc/authentication/bloc.dart';
 import 'package:merosathi/bloc/login/bloc.dart';
 import 'package:merosathi/repositories/userRepository.dart';
-import 'package:merosathi/ui/constants.dart';
 import 'package:merosathi/ui/pages/signUp.dart';
-import 'package:merosathi/ui/widgets/fade_animation.dart';
 
 class LoginForm extends StatefulWidget {
   final UserRepository _userRepository;

@@ -1,40 +1,26 @@
 
 import 'dart:io';
 
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:dropdownfield/dropdownfield.dart';
-import 'package:eva_icons_flutter/eva_icons_flutter.dart';
-import 'package:extended_image/extended_image.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
-import 'package:flutter_rounded_date_picker/rounded_picker.dart';
-import 'package:flutter_swiper/flutter_swiper.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:flutter_native_image/flutter_native_image.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:liquid_swipe/liquid_swipe.dart';
 import 'package:merosathi/bloc/authentication/authentication_bloc.dart';
 import 'package:merosathi/bloc/authentication/authentication_event.dart';
 import 'package:merosathi/bloc/profile/bloc.dart';
-import 'package:merosathi/models/user.dart';
 import 'package:merosathi/repositories/userRepository.dart';
-import 'package:merosathi/ui/constants.dart';
 import 'package:merosathi/ui/widgets/button_tapped.dart';
 import 'package:merosathi/ui/widgets/button_untapped.dart';
-import 'package:merosathi/ui/widgets/continue_button.dart';
-import 'package:merosathi/ui/widgets/gender.dart';
 import 'package:image/image.dart' as Im;
-import 'package:merosathi/services/helper_functions.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:merosathi/ui/widgets/button_tapped.dart';
-import 'package:merosathi/ui/widgets/text_styles.dart';
 
 class ProfileForm extends StatefulWidget {
   final UserRepository _userRepository;
@@ -170,18 +156,7 @@ class _ProfileFormState extends State<ProfileForm> {
 
   FirebaseAuth _auth;
 
-  compressImage() async {
-    final tempDir = await getTemporaryDirectory();
-    final path = tempDir.path;
-    Im.Image imageFile = Im.decodeImage(photo.readAsBytesSync());
-    final compressedImageFile =
-        File('$path/img_${_userRepository.getUser()}.jpg')
-          ..writeAsBytesSync(Im.encodeJpg(imageFile, quality: 85));
-    setState(() {
-      photo = compressedImageFile;
-    });
-  }
-
+  
   _getlocation() async {
     Position position = await Geolocator()
         .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
@@ -268,6 +243,9 @@ class _ProfileFormState extends State<ProfileForm> {
 
  
   uploadImage(File photo, String name) async {
+    
+    File compressedFile = await FlutterNativeImage.compressImage(photo.path,
+    quality: 75);
     String uid = (await FirebaseAuth.instance.currentUser()).uid;
 
     final StorageReference storageReference = FirebaseStorage.instance
@@ -276,7 +254,7 @@ class _ProfileFormState extends State<ProfileForm> {
         .child(uid)
         .child(name);
 
-     storageReference.putFile(photo);
+     storageReference.putFile(compressedFile);
   }
 
   TextEditingController _jobController = TextEditingController();
@@ -1400,10 +1378,12 @@ Widget bioPage() {
                                     type: FileType.image);
                                 if (getPic != null) {
                                   //await compressImage();
-                                  photo3 = getPic;
+                                   
+                                   photo3 = getPic;
                                   setState(() {
                                         photo3 = photo3;
                                       });
+
                                 }
                               },
                               child: ClipRRect(
@@ -1441,6 +1421,7 @@ Widget bioPage() {
                                     type: FileType.image);
                                 if (getPic != null) {
                                   //await compressImage();
+                                  
                                   photo4 = getPic;
                                   setState(() {
                                         photo4 = photo4;
@@ -1493,6 +1474,7 @@ Widget bioPage() {
                                         type: FileType.image);
                                     if (getPic != null) {
                                       //await compressImage();
+                                     
                                       photo6 = getPic;
                                       setState(() {
                                         photo6 = photo6;
@@ -1535,6 +1517,7 @@ Widget bioPage() {
                                         type: FileType.image);
                                     if (getPic != null) {
                                       //await compressImage();
+                                      
                                       photo7 = getPic;
                                       setState(() {
                                         photo7 = photo7;
@@ -1606,7 +1589,7 @@ Widget bioPage() {
                       });
                       try{
                                await uploadImage(photo3, "photo2");
-                              await uploadImage(photo4, "photo3");
+                               await uploadImage(photo4, "photo3");
 
                               await uploadImage(photo6, "photo4");
                               await uploadImage(photo7, "photo5");

@@ -17,6 +17,7 @@ import 'package:merosathi/services/constants.dart';
 import 'package:merosathi/ui/pages/chatRoom.dart';
 import 'package:merosathi/ui/pages/conversation_screen.dart';
 import 'package:merosathi/ui/pages/map.dart';
+import 'package:merosathi/ui/pages/spash_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:merosathi/services/geolocator_service.dart';
 
@@ -156,7 +157,7 @@ class _PeopleProfileState extends State<PeopleProfile> {
               return Text('none');
             case ConnectionState.active:
             case ConnectionState.waiting:
-              return Center(child: CircularProgressIndicator());
+              return SplashScreen();
             case ConnectionState.done:
               return Scaffold(
                 body: Container(
@@ -274,7 +275,7 @@ class _PeopleProfileState extends State<PeopleProfile> {
                     return Text('none');
                   case ConnectionState.active:
                   case ConnectionState.waiting:
-                    return Center(child: CircularProgressIndicator());
+                    return SplashScreen();
                   case ConnectionState.done:
                     return SingleChildScrollView(
                       child: StaggeredGridView.countBuilder(
@@ -378,7 +379,7 @@ class _PeopleProfileState extends State<PeopleProfile> {
               return Text('none');
             case ConnectionState.active:
             case ConnectionState.waiting:
-              return Center(child: CircularProgressIndicator());
+              return SplashScreen();
             case ConnectionState.done:
               return StaggeredGridView.countBuilder(
                 shrinkWrap: true,

@@ -7,7 +7,6 @@ import 'package:merosathi/bloc/authentication/authentication_bloc.dart';
 import 'package:merosathi/bloc/authentication/authentication_event.dart';
 import 'package:merosathi/bloc/signup/bloc.dart';
 import 'package:merosathi/repositories/userRepository.dart';
-import 'package:merosathi/ui/constants.dart';
 
 class SignUpForm extends StatefulWidget {
   final UserRepository _userRepository;

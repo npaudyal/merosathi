@@ -15,6 +15,7 @@ import 'package:merosathi/ui/pages/chatRoom.dart';
 import 'package:merosathi/ui/pages/heart.dart';
 import 'package:merosathi/ui/pages/search.dart';
 import 'package:merosathi/ui/pages/edit_profile.dart';
+import 'package:merosathi/ui/pages/spash_screen.dart';
 
 Color mainColor = Color(0xff774a63);
 Color secondColor = Color(0xffd6a5c0);
@@ -168,7 +169,7 @@ class _MyProfileState extends State<MyProfile> {
               return Text('none');
             case ConnectionState.active:
             case ConnectionState.waiting:
-              return Center(child: CircularProgressIndicator());
+              return SplashScreen();
             case ConnectionState.done:
               return Scaffold(
                 bottomNavigationBar: Container(
@@ -359,7 +360,7 @@ class _MyProfileState extends State<MyProfile> {
               return Text('none');
             case ConnectionState.active:
             case ConnectionState.waiting:
-              return Center(child: CircularProgressIndicator());
+              return SplashScreen();
             case ConnectionState.done:
               return Stack(
                 children: <Widget>[

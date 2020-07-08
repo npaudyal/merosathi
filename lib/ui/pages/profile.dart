@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:merosathi/bloc/profile/bloc.dart';
 import 'package:merosathi/repositories/userRepository.dart';
-import 'package:merosathi/ui/constants.dart';
 import 'package:merosathi/ui/widgets/profileForm.dart';
 
 
