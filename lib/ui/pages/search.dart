@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flare_flutter/flare_controller.dart';
 import 'package:flutter/material.dart';
@@ -17,6 +18,7 @@ import 'package:merosathi/ui/pages/my_profile.dart';
 import 'package:merosathi/ui/pages/heart.dart';
 import 'package:merosathi/ui/widgets/animations/slide_tansition.dart';
 import 'package:merosathi/ui/widgets/animations/slide_up.dart';
+import 'package:merosathi/ui/pages/no_users.dart';
 
 class MenuItem {
   final String name;
@@ -43,7 +45,7 @@ class _SearchState extends State<Search> {
 
   List<Container> feed = [];
    List items = [
-    MenuItem(x: -1.0, name: 'search_to_close', color: Colors.red),
+    MenuItem(x: -1.0, name: 'lak', color: Colors.red),
     MenuItem(x: -0.3, name: 'message', color: Colors.purple),
    
     MenuItem(x: 0.3, name: 'heart', color: Colors.pink),
@@ -53,6 +55,9 @@ class _SearchState extends State<Search> {
   MenuItem active;
 
   bool animation = false;
+  final _scaffoldKey = GlobalKey<ScaffoldState> ();
+
+  FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
 
   getDifference(GeoPoint userLocation) async {
     Position position;
@@ -109,8 +114,9 @@ class _SearchState extends State<Search> {
                   case ConnectionState.waiting:
                     return SplashScreen();
                   case ConnectionState.done:
+                  
                     return Scaffold(
-                      
+                      key: _scaffoldKey,
                      bottomNavigationBar: Container(
       
       height: 50,
@@ -139,29 +145,27 @@ class _SearchState extends State<Search> {
           )
         ],
       ),
-    )
-,
+    ),
+
                          
                          body: _searchRepository.userList.length > 0
                            ?
+                           
                                    Stack(
-                                 children: <Widget>[
+                                     children: <Widget> [
                                      LiquidSwipe(
                                      enableLoop: false,
-                                    pages: feed,
+                                      pages: feed,
                                     
-                                 ),
-                          
-                              
-                                 
+                                     ),
+                                     ],
+
                                   
-                                 
-                                  ],
                 
 
 
 
-                                    ):Text("No users"),                          
+                                    ):NoUsersScreen()                          
                             
 
                             );
@@ -213,6 +217,8 @@ class _SearchState extends State<Search> {
 
   buildContainer(List<User> usersaa, User _currentUser) async {
 
+    
+
   
    
     Size size = MediaQuery.of(context).size;
@@ -222,120 +228,108 @@ class _SearchState extends State<Search> {
 
       // print(_currentUser.location.latitude);
       if (usera.location == null) {
-        return Text(
-          "No One Here",
-          style: TextStyle(
-              fontSize: 20.0, fontWeight: FontWeight.bold, color: Colors.black),
-        );
+        return NoUsersScreen();
       } else {
         feed.add(Container(
           width: MediaQuery.of(context).size.width,
-          child: GestureDetector(
-              onDoubleTap: () {
-              
-               
+          child: ProfileWidget(
+          padding: 0.0,
+          photoHeight: size.height,
+          photoWidth: size.width,
+          photo: usera.photo,
+          clipRadius: size.height * 0.02,
+          containerHeight: size.height * 0.3,
+          containerWidth: size.width,
+          child: Stack(
+            
+            children: <Widget>[
 
-              },
-              child: ProfileWidget(
-              padding: 0.0,
-              photoHeight: size.height,
-              photoWidth: size.width,
-              photo: usera.photo,
-              clipRadius: size.height * 0.02,
-              containerHeight: size.height * 0.3,
-              containerWidth: size.width,
-              child: Stack(
-                
-                children: <Widget>[
-
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: size.width * 0.03),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                            
-                        SizedBox(
-                          height: size.height * 0.15,
-                        ),
-                        Row(
-                          children: <Widget>[
-                            //userGender(usera.gender),
-                            
-                            RichText(
-                                text: TextSpan(
-                                    text: " ${usera.name}, ",
-                                    style: GoogleFonts.roboto(
-                                    fontWeight: FontWeight.bold,
-                                    
-                                    color: Colors.white,
-                                    fontSize: size.height * 0.04,),
-
-                                    children: <TextSpan> [
-                                      TextSpan(text:  (DateTime.now().year -
-                                             usera.age.toDate().year).toString(),
-                                              style: GoogleFonts.roboto(
-                                              color:Colors.white,
-                                              
-                                              fontWeight: FontWeight.w400,
-                                              fontSize: size.height * 0.035,), ),
-
-
-                                    ],
-                                
-
-                                   
-                                   
-                                    // (DateTime.now().year -
-                                    //         usera.age.toDate().year)
-                                    //     .toString(),
-                                
-                              ),
-                            ),
-                            
-                          ],
-                        ),
-                        Row(
-                          children: <Widget>[
-                            Icon(
-                              Icons.location_on,
-                              color: Colors.blue,
-                            ),
-                            Text(
-                              difference != null
-                                  ? (difference / 1000).floor().toString() +
-                                      " km away"
-                                  : "away",
-                              style: TextStyle(color: Colors.white),
-                            )
-                          ],
-                        ),
-                        SizedBox(
-                          height: size.height * 0.01,
-                        ),
-                       
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: size.width * 0.03),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
                         
+                    SizedBox(
+                      height: size.height * 0.15,
+                    ),
+                    Row(
+                      children: <Widget>[
+                        
+                        RichText(
+                            text: TextSpan(
+                                text: usera.name != null ? " ${usera.name}, " : " ",
+                                style: GoogleFonts.roboto(
+                                fontWeight: FontWeight.bold,
+                                
+                                color: Colors.white,
+                                fontSize: size.height * 0.04,),
 
-                  
+                                children: <TextSpan> [
+                                  TextSpan(text: usera.age!=null ? (DateTime.now().year -
+                                         usera.age.toDate().year).toString(): "",
+                                          style: GoogleFonts.roboto(
+                                          color:Colors.white,
+                                          
+                                          fontWeight: FontWeight.w400,
+                                          fontSize: size.height * 0.035,), ),
+
+
+                                ],
+                            
+
+                               
+                               
+                                // (DateTime.now().year -
+                                //         usera.age.toDate().year)
+                                //     .toString(),
+                            
+                          ),
+                        ),
+                        
                       ],
                     ),
-                  ),
-                 
+                    Row(
+                      children: <Widget>[
+                        Icon(
+                          Icons.location_on,
+                          color: Colors.blue,
+                        ),
+                        Text(
+                          difference != null
+                              ? (difference / 1000).floor().toString() +
+                                  " km away"
+                              : "away",
+                          style: TextStyle(color: Colors.white),
+                        )
+                      ],
+                    ),
+                    SizedBox(
+                      height: size.height * 0.01,
+                    ),
                    
-                  
+                    
+
+              
+                  ],
+                ),
+              ),
              
                
+              
+             
+           
 
-                  CustomBottomBar(usera, _currentUser),
-                 
-                  PlayButton(usera, _currentUser),
+              CustomBottomBar(usera, _currentUser),
+             
+              PlayButton(usera, _currentUser),
 
-                   
-                      
+               
                   
-                ],
-              ),
-            ),
+              
+            ],
           ),
+            ),
           
         ), 
         );

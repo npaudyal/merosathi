@@ -275,6 +275,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
   }
 }
 
+
 class MessageTile extends StatelessWidget {
   final String message;
   final bool isSentByMe;

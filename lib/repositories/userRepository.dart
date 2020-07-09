@@ -51,6 +51,10 @@ class UserRepository {
     return (await _firebaseAuth.currentUser()).uid;
   }
 
+  Future<FirebaseUser> getUserOnly() async {
+    return(await _firebaseAuth.currentUser());
+  }
+
   //profile setup
   Future<void> profileSetup(
       File photo,
@@ -67,8 +71,12 @@ class UserRepository {
       String job,
       String religion,
       String education,
-
+      String insta,
+      bool live,
+      
+      
       DateTime age,
+
       GeoPoint location) async {
     StorageUploadTask storageUploadTask;
     storageUploadTask = FirebaseStorage.instance
@@ -96,7 +104,12 @@ class UserRepository {
           'religion': religion,
           'salary': salary,
           'bio':bio,
-          'education':education
+          'education':education,
+          'insta':insta,
+          'joined': DateTime.now(),
+          'live': live,
+          
+          
 
 
         });

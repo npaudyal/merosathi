@@ -1,39 +1,59 @@
 const functions = require('firebase-functions');
 
 
+exports.onCreateLikes = functions.firestore
+.document("users/{currentUserId}/selectedList/{userId}")
+.onCreate( async (snapshot, context) => {
+    console.log("Activity feed item created", snapshot.data());
 
-exports.getMatches = functions.firestore.document('/users/{userId}/{collection}/{documentId}')
-.onCreate( async (snap, context) => {
+    //Get the user connected to the likes
 
-    const userId = context.params.userId;
-    
-    
-    let getchosenId = await admin.firestore
-    .collection("users")
-    .doc(userId)
-    .collection("chosenList")
-    .get();
-    
+    const currentUserId = context.params.currentUserId;
 
-    let getSelectedId = admin.firestore
-    .collection("users")
-    .doc(userId)
-    .collection("selectedList")
-    .get();
+    const currentUserRef = admin.firestore().document(`users/${currentUserId}`);
 
-    var matchedids = [];
-    const matches = admin.firestore().collection('matchedList');
+    const doc = await currentUserRef.get();
 
+    //We have user data, check if they have notification token
 
-    for(docs in getchosenId) {
-        for(doc in getSelectedId) {
-            if(doc.documentId === docs.getchosenId) {
-                 matches.add(docs);
-            } else {
-                return
-            }
-        }
-    }  
-    
+    const androidNotificationToken = doc.data().androidNotificationToken;
+
+    const createdLikes = snapshot.data();
+
+    if(androidNotificationToken) {
+        //send Notification
+
+        sendNotification(androidNotificationToken, createdLikes);
+
+    } else {
+        console.log("No token")
+
+    }
+
+    function sendNotification(androidNotificationToken, userId) {
+        
+        const body = `${userId.name} liked you!`
+
+    }
+
+    //Create message for push notification
+
+    const message = {
+        notification: {body},
+        token : androidNotificationToken,
+        data : {recipient: currentUserId}
+    }
+
+    // Send message with admin.messaging
+
+    admin
+        .messaging().send(message)
+        .then(response => {
+            console.log("Successfully sent message", response);
+        })
+        .catch(error => {
+            console.log("Error", error);
+        })
+
 
 })

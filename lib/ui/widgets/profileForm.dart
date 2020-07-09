@@ -51,10 +51,13 @@ class _ProfileFormState extends State<ProfileForm> {
       gotra,
       bio,
       job,
+      insta,
       religion;
   String education;
   String name="";
   DateTime age;
+  
+  
   
   File photo, photo2, photo3, photo4, photo5, photo6, photo7;
   GeoPoint location;
@@ -135,6 +138,8 @@ class _ProfileFormState extends State<ProfileForm> {
 
   bool letsgo = false;
 
+  bool isButtonPressed12 = false;
+
   bool get isFilled =>
       _nameController.text.isNotEmpty &&
       gender != null &&
@@ -181,6 +186,10 @@ class _ProfileFormState extends State<ProfileForm> {
         salary: salary,
         religion: religion,
         job: job,
+        insta:insta,
+        live:live,
+        
+
         education: education));
   }
 
@@ -191,6 +200,9 @@ class _ProfileFormState extends State<ProfileForm> {
 
   int selected_radio_int;
   int selected_radio_tile_int;
+
+  bool locationshare = false;
+  bool live = false;
 
   setSelectedRadioGen(int val) {
     setState(() {
@@ -261,6 +273,8 @@ class _ProfileFormState extends State<ProfileForm> {
   TextEditingController _schoolController = TextEditingController();
   TextEditingController _bioController = TextEditingController();
   TextEditingController _gotraController = TextEditingController();
+    TextEditingController _instaController = TextEditingController();
+
 
 
 
@@ -357,7 +371,7 @@ Widget bioPage() {
                        color: Colors.black87,
                        fontSize: 13,
                      ),
-                     hintText: "5000/mo ...",
+                     hintText: "....",
                      focusColor: Colors.orangeAccent,
                      
 
@@ -408,7 +422,7 @@ Widget bioPage() {
                   ),
                 ),
               ),
-               SizedBox(height:20),
+               SizedBox(height:10),
                Padding(
                 padding:  EdgeInsets.only(right: size.width/1.4),
                 child: Text("Gotra?", style: GoogleFonts.ubuntu(color: Colors.deepOrange, fontSize: 25),
@@ -446,13 +460,13 @@ Widget bioPage() {
                   ),
                 ),
               ),
-               SizedBox(height:20),
+               SizedBox(height:10),
                Padding(
                 padding:  EdgeInsets.only(right: size.width/1.27),
                 child: Text("Bio", style: GoogleFonts.ubuntu(color: Colors.deepOrange, fontSize: 25),
                 ),
               ),
-              SizedBox(height: 20,),
+              SizedBox(height: 10,),
               Container(
                 height: size.height*0.15,
                 width: size.width/1.1,
@@ -486,6 +500,49 @@ Widget bioPage() {
 
               ),
 
+ SizedBox(height: 10,),
+ Padding(
+                padding:  EdgeInsets.only(right: size.width/2.5),
+                child: Text("Instagram handle", style: GoogleFonts.ubuntu(color: Colors.deepOrange, fontSize: 25),
+                ),
+              ),
+
+               SizedBox(height: 10,),
+
+
+               Container(
+                height: size.height*0.06,
+                width: size.width/1.1,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(30)
+
+                ),
+                child: Padding(
+                  padding:  EdgeInsets.only(left:size.width/35),
+                  child: TextField(
+                    controller: _instaController,
+                    decoration: InputDecoration(
+                     border: InputBorder.none,
+                    
+                     labelStyle: GoogleFonts.ubuntu(
+                       color: Colors.black87,
+                       fontSize: 13,
+                     ),
+                     hintText: "@",
+                     focusColor: Colors.orangeAccent,
+                     
+
+                    ),
+                    cursorColor: Colors.black,
+                    textAlign: TextAlign.left,
+
+                    
+                  ),
+                ),
+
+              ),
+
 
              letsgo == false ? buttonUnTappedWithText(context, Colors.deepOrange, Colors.deepOrange,  () {
 
@@ -496,6 +553,7 @@ Widget bioPage() {
                  education = _schoolController.text;
                  gotra= _gotraController.text;
                  salary = _salaryController.text;
+                 insta = _instaController.text;
                  _onSubmitted();
                  Navigator.pop(context);
                });
@@ -645,9 +703,18 @@ Widget bioPage() {
                             Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: <Widget>[
-                                    Text("Your name", 
+                                    RichText(text: TextSpan(
+                                      text: "Your name", 
                                      style: TextStyle(fontSize: 14, color: Colors.white38),
-                                      textAlign: TextAlign.left,),
+                                      
+                                      children:[
+                                        TextSpan(text:" *",
+                                        style: GoogleFonts.ubuntu(color: Colors.white),),
+                                      ],
+                                    )),
+                                    
+
+                                     
 
                                     Text(
                                       '${_nameController.text.length} / 32',
@@ -810,7 +877,7 @@ Widget bioPage() {
                                     side: BorderSide(color: Colors.pink.shade500),
                                   ),
                                   child: Text(
-                                      age == null ? "Choose a date" : "${age.month}/${age.day}/${age.year}",
+                                      age == null ? "Choose a date*" : "${age.month}/${age.day}/${age.year}",
                                       style: GoogleFonts.ubuntu(fontSize: 20)),
                                 ),
                               ),
@@ -905,7 +972,7 @@ Widget bioPage() {
             Padding(
                       padding: EdgeInsets.symmetric(horizontal: size.width/14.4, vertical: size.width/3.92),
                       child: Text(
-                        "I am a: ",
+                        "*I am a: ",
                         style:
                             GoogleFonts.ubuntu(color: Colors.white, fontSize: 28, fontWeight: FontWeight.w800),
                       )),
@@ -989,7 +1056,7 @@ Widget bioPage() {
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: size.width/21.6,vertical: size.width/1.24),
                       child: Text(
-                        "Interested in: ",
+                        "*Interested in: ",
                         textAlign: TextAlign.center,
                         style: GoogleFonts.ubuntu(
                           color: Colors.white,
@@ -1165,7 +1232,7 @@ Widget bioPage() {
             Padding(
                       padding: EdgeInsets.symmetric(horizontal: size.width/6.5, vertical: size.width/4.5),
                       child: Text(
-                        "Attach a Profile Picture ",
+                        "*Attach a Profile Picture ",
                         style:
                             GoogleFonts.quicksand(color: Colors.white, fontSize: 25, fontWeight: FontWeight.w800),
                       )),
@@ -1199,15 +1266,7 @@ Widget bioPage() {
                                                   'assets/images/addImage.jpg')
                                               : FileImage(photo),
                                           fit: BoxFit.cover)),
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                        gradient: LinearGradient(
-                                            begin: Alignment.bottomRight,
-                                            colors: [
-                                          Colors.grey[200].withOpacity(.9),
-                                          Colors.grey.withOpacity(0)
-                                        ])),
-                                  ),
+                                 
                                 ),
                               ),
                   ),
@@ -1400,15 +1459,7 @@ Widget bioPage() {
                                                   'assets/images/addImage.jpg')
                                               : FileImage(photo3),
                                           fit: BoxFit.cover)),
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                        gradient: LinearGradient(
-                                            begin: Alignment.bottomRight,
-                                            colors: [
-                                          Colors.grey[200].withOpacity(.9),
-                                          Colors.grey.withOpacity(0)
-                                        ])),
-                                  ),
+                                  
                                 ),
                               ),
                             ),
@@ -1443,15 +1494,7 @@ Widget bioPage() {
                                                   'assets/images/addImage.jpg')
                                               : FileImage(photo4),
                                           fit: BoxFit.cover)),
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                        gradient: LinearGradient(
-                                            begin: Alignment.bottomRight,
-                                            colors: [
-                                          Colors.grey[200].withOpacity(.9),
-                                          Colors.grey.withOpacity(0)
-                                        ])),
-                                  ),
+                                  
                                 ),
                               ),
                             ),
@@ -1497,15 +1540,6 @@ Widget bioPage() {
                                                       'assets/images/addImage.jpg')
                                                   : FileImage(photo6),
                                               fit: BoxFit.cover)),
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                            gradient: LinearGradient(
-                                                begin: Alignment.bottomRight,
-                                                colors: [
-                                              Colors.grey[200].withOpacity(.9),
-                                              Colors.grey.withOpacity(0)
-                                            ])),
-                                      ),
                                     ),
                                   ),
                                 ),
@@ -1541,15 +1575,7 @@ Widget bioPage() {
                                                       'assets/images/addImage.jpg')
                                                   : FileImage(photo7),
                                               fit: BoxFit.cover)),
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                            gradient: LinearGradient(
-                                                begin: Alignment.bottomRight,
-                                                colors: [
-                                              Colors.grey[200].withOpacity(.9),
-                                              Colors.grey.withOpacity(0)
-                                            ])),
-                                      ),
+                                      
                                     ),
                                   ),
                                 ),
@@ -1587,7 +1613,7 @@ Widget bioPage() {
                 bottom: size.width/14.4,
              left:size.width/6.17,
                 
-                child: buttonUnTapped(context, Colors.deepOrange.shade400, Colors.white, () async {
+                child: isButtonPressed5 == false ? buttonUnTapped(context, Colors.deepOrange.shade400, Colors.white, () async {
                       setState(() {
                         isButtonPressed5 = !isButtonPressed5;
                       });
@@ -1601,11 +1627,11 @@ Widget bioPage() {
                       } catch (e) {
 
                       }
-                })
+                }):  buttonTapped(context, () {}),
 
                
 
-              ),
+              )
           ],
                  ),
       ),
@@ -2973,7 +2999,6 @@ Container(
                           isButtonPressed11 = !isButtonPressed11;
                         });
 
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => bioPage()));
                         
                     }) : buttonTapped(context, (){}),
                     ),
@@ -3005,6 +3030,154 @@ Container(
       ),
       ),
      ),
+
+
+
+     Container(
+      height: double.infinity,
+      width: double.infinity,
+      decoration: BoxDecoration(
+       
+                              gradient: LinearGradient(
+                                colors: [Colors.white,Colors.blue],
+                                begin: Alignment.topRight, end:Alignment.bottomLeft,
+                                ),
+                                
+                            ),
+        
+     
+              
+      child: SingleChildScrollView(
+      child: Stack(
+         
+          children: <Widget>[
+
+    
+            
+            Padding(
+                      padding: EdgeInsets.symmetric(horizontal: size.width/28.8, vertical: size.width/5),
+                      child: Text(
+                        "We need your permissions: ",
+                        style:
+                            GoogleFonts.ubuntu(color: Colors.deepOrange,fontSize: 25, fontWeight: FontWeight.w600),
+                      ),
+                      
+                      ),
+                      
+                      
+
+                      Padding(
+                        padding:  EdgeInsets.only(left:size.width/24, top: size.width/2.7, right:size.width/17.28),
+                        child: Column(
+                          children: <Widget>[
+                            
+                            RichText(
+                              text: TextSpan(
+                                text: "To connect you with other users, ",
+                                style: GoogleFonts.ubuntu(color:Colors.deepOrange, fontSize: 20),
+
+                                children: <TextSpan> [
+                                  TextSpan(text: "we need your location.", style: GoogleFonts.ubuntu(color:Colors.blue, fontSize: 20)),
+                                  TextSpan(text: "*", style: GoogleFonts.ubuntu(color: Colors.black))
+                                ]
+                              ),
+                            ),
+
+                             Switch(
+                               activeColor: Colors.deepOrange,
+                      value: locationshare,
+                      onChanged: (val) {
+                        setState(() {
+                          locationshare = val;
+                        });
+                        
+                        
+                        
+                      },
+
+                      ),
+
+                             SizedBox(height:size.height*0.08),
+
+                          RichText(
+                              text: TextSpan(
+                                text: "Do you to share live location? ",
+                                style: GoogleFonts.ubuntu(color:Colors.deepOrange, fontSize: 20),
+
+                                children: <TextSpan> [
+                                  TextSpan(text: "Don't worry, you can change it later", style: GoogleFonts.ubuntu(color:Colors.black, fontSize: 20)),
+
+                                ]
+                              ),
+                            ),  
+
+                             Center(
+                               child: Switch(
+                                 activeColor: Colors.deepOrange,
+                      value: live,
+                      onChanged: (val) {
+                        setState(() {
+                          live = val;
+                        });
+                        
+                        
+                        
+                        
+                      },
+
+                      ),
+                             ),                         
+
+
+                           
+                                
+                          ],
+                        ),
+                      ),
+            
+                 
+                  Positioned(
+
+                     bottom: size.width/14.4,
+             left:size.width/6.17,
+                    child: locationshare == false ? buttonUnTapped(context, Colors.transparent,Colors.transparent, () {}):isButtonPressed12 == false ? buttonUnTappedWithText(context, Colors.deepOrange, Colors.deepOrange, () {
+                        setState(() {
+                          isButtonPressed11 = !isButtonPressed11;
+                        });
+
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => bioPage()));
+                        
+                    }, "Lets get Started") : buttonTapped(context, (){}),
+                    ),
+
+                     
+             
+             Padding(
+               padding: EdgeInsets.only(left:size.width / 1.2),
+               child: ClipPath(
+                         clipper: SidebarClipper(),
+                        
+                            child: Container(
+                                
+                                width: size.width * 0.2,
+                                 height: MediaQuery.of(context).size.height,
+                                decoration: BoxDecoration(
+       
+                              gradient: LinearGradient(
+                                colors: [Colors.red,Colors.black, Colors.black],
+                                begin: Alignment.topRight, end:Alignment.bottomLeft,
+                                ),
+                                
+                            ),
+                          
+                        ),
+                      ),
+             ),
+          ],
+      ),
+      ),
+     ),
+
 
 
             

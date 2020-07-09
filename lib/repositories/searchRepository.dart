@@ -85,7 +85,7 @@ class SearchRepository {
     List<String> chosenList = await getChosenList(userId);
     User currentUser = await getUserInterests(userId);
 
-    await _firestore.collection('users').getDocuments().then((users) {
+    await _firestore.collection('users').orderBy('joined', descending: true).getDocuments().then((users) {
       for (var user in users.documents) {
         if (
             (user.documentID != userId) &&
@@ -107,7 +107,10 @@ class SearchRepository {
               salary: user['salary'],
               education: user['education'],
               gotra: user['gotra'],
+              live: user['live'],
+              insta: user['insta'],
               religion: user['religion']);
+              
 
           userList.add(users1);
         }

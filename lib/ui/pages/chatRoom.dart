@@ -35,7 +35,7 @@ class _ChatRoomState extends State<ChatRoom> {
 
     List<Container> feed = [];
    List items = [
-    MenuItem(x: -1.0, name: 'search_to_close', color: Colors.red),
+    MenuItem(x: -1.0, name: 'lak', color: Colors.red),
     MenuItem(x: -0.3, name: 'message', color: Colors.purple),
    
     MenuItem(x: 0.3, name: 'heart', color: Colors.pink),
@@ -278,7 +278,7 @@ List filtered = [];
         if(item.name == "heart") {
           Navigator.push(context, SlideRightRoute(page: Heart(userId: widget.userId,currentUserId: widget.userId, currentUser: currentUser, )));//Matches(userId: widget.userId,)));
         }
-        if(item.name == "search_to_close"){
+        if(item.name == "lak"){
         Navigator.push(context, SlideRightRoute(page: Search(userId: widget.userId)));
 
         }

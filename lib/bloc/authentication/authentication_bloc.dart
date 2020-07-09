@@ -1,5 +1,9 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:bloc/bloc.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:merosathi/repositories/userRepository.dart';
 import './bloc.dart';
@@ -7,6 +11,7 @@ import './bloc.dart';
 class AuthenticationBloc
     extends Bloc<AuthenticationEvent, AuthenticationState> {
   final UserRepository _userRepository;
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
 
   AuthenticationBloc({@required UserRepository userRepository})
       : assert(userRepository != null),
@@ -39,6 +44,7 @@ class AuthenticationBloc
           yield AuthenticatedButNotSet(uid);
         } else {
           yield Authenticated(uid);
+          configurePushNotification();
         }
       } else {
         yield Unauthenticated();
@@ -54,8 +60,11 @@ class AuthenticationBloc
 
     if (!isFirstTime) {
       yield AuthenticatedButNotSet(await _userRepository.getUser());
+
+
     } else {
       yield Authenticated(await _userRepository.getUser());
+      
     }
   }
 
@@ -63,4 +72,46 @@ class AuthenticationBloc
     yield Unauthenticated();
     _userRepository.signOut();
   }
+
+  
+configurePushNotification() async {
+  final FirebaseUser firebaseUser = await _userRepository.getUserOnly();
+  if(Platform.isIOS) getiOSPermission();
+  _firebaseMessaging.getToken().then((token) 
+  {
+    
+    print("Firebase token: $token");
+     Firestore.instance.collection("users")
+     .document(firebaseUser.uid)
+     .updateData({
+       "androidNotificationToken" : token
+     });
+  });
+
+  _firebaseMessaging.configure(
+    // onLaunch: (Map<String, dynamic> message) async {},
+    // onResume:  (Map<String, dynamic> message) async {},
+    onMessage:  (Map<String, dynamic> message) async {
+      print("On message: $message");
+      final String recipientId = message['data']['recipient'];
+      final String body = message['notification']['body'];
+      if(recipientId == firebaseUser.uid) {
+        print("Notification shown");
+
+      } else {
+        print("Notification not shown");
+      }
+    },
+
+  );
+}
+getiOSPermission() {
+_firebaseMessaging.requestNotificationPermissions(
+  IosNotificationSettings(alert: true, badge: true, sound: true)
+);
+
+_firebaseMessaging.onIosSettingsRegistered.listen((settings) {
+  print("Setting registered: $settings");
+ });
+}
 }

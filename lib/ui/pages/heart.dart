@@ -41,7 +41,7 @@ class _HeartState extends State<Heart> {
 
  List<Container> feed = [];
    List items = [
-    MenuItem(x: -1.0, name: 'search_to_close', color: Colors.red),
+    MenuItem(x: -1.0, name: 'lak', color: Colors.red),
     MenuItem(x: -0.3, name: 'message', color: Colors.purple),
    
     MenuItem(x: 0.3, name: 'heart', color: Colors.pink),
@@ -82,7 +82,7 @@ class _HeartState extends State<Heart> {
          Navigator.push(context, SlideRightRoute(
            page: MyProfile(userId: widget.userId, currentUserId: widget.currentUserId, currentUser: currentUser,)));
         }
-         if(item.name == "search_to_close"){
+         if(item.name == "lak"){
         Navigator.push(context, SlideRightRoute(page: Search(userId: widget.userId)));
 
         }

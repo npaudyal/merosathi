@@ -140,7 +140,7 @@ _blockUsers(String userId, String currentUserId, String chatRoomId) {
                         
                       },
 
-                      )
+                      ),
                 ],
             ),
             

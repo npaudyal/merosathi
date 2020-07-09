@@ -17,6 +17,8 @@ class ProfileState {
   final bool isBioEmpty;
   final bool isSalaryEmpty;
   final bool isEducationEmpty;
+  final bool isInstaEmpty;
+  final bool isLiveEmpty;
 
 
 
@@ -49,6 +51,8 @@ class ProfileState {
     @required this.isReligionEmpty,
     @required this.isSalaryEmpty,
     @required this.isEducationEmpty,
+    @required this.isInstaEmpty,
+    @required this.isLiveEmpty,
 
 
     @required this.isFailure,
@@ -75,7 +79,9 @@ class ProfileState {
       isJobEmpty: false,
       isReligionEmpty: false,
       isSalaryEmpty: false,
-      isEducationEmpty: false
+      isEducationEmpty: false,
+      isInstaEmpty: false,
+      isLiveEmpty: false,
       
     );
   }
@@ -99,7 +105,9 @@ class ProfileState {
       isJobEmpty: false,
       isReligionEmpty: false,
       isSalaryEmpty: false,
-      isEducationEmpty: false
+      isEducationEmpty: false,
+      isInstaEmpty: false,
+      isLiveEmpty: false,
     );
   }
 
@@ -122,7 +130,9 @@ class ProfileState {
       isJobEmpty: false,
       isReligionEmpty: false,
       isSalaryEmpty: false,
-      isEducationEmpty: false
+      isEducationEmpty: false,
+      isInstaEmpty: false,
+      isLiveEmpty: false,
     );
   }
 
@@ -145,7 +155,9 @@ class ProfileState {
       isJobEmpty: false,
       isReligionEmpty: false,
       isSalaryEmpty: false,
-      isEducationEmpty: false
+      isEducationEmpty: false,
+      isInstaEmpty: false,
+      isLiveEmpty: false,
     );
   }
 
@@ -164,7 +176,9 @@ class ProfileState {
    bool   isJobEmpty,
    bool   isReligionEmpty,
    bool   isSalaryEmpty,
-   bool isEducationEmpty
+   bool isEducationEmpty,
+   bool isInstaEmpty,
+   bool isLiveEmpty,
   }) {
     return copyWith(
       isFailure: false,
@@ -185,7 +199,9 @@ class ProfileState {
       isSalaryEmpty: isSalaryEmpty,
       isGotraEmpty: isGotraEmpty,
       isHeightPEmpty: isHeightPEmpty,
-      isEducationEmpty: isEducationEmpty
+      isEducationEmpty: isEducationEmpty,
+      isInstaEmpty: isInstaEmpty,
+      isLiveEmpty : isLiveEmpty,
 
 
 
@@ -211,6 +227,8 @@ class ProfileState {
     bool isSuccess,
     bool isFailure,
     bool isEducationEmpty,
+    bool isInstaEmpty,
+    bool isLiveEmpty,
   }) {
     return ProfileState(
       isPhotoEmpty: isPhotoEmpty ?? this.isPhotoEmpty,
@@ -229,6 +247,8 @@ class ProfileState {
       isGotraEmpty: isGotraEmpty ?? this.isGotraEmpty,
       isHeightPEmpty: isHeightPEmpty ?? this.isHeightPEmpty,
       isEducationEmpty: isEducationEmpty ?? this.isEducationEmpty,
+      isInstaEmpty: isInstaEmpty ?? this.isInstaEmpty,
+      isLiveEmpty: isLiveEmpty ?? this.isLiveEmpty,
 
 
       isSubmitting: isSubmitting ?? this.isSubmitting,

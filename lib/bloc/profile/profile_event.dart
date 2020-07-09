@@ -139,6 +139,23 @@ class EducationChanged extends ProfileEvent {
   @override
   List<Object> get props => [education];
 }
+class InstaChanged extends ProfileEvent {
+  final String insta;
+
+  InstaChanged({@required this.insta});
+
+  @override
+  List<Object> get props => [insta];
+}
+
+class LiveChanged extends ProfileEvent {
+  final bool live;
+
+  LiveChanged({@required this.live});
+
+  @override
+  List<Object> get props => [live];
+}
 
 class Submitted extends ProfileEvent {
   final String name, gender, interestedIn;
@@ -154,6 +171,8 @@ class Submitted extends ProfileEvent {
   final String job;
   final String religion;
   final String education;
+  final String insta;
+  final bool live;
 
   Submitted(
       {@required this.name,
@@ -171,11 +190,12 @@ class Submitted extends ProfileEvent {
       @required this.religion,
       @required this.salary,
       @required this.education,
-      
+      @required this.insta,
+      @required this.live,
       
       
       });
 
   @override
-  List<Object> get props => [location, name, age, gender, interestedIn, photo, country, community, heightP, job,bio,gotra,religion,salary,education];
+  List<Object> get props => [location, name, age, gender, interestedIn, photo, country, community, heightP, job,bio,gotra,religion,salary,education, insta,live];
 }

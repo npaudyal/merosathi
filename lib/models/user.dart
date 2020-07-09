@@ -15,8 +15,10 @@ class User {
   String religion;
   String education;
   String photo;
+  String insta;
   Timestamp age;
   GeoPoint location;
+  bool live;
 
   User({
     this.uid,
@@ -35,5 +37,8 @@ class User {
     this.gotra,
     this.religion,
     this.education,
+    this.insta,
+    this.live
+    
   });
 }

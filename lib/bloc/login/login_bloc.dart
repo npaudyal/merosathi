@@ -70,7 +70,6 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
 
     try {
       await _userRepository.signInWithEmail(email, password);
-      HelperFunctions.saveUserEmailSharedPref(email);
       yield LoginState.success();
     } catch (_) {
       LoginState.failure();

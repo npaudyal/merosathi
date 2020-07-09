@@ -183,7 +183,7 @@ class _PeopleProfileState extends State<PeopleProfile> {
                     children: <Widget>[
                       CustomBody(),
                       // CustomBottomBar(),
-                      PlayButton(),
+                      
                     ],
                   ),
                 ),
@@ -192,34 +192,7 @@ class _PeopleProfileState extends State<PeopleProfile> {
         });
   }
 
-  Widget PlayButton() {
-    return Positioned(
-      bottom: 55,
-      left: MediaQuery.of(context).size.width / 2 - 30,
-      child: Container(
-        width: 60,
-        height: 60,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Colors.blueGrey.shade900,
-              Colors.blue.shade700,
-            ],
-          ),
-        ),
-        child: IconButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          icon: Icon(Icons.keyboard_arrow_down,
-              color: Colors.white.withOpacity(0.9), size: 40),
-        ),
-      ),
-    );
-  }
+  
 
   Widget CustomBody() {
     double listheight = (45 * 7).toDouble();
@@ -282,8 +255,19 @@ class _PeopleProfileState extends State<PeopleProfile> {
                       ? Text("${user.heightP} ")
                       : Text("Height"),
                 ),
+
+                 ListTile(
+                  leading: Icon(FontAwesomeIcons.instagram),
+                  title: user.insta != null
+                      ? Text("${user.insta} ")
+                      : Text("Instagram"),
+                ),
+
+                
               ],
             ),
+
+            
           ),
           FutureBuilder(
               future: getImageURL(),
@@ -340,7 +324,7 @@ class _PeopleProfileState extends State<PeopleProfile> {
                 }
               }),
           SizedBox(height: 25),
-          Padding(
+          user.live == true ? Padding(
             padding: EdgeInsets.all(25),
             child: Align(
               alignment: Alignment.centerLeft,
@@ -353,8 +337,8 @@ class _PeopleProfileState extends State<PeopleProfile> {
                 ),
               ),
             ),
-          ),
-          GestureDetector(
+          ) : Text(""),
+         user.live == true ?  GestureDetector(
             onTap: () {
               Navigator.push(
                   context,
@@ -374,10 +358,10 @@ class _PeopleProfileState extends State<PeopleProfile> {
                 borderRadius: BorderRadius.circular(40),
               ),
             ),
-          ),
+          ) : Text(""),
           SizedBox(height: 80),
           Center(
-            child: Text(
+            child: Text( 
               "Joined during Covid-19",
               style: GoogleFonts.roboto(color: Colors.grey),
             ),
@@ -492,22 +476,11 @@ class _PeopleProfileState extends State<PeopleProfile> {
                   ),
                 ],
               ),
-              SizedBox(height: 25),
-              RichText(
-                textAlign: TextAlign.center,
-                text: TextSpan(
-                    text: (user.bio != null) ? user.bio : Text(""),
-                    style: GoogleFonts.roboto(
-                        fontSize: 24, fontStyle: FontStyle.italic),
-                    children: <TextSpan>[
-                      TextSpan(
-                          text: '\n \n@instagram  @facebook',
-                          style: TextStyle(fontSize: 16, color: Colors.white70))
-                    ]),
-              ),
+              SizedBox(height: MediaQuery.of(context).size.height * 0.1),
+              
               SizedBox(height: MediaQuery.of(context).size.height * 0.25),
               Text(
-                //TODO
+               
                 user.name,
                 style: TextStyle(
                     color: Colors.black45,
@@ -624,9 +597,9 @@ class _PeopleProfileState extends State<PeopleProfile> {
             height: 450,
             decoration: BoxDecoration(
               image: DecorationImage(
-                image: AssetImage('assets/images/cover.jpg'),
+                image: AssetImage('assets/images/hearttt.jpg'),
                 colorFilter: new ColorFilter.mode(
-                    Colors.black.withOpacity(0.8), BlendMode.dstATop),
+                    Colors.black.withOpacity(1), BlendMode.dstATop),
                 fit: BoxFit.cover,
               ),
             ),

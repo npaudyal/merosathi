@@ -48,7 +48,11 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       yield* _mapSalaryChangedToState(event.salary);
     } else if (event is EducationChanged) {
       yield* _mapEducationChangedToState(event.education);
-    }
+    }  else if (event is InstaChanged) {
+      yield* _mapInstaChangedToState(event.insta);
+    }  else if (event is LiveChanged) {
+      yield* _mapLiveChangedToState(event.live);
+    } 
     
      else if (event is Submitted) {
       final uid = await _userRepository.getUser();
@@ -68,7 +72,9 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
           bio: event.bio,
           job: event.job,
           gotra: event.gotra,
-          education:event.education
+          education:event.education,
+          insta:event.insta,
+          live:event.live,
           );
     }
   }
@@ -158,7 +164,17 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       isEducationEmpty: education == null,
     );
   }
-
+   Stream<ProfileState> _mapInstaChangedToState(String insta) async* {
+    yield state.update(
+      isInstaEmpty: insta == null,
+    );
+  }
+   Stream<ProfileState> _mapLiveChangedToState(bool live) async* {
+    yield state.update(
+      isLiveEmpty: live == null,
+    );
+  }
+ 
 
 
 
@@ -178,13 +194,15 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       String bio,
       String job,
       String religion,
-      String education
+      String education,
+      String insta,
+      bool live,
 
       }) async* {
     yield ProfileState.loading();
     try {
       await _userRepository.profileSetup(
-          photo, userId, name, gender, interestedIn,country, heightP, community,salary,gotra,job,bio,religion,education, age, location);
+          photo, userId, name, gender, interestedIn,country, heightP, community,salary,gotra,job,bio,religion,education,insta,live,age, location);
       yield ProfileState.success();
     } catch (_) {
       yield ProfileState.failure();

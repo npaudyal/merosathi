@@ -1,22 +1,22 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
-import 'package:extended_image/extended_image.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:focused_menu/focused_menu.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:merosathi/bloc/authentication/bloc.dart';
 import 'package:merosathi/models/user.dart';
 import 'package:merosathi/ui/pages/chatRoom.dart';
 import 'package:merosathi/ui/pages/heart.dart';
+import 'package:merosathi/ui/pages/map.dart';
 import 'package:merosathi/ui/pages/search.dart';
 import 'package:merosathi/ui/pages/edit_profile.dart';
-import 'package:merosathi/ui/pages/spash_screen.dart';
 import 'package:merosathi/ui/widgets/animations/slide_tansition.dart';
+
 
 Color mainColor = Color(0xff774a63);
 Color secondColor = Color(0xffd6a5c0);
@@ -47,13 +47,15 @@ class _MyProfileState extends State<MyProfile> {
   int count, count1, count2;
   List<Container> feed = [];
   List items = [
-    MenuItem(x: -1.0, name: 'search_to_close', color: Colors.red),
+    MenuItem(x: -1.0, name: 'lak', color: Colors.red),
     MenuItem(x: -0.3, name: 'message', color: Colors.purple),
     MenuItem(x: 0.3, name: 'heart', color: Colors.pink),
     MenuItem(x: 1.0, name: 'head', color: Colors.yellow),
   ];
 
   MenuItem active;
+  
+  bool toggleLive = false;
 
   @override
   void initState() {
@@ -139,7 +141,7 @@ class _MyProfileState extends State<MyProfile> {
                       ))); //Matches(userId: widget.userId,)));
         }
 
-        if (item.name == "search_to_close") {
+        if (item.name == "lak") {
           Navigator.push(
               context,
               SlideRightRoute(
@@ -255,7 +257,10 @@ class _MyProfileState extends State<MyProfile> {
                         },
                       ),
                     ),
+                    //showMap(widget.currentUser),
                     signoutButton(),
+
+                    
                   ],
                 ),
               );
@@ -263,6 +268,46 @@ class _MyProfileState extends State<MyProfile> {
 
           return Container();
         });
+  }
+
+  showMap(User currentUser) {
+    
+   return currentUser.live == true ? Column(
+     children: <Widget>[
+       Text("Stop sharing location.", 
+       style: GoogleFonts.ubuntu(color: Colors.red, fontSize: 20),),
+      // SizedBox(height: MediaQuery.of(context).size.width /10) ,
+
+       Switch(value: toggleLive,
+        onChanged: (val) {
+          setState(() {
+             toggleLive = val;
+          });
+         
+         // updateLive();
+       }),
+
+     ],
+   ) :  Column(
+     children: <Widget>[
+       Text("Start sharing location.", 
+       style: GoogleFonts.ubuntu(color: Colors.red, fontSize: 20),),
+       SizedBox(height: MediaQuery.of(context).size.width /5) ,
+
+       Switch(value: toggleLive,
+        onChanged: (val) {
+          setState(() {
+             toggleLive = val;
+          });
+         
+          //updateLive();
+       }),
+
+     ],
+   );
+  
+    
+
   }
 
   Widget signoutButton() {
@@ -278,7 +323,7 @@ class _MyProfileState extends State<MyProfile> {
         child: GestureDetector(
           onTap: () {
             BlocProvider.of<AuthenticationBloc>(context).add(LoggedOut());
-            Navigator.pop(context);
+            Navigator.popUntil(context, ModalRoute.withName("/"));
           },
           child: Center(
             child: Text(
@@ -343,7 +388,7 @@ class _MyProfileState extends State<MyProfile> {
                 fontSize: 28, fontWeight: FontWeight.w700, color: mainColor),
           ),
           Text(
-            '@insta_handle',
+            currentUser.insta !=null ?'${currentUser.insta}': "",
             style: TextStyle(
                 fontSize: 16, fontWeight: FontWeight.w700, color: secondColor),
           ),
