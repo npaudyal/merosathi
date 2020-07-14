@@ -60,6 +60,7 @@ class SearchRepository {
       currentUser.photo = user['photoUrl'];
       currentUser.gender = user['gender'];
       currentUser.interestedIn = user['interestedIn'];
+      currentUser.uid = user['uid'];
     });
     return currentUser;
   }
@@ -109,6 +110,7 @@ class SearchRepository {
               gotra: user['gotra'],
               live: user['live'],
               insta: user['insta'],
+
               religion: user['religion']);
               
 

@@ -32,7 +32,7 @@ dependencies:
   firebase_core: ^0.4.4+3
   firebase_auth: ^0.16.0
   firebase_messaging: ^6.0.16
-  cloud_firestore: ^0.13.5
+  cloud_firestore: ^0.13.7
   flutter_bloc: ^3.2.0
   meta: ^1.1.8
   equatable: ^1.1.1
@@ -67,6 +67,13 @@ dependencies:
   flutter_native_image: ^0.0.5
   animated_text_kit: ^2.2.0
   image_picker: ^0.6.7+4
+  page_transition: ^1.1.5
+  swipedetector: ^1.2.0
+  timeago: ^2.0.26
+  uuid: ^2.2.0
+  google_sign_in: ^4.5.1
+
+
   
   http: ^0.12.1
 
@@ -122,5 +129,4 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
-
 

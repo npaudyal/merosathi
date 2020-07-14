@@ -37,26 +37,28 @@ class SplashScreen extends StatelessWidget {
         height: size.height,
         width: size.width,
         color: Colors.black,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Image.asset("assets/liquidlove.gif"),
+        child: SingleChildScrollView(
+                  child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Image.asset("assets/liquidlove.gif"),
 
-            SizedBox(height: size.width * 0.6),
+              SizedBox(height: size.width * 0.6),
 
-            Padding(
-              padding:  EdgeInsets.symmetric(horizontal: 10),
-              child: Center(
-                child: FadeAnimatedTextKit(
-                  text: [element, element, element, element, element, element],
-                textStyle: GoogleFonts.lora(color:Colors.white70, fontSize: 16),
-                textAlign: TextAlign.center,
-                
+              Padding(
+                padding:  EdgeInsets.symmetric(horizontal: 10),
+                child: Center(
+                  child: FadeAnimatedTextKit(
+                    text: [element, element, element, element, element, element],
+                  textStyle: GoogleFonts.lora(color:Colors.white70, fontSize: 16),
+                  textAlign: TextAlign.center,
+                  
+                  ),
                 ),
-              ),
-            )
+              )
 
-          ],
+            ],
+          ),
         ),
       ),
     );

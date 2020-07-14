@@ -1,59 +1,62 @@
-const functions = require('firebase-functions');
+// const functions = require('firebase-functions');
+// const admin = require('firebase-admin');
+// admin.initializeApp();
 
 
-exports.onCreateLikes = functions.firestore
-.document("users/{currentUserId}/selectedList/{userId}")
-.onCreate( async (snapshot, context) => {
-    console.log("Activity feed item created", snapshot.data());
 
-    //Get the user connected to the likes
+// exports.onCreateLikes = functions.firestore
+// .document("users/{currentUserId}/selectedList/{userId}")
+// .onCreate( async (snapshot, context) => {
+//     console.log("Activity feed item created", snapshot.data());
 
-    const currentUserId = context.params.currentUserId;
+//     //Get the user connected to the likes
 
-    const currentUserRef = admin.firestore().document(`users/${currentUserId}`);
+//     const currentUserId = context.params.currentUserId;
 
-    const doc = await currentUserRef.get();
+//     const currentUserRef = admin.firestore().document(`users/${currentUserId}`);
 
-    //We have user data, check if they have notification token
+//     const doc = await currentUserRef.get();
 
-    const androidNotificationToken = doc.data().androidNotificationToken;
+//     //We have user data, check if they have notification token
 
-    const createdLikes = snapshot.data();
+//     const androidNotificationToken = doc.data().androidNotificationToken;
 
-    if(androidNotificationToken) {
-        //send Notification
+//     const createdLikes = snapshot.data();
 
-        sendNotification(androidNotificationToken, createdLikes);
+//     if(androidNotificationToken) {
+//         //send Notification
 
-    } else {
-        console.log("No token")
+//         sendNotification(androidNotificationToken, createdLikes);
 
-    }
+//     } else {
+//         console.log("No token")
 
-    function sendNotification(androidNotificationToken, userId) {
+//     }
+
+//     function sendNotification(androidNotificationToken, userId) {
         
-        const body = `${userId.name} liked you!`
+//         const body = `${userId.name} liked you!`
 
-    }
+//     }
 
-    //Create message for push notification
+//     //Create message for push notification
 
-    const message = {
-        notification: {body},
-        token : androidNotificationToken,
-        data : {recipient: currentUserId}
-    }
+//     const message = {
+//         notification: {body},
+//         token : androidNotificationToken,
+//         data : {recipient: currentUserId}
+//     }
 
-    // Send message with admin.messaging
+//     // Send message with admin.messaging
 
-    admin
-        .messaging().send(message)
-        .then(response => {
-            console.log("Successfully sent message", response);
-        })
-        .catch(error => {
-            console.log("Error", error);
-        })
+//     admin
+//         .messaging().send(message)
+//         .then(response => {
+//             console.log("Successfully sent message", response);
+//         })
+//         .catch(error => {
+//             console.log("Error", error);
+//         })
 
 
-})
+// })

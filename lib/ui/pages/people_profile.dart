@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
@@ -14,14 +13,18 @@ import 'package:merosathi/bloc/search/search_event.dart';
 import 'package:merosathi/models/user.dart';
 import 'package:merosathi/repositories/searchRepository.dart';
 import 'package:merosathi/services/database.dart';
-import 'package:merosathi/services/constants.dart';
 import 'package:merosathi/ui/pages/chatRoom.dart';
-import 'package:merosathi/ui/pages/conversation_screen.dart';
 import 'package:merosathi/ui/pages/flare.dart';
 import 'package:merosathi/ui/pages/map.dart';
-import 'package:merosathi/ui/pages/spash_screen.dart';
-import 'package:provider/provider.dart';
 import 'package:merosathi/services/geolocator_service.dart';
+import 'package:merosathi/ui/pages/messaging.dart';
+import 'package:merosathi/ui/widgets/pageTurn.dart';
+import 'package:merosathi/repositories/matchesRepository.dart';
+
+
+
+
+
 
 class PeopleProfile extends StatefulWidget {
   final User user;
@@ -50,16 +53,12 @@ class _PeopleProfileState extends State<PeopleProfile> {
 
   User get user => widget.user;
   User get currentUser => widget.currentUser;
+  MatchesRepository _matchesRepository = MatchesRepository();
 
   String get currentUserId => widget.currentUserId;
   bool liked = false;
-  ConversationScreen convo = new ConversationScreen();
 
-  getCurrentUser() async {
-    final FirebaseUser user = await auth.currentUser();
-
-    print(user.uid);
-  }
+  
 
   ChatRoom chatRoom = new ChatRoom();
 
@@ -78,7 +77,7 @@ class _PeopleProfileState extends State<PeopleProfile> {
 
         images.add(url);
       } catch (e) {
-        print(e);
+        //print(e);
       }
     }
   }
@@ -165,122 +164,108 @@ class _PeopleProfileState extends State<PeopleProfile> {
     Size size = MediaQuery.of(context).size;
 
     return new FutureBuilder(
-        future: getCount(),
-        builder: (
-          context,
-          snapshot,
-        ) {
-          switch (snapshot.connectionState) {
-            case ConnectionState.none:
-              return Text('none');
-            case ConnectionState.active:
-            case ConnectionState.waiting:
-              return Center(child: Flare());
-            case ConnectionState.done:
-              return Scaffold(
-                body: Container(
-                  child: Stack(
-                    children: <Widget>[
-                      CustomBody(),
-                      // CustomBottomBar(),
-                      
-                    ],
-                  ),
-                ),
-              );
-          }
-        });
+    future: getCount(),
+    builder: (
+      context,
+      snapshot,
+    ) {
+      switch (snapshot.connectionState) {
+        case ConnectionState.none:
+          return Text('none');
+        case ConnectionState.active:
+        case ConnectionState.waiting:
+          return Center(child: Flare());
+        case ConnectionState.done:
+          return Scaffold(
+            body: Container(
+              child: Stack(
+                children: <Widget>[
+                  CustomBody(),
+         
+                 
+                  
+                ],
+              ),
+            ),
+          );
+      }
+    });
   }
 
   
 
   Widget CustomBody() {
-    double listheight = (45 * 7).toDouble();
-    return SingleChildScrollView(
-      child: Column(
-        children: <Widget>[
-          CustomHeader(),
-          Container(
-            height: listheight,
-            padding: EdgeInsets.symmetric(horizontal: 35),
-            margin: EdgeInsets.only(bottom: 10),
-            child: ListView(
-              physics: ScrollPhysics(),
-              children: <Widget>[
-                ListTile(
-                  leading: Icon(Icons.format_quote),
-                  title: user.bio != null
-                      ? Text("${user.bio}")
-                      : Text("I don't have a bio"),
-                ),
-                ListTile(
-                  leading: Icon(Icons.work),
-                  title: user.job != null
-                      ? Text("Works at ${user.job}")
-                      : Text("Job"),
-                ),
-                ListTile(
-                  leading: Icon(Icons.school),
-                  title: user.education != null
-                      ? Text("Studied ${user.education}")
-                      : Text("University"),
-                ),
-                ListTile(
-                  leading: Icon(FontAwesomeIcons.church),
-                  title: user.religion != null
-                      ? Text("${user.religion}")
-                      : Text("Religion"),
-                ),
-                ListTile(
-                  leading: Icon(FontAwesomeIcons.moneyBill),
-                  title: user.salary != null
-                      ? Text("Earns ${user.salary}")
-                      : Text("Enough"),
-                ),
-                ListTile(
-                  leading: Icon(Icons.star),
-                  title: user.gotra != null
-                      ? Text("${user.gotra} Gotra")
-                      : Text("Who knows?"),
-                ),
-                ListTile(
-                  leading: Icon(Icons.group),
-                  title: user.community != null
-                      ? Text("${user.community}")
-                      : Text("Community"),
-                ),
-                ListTile(
-                  leading: Icon(FontAwesomeIcons.ruler),
-                  title: user.heightP != null
-                      ? Text("${user.heightP} ")
-                      : Text("Height"),
-                ),
+   
+    return ListView(
+      children: <Widget>[
+        CustomHeader(),
+        ListTile(
+          leading: Icon(Icons.format_quote),
+          title: user.bio != null
+              ? Text("${user.bio}")
+              : Text("I don't have a bio"),
+        ),
+        ListTile(
+          leading: Icon(Icons.work),
+          title: user.job != null
+              ? Text("Works at ${user.job}")
+              : Text("Job"),
+        ),
+        ListTile(
+          leading: Icon(Icons.school),
+          title: user.education != null
+              ? Text("Studied ${user.education}")
+              : Text("University"),
+        ),
+        ListTile(
+          leading: Icon(FontAwesomeIcons.church),
+          title: user.religion != null
+              ? Text("${user.religion}")
+              : Text("Religion"),
+        ),
+        ListTile(
+          leading: Icon(FontAwesomeIcons.moneyBill),
+          title: user.salary != null
+              ? Text("Earns ${user.salary}")
+              : Text("Enough"),
+        ),
+        ListTile(
+          leading: Icon(Icons.star),
+          title: user.gotra != null
+              ? Text("${user.gotra} Gotra")
+              : Text("Who knows?"),
+        ),
+        ListTile(
+          leading: Icon(Icons.group),
+          title: user.community != null
+              ? Text("${user.community}")
+              : Text("Community"),
+        ),
+        ListTile(
+          leading: Icon(FontAwesomeIcons.ruler),
+          title: user.heightP != null
+              ? Text("${user.heightP} ")
+              : Text("Height"),
+        ),
 
-                 ListTile(
-                  leading: Icon(FontAwesomeIcons.instagram),
-                  title: user.insta != null
-                      ? Text("${user.insta} ")
-                      : Text("Instagram"),
-                ),
-
-                
-              ],
-            ),
-
-            
-          ),
-          FutureBuilder(
-              future: getImageURL(),
-              builder: (context, snapshot) {
-                switch (snapshot.connectionState) {
-                  case ConnectionState.none:
-                    return Text('none');
-                  case ConnectionState.active:
-                  case ConnectionState.waiting:
-                    return Center(child: CircularProgressIndicator());
-                  case ConnectionState.done:
-                    return SingleChildScrollView(
-                      child: StaggeredGridView.countBuilder(
+         ListTile(
+          leading: Icon(FontAwesomeIcons.instagram),
+          title: user.insta != null
+              ? Text("${user.insta} ")
+              : Text("Instagram"),
+        ),
+        FutureBuilder(
+            future: getImageURL(),
+            builder: (context, snapshot) {
+              switch (snapshot.connectionState) {
+                case ConnectionState.none:
+                  return Text('none');
+                case ConnectionState.active:
+                case ConnectionState.waiting:
+                  return Center(child: CircularProgressIndicator());
+                case ConnectionState.done:
+                  return SingleChildScrollView(
+                    child: StaggeredGridView.countBuilder(
                         physics: ScrollPhysics(),
                         shrinkWrap: true,
                         crossAxisCount: 2,
@@ -320,55 +305,54 @@ class _PeopleProfileState extends State<PeopleProfile> {
                           return StaggeredTile.count(1, index.isEven ? 2 : 1);
                         },
                       ),
-                    );
-                }
-              }),
-          SizedBox(height: 25),
-          user.live == true ? Padding(
-            padding: EdgeInsets.all(25),
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                "Maps",
-                style: GoogleFonts.varelaRound(
-                  color: Colors.black54,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20,
-                ),
+                  );
+              }
+            }),
+        SizedBox(height: 25),
+        user.live == true ? Padding(
+          padding: EdgeInsets.all(25),
+          child: Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              "Maps",
+              style: GoogleFonts.varelaRound(
+                color: Colors.black54,
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
               ),
-            ),
-          ) : Text(""),
-         user.live == true ?  GestureDetector(
-            onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => GMap(
-                          user.location.latitude, user.location.longitude)));
-            },
-            child: Container(
-              padding: EdgeInsets.all(5),
-              height: 180,
-              width: MediaQuery.of(context).size.width / 1.05,
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage("assets/images/maps.png"),
-                  fit: BoxFit.cover,
-                ),
-                borderRadius: BorderRadius.circular(40),
-              ),
-            ),
-          ) : Text(""),
-          SizedBox(height: 80),
-          Center(
-            child: Text( 
-              "Joined during Covid-19",
-              style: GoogleFonts.roboto(color: Colors.grey),
             ),
           ),
-          SizedBox(height: 40),
-        ],
-      ),
+        ) : Text(""),
+           user.live == true ?  GestureDetector(
+          onTap: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => GMap(
+                        user.location.latitude, user.location.longitude)));
+          },
+          child: Container(
+            padding: EdgeInsets.all(5),
+            height: 180,
+            width: MediaQuery.of(context).size.width / 1.05,
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage("assets/images/maps.png"),
+                fit: BoxFit.cover,
+              ),
+              borderRadius: BorderRadius.circular(40),
+            ),
+          ),
+        ) : Text(""),
+        SizedBox(height: 80),
+        Center(
+          child: Text( 
+            "Joined during Covid-19",
+            style: GoogleFonts.roboto(color: Colors.grey),
+          ),
+        ),
+        SizedBox(height: 40),
+      ],
     );
   }
 
@@ -407,48 +391,7 @@ class _PeopleProfileState extends State<PeopleProfile> {
         });
   }
 
-  createChatRoomAndStartConvo(User currentUser, User user) async {
-    String chatRoomId = currentUserId + user.uid;
-    List<String> users = [currentUser.name, user.name];
-    bool exists = await databaseMethod.chatRoomExists(chatRoomId);
-
-    Map<String, dynamic> chatRoomMap = {
-      "users": users,
-      "chatRoomId": chatRoomId,
-      "name": user.name,
-      "photoUrl": user.photo,
-      "uid": user.uid,
-      "blocked": false,
-    };
-
-    if (exists == false) {
-      databaseMethod.createChatRoom(chatRoomId, chatRoomMap);
-
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => ConversationScreen(
-                    chatRoomId: chatRoomId,
-                    userName: widget.user.name,
-                    currentUser: widget.currentUser,
-                    photoUrl: widget.user.photo,
-                    currentUserId: currentUserId,
-                    userId: user.uid,
-                  )));
-    } else {
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => ConversationScreen(
-                    chatRoomId: chatRoomId,
-                    userName: widget.user.name,
-                    currentUser: widget.currentUser,
-                    photoUrl: widget.user.photo,
-                    currentUserId: currentUserId,
-                    userId: user.uid,
-                  )));
-    }
-  }
+  
 
   Widget CustomHeader() {
     return Stack(
@@ -476,7 +419,7 @@ class _PeopleProfileState extends State<PeopleProfile> {
                   ),
                 ],
               ),
-              SizedBox(height: MediaQuery.of(context).size.height * 0.1),
+              SizedBox(height: MediaQuery.of(context).size.height * 0.15),
               
               SizedBox(height: MediaQuery.of(context).size.height * 0.25),
               Text(
@@ -524,9 +467,18 @@ class _PeopleProfileState extends State<PeopleProfile> {
                               )),
                     SizedBox(width: MediaQuery.of(context).size.width * 0.18),
                     GestureDetector(
-                      onTap: () {
-                        createChatRoomAndStartConvo(
-                            widget.currentUser, widget.user);
+                      onTap: () async {
+                        // createChatRoomAndStartConvo(
+                        //     widget.currentUser, widget.user);
+
+                        databaseMethod.openChat(currentUserId: widget.currentUser.uid, selectedUserId: widget.user.uid);
+
+                        pageTurn(Messaging(
+                          currentUser: widget.currentUser,
+                          selectedUser: widget.user,
+                         
+                          
+                        ), context);
                       },
                       child: Icon(FontAwesomeIcons.solidPaperPlane),
                     ),
@@ -552,16 +504,33 @@ class _PeopleProfileState extends State<PeopleProfile> {
             ],
           ),
         ),
-        Container(
-          width: 150,
-          height: 150,
-          margin: EdgeInsets.only(top: 275),
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              image: ExtendedNetworkImageProvider(user.photo),
-              fit: BoxFit.cover,
+        FocusedMenuHolder(
+                            blurSize: 4,
+                            blurBackgroundColor: Colors.white,
+                            menuWidth: MediaQuery.of(context).size.width,
+                            menuItemExtent: 50,
+                            menuBoxDecoration: BoxDecoration(
+                              color: Colors.blue,
+                              boxShadow: [
+                                BoxShadow(
+                                    color: Colors.black,
+                                    blurRadius: 5,
+                                    spreadRadius: 1)
+                              ],
+                            ),
+                            onPressed: () {},
+                            menuItems: [],
+                  child: Container(
+            width: 150,
+            height: 150,
+            margin: EdgeInsets.only(top: 275),
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: ExtendedNetworkImageProvider(user.photo),
+                fit: BoxFit.cover,
+              ),
+              borderRadius: BorderRadius.circular(40),
             ),
-            borderRadius: BorderRadius.circular(40),
           ),
         ),
       ],
@@ -596,12 +565,11 @@ class _PeopleProfileState extends State<PeopleProfile> {
           child: Container(
             height: 450,
             decoration: BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage('assets/images/hearttt.jpg'),
-                colorFilter: new ColorFilter.mode(
-                    Colors.black.withOpacity(1), BlendMode.dstATop),
-                fit: BoxFit.cover,
-              ),
+              gradient: LinearGradient(colors: [Colors.white, Colors.black45, Colors.black54, Colors.black87, Colors.black],
+              begin: Alignment.topCenter, end: Alignment.bottomCenter
+              ) ,
+                
+               
             ),
           ),
         ),

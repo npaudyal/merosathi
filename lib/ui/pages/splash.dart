@@ -1,44 +1,33 @@
 import 'package:flutter/material.dart';
 
 
+
 class Splash extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
 
     return Scaffold(
-      backgroundColor: Colors.white,
-      body: Stack(
-        fit: StackFit.expand,
-        children: <Widget>[
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.black
+      backgroundColor: Colors.black,
+      body: SingleChildScrollView(
+              child: Column(
+                
+          children: <Widget>[
+            Container(
+              height: size.height*0.7,
+              width: size.width,
+              color: Colors.black,
+              child: Image.asset("assets/splash screen.gif")
             ),
-          ),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-              Expanded(
-                flex: 2,
-                child: Container(
-                  child:Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Image(image: AssetImage('assets/unnamed.png'), 
-                        height: 100,
-                        width: 100,
-                      )
-                    ],
 
-                  ),
-                ))
-            ],
-
-          ),
-        ],
+            
+          ],
+        ),
       ),
     );
+      
+
+            
   }
 }
 

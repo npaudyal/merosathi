@@ -8,7 +8,6 @@ import 'package:merosathi/bloc/matches/matches_state.dart';
 import 'package:merosathi/models/user.dart';
 import 'package:merosathi/repositories/matchesRepository.dart';
 import 'package:merosathi/ui/pages/people_profile.dart';
-import 'package:merosathi/ui/pages/spash_screen.dart';
 import 'package:merosathi/ui/widgets/profile.dart';
 
 class LikesTab extends StatefulWidget {
@@ -57,7 +56,7 @@ class _LikesTabState extends State<LikesTab> {
                                )));
                     },
                     child: CircleAvatar(
-                      radius: 35,
+                      radius: 30,
                       backgroundImage: NetworkImage(user.photo)
                     ),
                   ),
@@ -146,33 +145,36 @@ class _LikesTabState extends State<LikesTab> {
     Size size = MediaQuery.of(context).size;
 
     return BlocBuilder<MatchesBloc, MatchesState>(
-        bloc: _matchesBloc,
-        builder: (BuildContext context, MatchesState state) {
-          if (state is LoadingMState) {
-            _matchesBloc.add(LoadListsEvent(userId: widget.userId));
-            return SplashScreen();
-          }
-          if (state is LoadUserMState) {
-            return SingleChildScrollView(
-              
-             child: StreamBuilder<QuerySnapshot>(
-                    stream: state.selectedList,
-                    builder: (context, snapshot) {
-                      if (!snapshot.hasData) {
-                        return  Container();
-                        
-                      }
-                      if (snapshot.data.documents != null){
-                        final user = snapshot.data.documents;
+    bloc: _matchesBloc,
+    builder: (BuildContext context, MatchesState state) {
+      if (state is LoadingMState) {
+        _matchesBloc.add(LoadListsEvent(userId: widget.userId));
+        return Center(child: CircularProgressIndicator());
+      }
+      if (state is LoadUserMState) {
+        return SingleChildScrollView(
+          
+         child: StreamBuilder<QuerySnapshot>(
+                stream: state.selectedList,
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) {
+                    return  Container();
+                    
+                  }
+                  if (snapshot.data.documents != null){
+                    final user = snapshot.data.documents;
 
-                        return SizedBox(
-                          height: size.height,
-                          
-                           child: GridView.builder(
-                           
-                            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2) ,
-                             itemBuilder: (BuildContext context, int index) {
-                                return GestureDetector(
+                    return SingleChildScrollView(
+                    child: Container(
+                      height: size.height,
+                      
+                       child: GridView.builder(
+                        
+                         physics: ScrollPhysics(),
+                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2) ,
+                           itemBuilder: (BuildContext context, int index) {
+                             
+                              return GestureDetector(
                                   onTap: () async {
                                     User selectedUser = await matchesRepository
                                         .getUserDetails(user[index].documentID);
@@ -209,28 +211,29 @@ class _LikesTabState extends State<LikesTab> {
                                         )),
                                   ),
                                 );
-                              
+                            
 
-                             },
-                             itemCount: user.length,
-                             ),
-                        );
-                      } else return Container();
-                     
-                    }
-               
-             )
+                           },
+                           itemCount: user.length,
+                           ),
+                        ),
+                    );
+                  } else return Container();
+                 
+                }
+           
+         )
 
-              
-             
-
-            );
-
-          } 
-            return Container();
-            
           
-        }
+         
+
         );
+
+      } 
+        return Container();
+        
+      
+    }
+    );
   }
 }

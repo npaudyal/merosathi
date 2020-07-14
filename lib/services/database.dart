@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:merosathi/ui/pages/chatRoom.dart';
 
 
 class DatabaseMethods{
@@ -11,7 +10,7 @@ createChatRoom(String chatRoomId, chatRoomMap) {
   .document(chatRoomId)
   .setData(chatRoomMap)
   .catchError((e) {
-    print(e.toString());
+   // print(e.toString());
   });
 }
 
@@ -22,7 +21,7 @@ addConversationMessages(String chatRoomId, messageMap) async {
   .collection("chats")
   
   .add(messageMap).catchError((e) {
-    print(e);
+   // print(e);
   });
 }
 
@@ -77,17 +76,52 @@ deleteMessages(String chatRoomId) async {
 
 
 
-blockUsers(userId, currentUserId, chatRoomId) async {
+blockUsers(userId, currentUserId) async {
 
   await Firestore.instance
-  .collection("chatRoom")
-  .document(chatRoomId)
-  .updateData({
-    'blocked': true
-  });
+  .collection("users")
+  .document(currentUserId)
+  .collection("blocked")
+  .document(userId)
+  .setData({});
+
+  await Firestore.instance
+  .collection("users")
+  .document(userId)
+  .collection("blocked")
+  .document(currentUserId)
+  .setData({});
 
 }
 
+ Future openChat({currentUserId, selectedUserId}) async {
+    await Firestore.instance
+        .collection('users')
+        .document(currentUserId)
+        .collection('chats')
+        .document(selectedUserId)
+        .setData({'timestamp': DateTime.now()});
+
+    await Firestore.instance
+        .collection('users')
+        .document(selectedUserId)
+        .collection('chats')
+        .document(currentUserId)
+        .setData({'timestamp': DateTime.now()});
+
+   
+  }
+
+  void deleteUser(currentUserId, selectedUserId) async {
+    return await Firestore.instance
+        .collection('users')
+        .document(currentUserId)
+        .collection('selectedList')
+        .document(selectedUserId)
+        .delete();
+  }
+
+  
 
 
 

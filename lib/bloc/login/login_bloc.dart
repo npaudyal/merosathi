@@ -5,11 +5,9 @@ import 'package:merosathi/ui/validators.dart';
 import 'package:meta/meta.dart';
 import './bloc.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:merosathi/services/helper_functions.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
   UserRepository _userRepository;
-  HelperFunctions helperFunctions = new HelperFunctions();
   
 
   LoginBloc({@required UserRepository userRepository})

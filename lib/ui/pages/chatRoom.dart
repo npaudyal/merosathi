@@ -1,17 +1,23 @@
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:focused_menu/modals.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:merosathi/bloc/message/message_bloc.dart';
+import 'package:merosathi/bloc/message/message_event.dart';
+import 'package:merosathi/bloc/message/message_state.dart';
 import 'package:merosathi/models/user.dart';
+import 'package:merosathi/repositories/messageRepository.dart';
 import 'package:merosathi/services/database.dart';
-import 'package:merosathi/ui/pages/conversation_screen.dart';
 import 'package:merosathi/ui/pages/heart.dart';
 import 'package:merosathi/ui/pages/my_profile.dart';
 import 'package:merosathi/ui/pages/search.dart';
 import 'package:focused_menu/focused_menu.dart';
 import 'package:merosathi/ui/widgets/animations/slide_tansition.dart';
+import 'package:merosathi/ui/widgets/chat_widget.dart';
 
 class MenuItem {
   final String name;
@@ -53,202 +59,188 @@ List filtered = [];
 
   
 
-  Widget chatRoomList() {
-    return StreamBuilder(
-      stream: chatRoomStream,
-      builder: (BuildContext context, AsyncSnapshot snapshot){
-        return snapshot.hasData? ListView.builder(
-          itemCount: snapshot.data.documents.length,
-          itemBuilder: (context, index) {
-
-            filter.add(ChatRoomTile(
-                snapshot.data.documents[index].data['name'],
-                snapshot.data.documents[index].data['chatRoomId'],
-                widget.currentUser,
-                
-                snapshot.data.documents[index].data['photoUrl'],
-                snapshot.data.documents[index].data['uid'],
-
-              ));
-
-              filtered = filter;
-              
-            return  FocusedMenuHolder(
-          blurSize: 4,
-          blurBackgroundColor: Colors.white,
-          menuWidth: MediaQuery.of(context).size.width,
-          menuItemExtent: 50,
-          
-          menuBoxDecoration: BoxDecoration(
-            color: Colors.blue,
-            boxShadow: [BoxShadow(color:Colors.black, blurRadius:5, spreadRadius: 1)],
-          ),
-          onPressed: () {
-              
-          },
-          menuItems: <FocusedMenuItem>[
-            
-             FocusedMenuItem(title: Center(child: Text("Clear messages", style: GoogleFonts.roboto(color: Colors.white),)),
-             onPressed: () {
-              
-              databaseMethods.deleteMessages(snapshot.data.documents[index].data['chatRoomId']);
-             },
-
-             trailingIcon: Icon(Icons.delete),
-              backgroundColor: Colors.redAccent
-             ),
-          ],
-           
-              child: filtered[index]
-            );
-
-          }
-          ): Container();
-      }
-        );
-      }
-
-  // void _filter(value) {
-
-  //   filter.where((element) => false)
-  // }
-      
-
 
 
   @override
   void initState() { 
         active = items[1];
 
-    databaseMethods.getChatRooms(widget.currentUser.name).then((val) {
-      setState(() {
-      chatRoomStream = val;
-      });
-    });
+     _messageBloc = MessageBloc(messageRepository: _messagesRepository);
+
     super.initState();
     
   }
 
-  getUserInfo() async {
-    databaseMethods.getChatRooms(widget.currentUser.name).then((val) {
-      setState(() {
-        chatRoomStream = val;
-      });
-    });
-  }
-
-  
-
-
  
 
+  MessageRepository _messagesRepository = MessageRepository();
+  MessageBloc _messageBloc;
+
+  
   @override
   Widget build(BuildContext context) {
     
     Size size = MediaQuery.of(context).size;
       
-   return Scaffold(
-       bottomNavigationBar: Container(
-      
-      height: 50,
-      width:size. width,
-      color: Colors.black,
-      child: Stack(
-        children: [
-          AnimatedContainer(
-            duration: Duration(milliseconds: 200),
-            alignment: Alignment(active.x, -1),
-            child: AnimatedContainer(
-              duration: Duration(milliseconds: 1000),
-              height: 8,
-              width: size.width * 0.2,
-              color: active.color,
-            ),
-          ),
-          Container(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: items.map((k) {
-                return _flare(k, widget.currentUser);
-              }).toList(),
-            ),
-          )
-        ],
-      ),
-    )
-,
-      body: SingleChildScrollView(
-        physics: BouncingScrollPhysics(),
-        child: SizedBox(
-          height: 500,
-           child: Column(
-             
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              SafeArea(
-                child: Padding(
-                  padding: EdgeInsets.only(left: 16,right: 16,top: 10),
-                  child: Row(
-                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Text("Chats",style: TextStyle(fontSize: 30,fontWeight: FontWeight.bold),),
-                      Container(
-                        padding: EdgeInsets.only(left: 8,right: 8,top: 2,bottom: 2),
-                        height: 30,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(30),
-                          color: Colors.pink[50],
-                        ),
-                        child: Row(
-                          children: <Widget>[
-                            Icon(FontAwesomeIcons.heart,color: Colors.pink,size: 20,),
-                            SizedBox(width: 2,),
-                          ],
-                        ),
-                      )
-                    ],
-                  ),
-                ),
+   return BlocBuilder<MessageBloc, MessageState>(
+        bloc: _messageBloc,
+        builder: (BuildContext context, MessageState state) {
+          if (state is MessageInitialState) {
+            _messageBloc.add(ChatStreamEvent(currentUserId: widget.userId));
+          }
+          if (state is ChatLoadingState) {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+          if (state is ChatLoadedState) {
+            Stream<QuerySnapshot> chatStream = state.chatStream;
+
+            return Scaffold(
+         bottomNavigationBar: Container(
+        
+        height: 50,
+        width:size. width,
+        color: Colors.black,
+        child: Stack(
+          children: [
+            AnimatedContainer(
+              duration: Duration(milliseconds: 200),
+              alignment: Alignment(active.x, -1),
+              child: AnimatedContainer(
+                duration: Duration(milliseconds: 1000),
+                height: 8,
+                width: size.width * 0.2,
+                color: active.color,
               ),
- 
-              
-              Padding(
-                padding: EdgeInsets.only(top: 16,left: 16,right: 16),
-                child: TextField(
-                  decoration: InputDecoration(
-                    hintText: "Search...",
-                    hintStyle: TextStyle(color: Colors.grey.shade400),
-                    prefixIcon: Icon(Icons.search,color: Colors.grey.shade400,size: 20,),
-                    filled: true,
-                    fillColor: Colors.grey.shade100,
-                    contentPadding: EdgeInsets.all(8),
-                    enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(30),
-                        borderSide: BorderSide(
-                            color: Colors.grey.shade100
+            ),
+            Container(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: items.map((k) {
+                  return _flare(k, widget.currentUser);
+                }).toList(),
+              ),
+            )
+          ],
+        ),
+      )
+,
+        body: SingleChildScrollView(
+          physics: BouncingScrollPhysics(),
+          child: SizedBox(
+            height: size.height,
+             child: Column(
+               
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                SafeArea(
+                  child: Padding(
+                    padding: EdgeInsets.only(left: 16,right: 16,top: 10),
+                    child: Row(
+                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Text("Chats",style: TextStyle(fontSize: 30,fontWeight: FontWeight.bold),),
+                        Container(
+                          padding: EdgeInsets.only(left: 8,right: 8,top: 2,bottom: 2),
+                          height: 30,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(30),
+                            color: Colors.pink[50],
+                          ),
+                          child: Row(
+                            children: <Widget>[
+                              Icon(FontAwesomeIcons.heart,color: Colors.pink,size: 20,),
+                              SizedBox(width: 2,),
+                            ],
+                          ),
                         )
+                      ],
                     ),
                   ),
                 ),
-              ),
-              Expanded(
-                child: SizedBox(
-                  height:500,
-                  child: chatRoomList(),
-                )
-              )
-
-              
  
-      
-             ],
-              ),
-        ),
-      ),
-   );
-            
+                
+                Padding(
+                  padding: EdgeInsets.only(top: 16,left: 16,right: 16),
+                  child: TextField(
+                    decoration: InputDecoration(
+                      hintText: "Search...",
+                      hintStyle: TextStyle(color: Colors.grey.shade400),
+                      prefixIcon: Icon(Icons.search,color: Colors.grey.shade400,size: 20,),
+                      filled: true,
+                      fillColor: Colors.grey.shade100,
+                      contentPadding: EdgeInsets.all(8),
+                      enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30),
+                          borderSide: BorderSide(
+                              color: Colors.grey.shade100
+                          )
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: SizedBox(
+                    height:500,
+                    child:  StreamBuilder<QuerySnapshot>(
+                stream: chatStream,
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) {
+                    return Center(child: Text("No data"));
+                  }
+
+                  if (snapshot.data.documents.isNotEmpty) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    } else {
+                      
+                      return  ListView.builder(
+                          scrollDirection: Axis.vertical,
+                          itemCount: snapshot.data.documents.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            print(snapshot.data.documents[index].data['timestamp']);
+                            return ChatWidget(
+                                  creationTime:
+                                      snapshot.data.documents[index].data['timestamp'],
+                                  userId: widget.userId,
+                                  selectedUserId:
+                                      snapshot.data.documents[index].documentID,
+                                
+                              
+                            );
+                          },
+                      
+                  
+                      );
+                    }
+                  } else {
+                    return Center(child: Text("No conversations"));
+                  }
+                },
+                    ),
+                  ),
+                ),
+
+
+                
+ 
         
+               ],
+                ),
+          ),
+        ),
+     
+   );
+          } 
+          return Container();
+        }      
+   );
+  
+     
       
     
   }
@@ -287,57 +279,3 @@ List filtered = [];
   }
 }
 
-class ChatRoomTile extends StatefulWidget {
-  final String userName;
-  final String chatRoomId;
-  final User currentUser;
-  final String userId;
-  final String photoUrl;
-  ChatRoomTile(this.userName, this.chatRoomId, this.currentUser, this.photoUrl, this.userId);
-
-  @override
-  _ChatRoomTileState createState() => _ChatRoomTileState();
-}
-
-class _ChatRoomTileState extends State<ChatRoomTile> {
-
-  
-  @override
-  Widget build(BuildContext context) {
-     return  GestureDetector(
-          
-          onTap: () {
-            Navigator.push(context, MaterialPageRoute(
-              builder: (context) => ConversationScreen(chatRoomId:widget.chatRoomId, currentUser: widget.currentUser, userName: widget.userName, photoUrl: widget.photoUrl,userId: widget.userId, )));
-          },
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal:24, vertical :12),
-          child: Row(
-            children: <Widget>[
-               CircleAvatar(
-                      backgroundImage: NetworkImage(widget.photoUrl),
-                      maxRadius: 30,
-                    ),
-                    SizedBox(width: 16,),
-                    Expanded(
-                      child: Container(
-                        color: Colors.transparent,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Text(widget.userName),
-                            SizedBox(height: 6,),
-                            Text("Active now",style: TextStyle(fontSize: 14,color: Colors.grey.shade500),),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-             
-          ),
-          
-        ),
-      //),
-    );
-  }
-}

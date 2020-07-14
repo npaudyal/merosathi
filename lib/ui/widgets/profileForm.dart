@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -39,7 +40,7 @@ class _ProfileFormState extends State<ProfileForm> {
   final PageController _pageController = PageController(initialPage: 0);
   int _currentPage = 0;
 
-  static TextEditingController _nameController = TextEditingController();
+   TextEditingController _nameController = TextEditingController();
 
   
      String country,
@@ -84,7 +85,7 @@ class _ProfileFormState extends State<ProfileForm> {
     bool isButtonPressed10 = false;
       bool isButtonPressed11 = false;
 
-
+  bool tappedReligion = false;
 
 
   bool _hindu = false;
@@ -141,7 +142,7 @@ class _ProfileFormState extends State<ProfileForm> {
   bool isButtonPressed12 = false;
 
   bool get isFilled =>
-      _nameController.text.isNotEmpty &&
+     name.isNotEmpty &&
       gender != null &&
       interestedIn != null &&
 
@@ -172,7 +173,7 @@ class _ProfileFormState extends State<ProfileForm> {
   _onSubmitted() async {
     await _getlocation();
     _profileBloc.add(Submitted(
-        name: _nameController.text,
+        name: name,
         age: age,
         location: location,
         gender: gender,
@@ -254,6 +255,7 @@ class _ProfileFormState extends State<ProfileForm> {
 
   List<String> image = ['img1.png', 'img2.png', 'img3.png'];
 
+
  
   uploadImage(File photo, String name) async {
     
@@ -275,13 +277,65 @@ class _ProfileFormState extends State<ProfileForm> {
   TextEditingController _gotraController = TextEditingController();
     TextEditingController _instaController = TextEditingController();
 
+ballIndicators({color}) {
+  
 
+                                      return  Container(
+                                         height:20,
+                                         width: 20,
+                                         child: FlareActor("assets/lak.flr",
+                                         alignment: Alignment.bottomCenter,
+                                         animation: "Alarm",
+                                         color: color,
+                                         
+                                         ),
+                                       );
+
+}
 
 
 
 Widget bioPage() {
+
   Size size = MediaQuery.of(context).size;
-  return Scaffold(
+  return BlocProvider<ProfileBloc>(
+        create: (context) => ProfileBloc(userRepository: _userRepository),
+        
+        child:  BlocListener<ProfileBloc, ProfileState>(
+      listener: (context, state) {
+        if (state.isFailure) {
+          Scaffold.of(context)
+            ..hideCurrentSnackBar()
+            ..showSnackBar(SnackBar(
+                content: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Text("Profile Creation Unsuccessful"),
+                Icon(Icons.error),
+              ],
+            )));
+        }
+        if (state.isSubmitting) {
+          Scaffold.of(context)
+            ..hideCurrentSnackBar()
+            ..showSnackBar(SnackBar(
+                content: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Text("Submitting"),
+                CircularProgressIndicator(),
+              ],
+            )));
+        }
+        if (state.isSuccess) {
+          BlocProvider.of<AuthenticationBloc>(context).add(LoggedIn());
+        }
+      },
+      child: BlocBuilder<ProfileBloc, ProfileState>(
+        builder: (context, state) {
+            
+        
+          return Scaffold(
     appBar: AppBar(
       backgroundColor: Colors.black,
       elevation: 0,
@@ -544,7 +598,7 @@ Widget bioPage() {
               ),
 
 
-             letsgo == false ? buttonUnTappedWithText(context, Colors.deepOrange, Colors.deepOrange,  () {
+             buttonUnTappedWithText(context, Colors.deepOrange, Colors.deepOrange,  ()  async {
 
                setState(() {
                  letsgo = !letsgo;
@@ -554,18 +608,27 @@ Widget bioPage() {
                  gotra= _gotraController.text;
                  salary = _salaryController.text;
                  insta = _instaController.text;
-                 _onSubmitted();
+                  
+                 
                  Navigator.pop(context);
+                 
                });
+               try{
+                               await uploadImage(photo3, "photo2");
+                               await uploadImage(photo4, "photo3");
 
-                print(job);
-                print(education);
-                print(gotra);
-                print(bio);
-                print(salary);
-             }, "Lets get Started",) : buttonTapped(context, () {
+                              await uploadImage(photo6, "photo4");
+                              await uploadImage(photo7, "photo5");
+                              
+                             
+                      } catch (e) {
 
-             }),
+                      }
+
+               _onSubmitted();
+             }, "Lets get Started",),
+
+             SizedBox(height:20),
               
 
               
@@ -576,6 +639,11 @@ Widget bioPage() {
     ),
 
   );
+        }),
+        ),
+
+  );
+  
 
 }
 
@@ -619,12 +687,13 @@ Widget bioPage() {
       },
       child: BlocBuilder<ProfileBloc, ProfileState>(
         builder: (context, state) {
-    
+            
         
           return LiquidSwipe(
-            enableSlideIcon: true,
+           
+            enableSlideIcon: false,
             enableLoop: false,
-            positionSlideIcon: 0.38,
+            
             waveType: WaveType.liquidReveal,
             pages: <Container>[
               Container(
@@ -633,169 +702,184 @@ Widget bioPage() {
       decoration: BoxDecoration(
        
         gradient: LinearGradient(
-          colors: [Colors.blue, Colors.red],
+           colors: [Colors.blue, Colors.red],
           begin: Alignment.topRight, end:Alignment.bottomLeft,
           ),
           
       ),
      
               
-                  child: SingleChildScrollView(
-               child: Stack(
+                  child: Stack(
          
-          children: <Widget>[
-
-           
+          children: <Widget>[           
             Padding(
-                      padding: EdgeInsets.only(top: size.width/3.3, left: size.width/12.34),
-                      child: Text(
-                        "Hello there, ",
-                        style:
-                            GoogleFonts.ubuntu(color: Colors.white, fontSize: 30),
-                      )),
+                         padding: EdgeInsets.only(top: size.width/3.3, left: size.width/5.34),
+                         child: Text(
+                           "Hello there, ",
+                           style:
+                               GoogleFonts.ubuntu(color: Colors.white, fontSize: 30),
+                         )),
             SizedBox(height: 10),
             Padding(
-                      padding: EdgeInsets.only(top: size.width/2.68,left: 35),
-                      child: Text(
-                        "Nice to meet you ",
-                        style: GoogleFonts.ubuntu(
-                            color: Colors.white, fontSize: 30),
-                      )),
+                         padding: EdgeInsets.only(top: size.width/2.3,left: size.width/3.34),
+                         child: Text(
+                          _nameController.text ==null? "Nice to meet you " : _nameController.text,
+                           style: GoogleFonts.ubuntu(
+                               color: Colors.white, fontSize: 30),
+                         )),
             SizedBox(height: size.height / 2.7),
             Padding(
-                    padding:  EdgeInsets.only(left: size.width/12.34),
-                    child: Column(
-                      // mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        SizedBox(height:10),
-                        Padding(
-                          padding:  EdgeInsets.only(top: size.width/0.83,right:size.width/8.64),
-                          child: Column(
-                               children: <Widget>[
-                                TextFormField(
-                                      
-                                      controller: _nameController,
-                                      onChanged: (val) {
-                                        setState(() {
-                                          name = _nameController.text;
-                                        });
-                                      },
-                                      
-                                     
-                                      cursorColor: Colors.white,
-                                    style: TextStyle(color: Colors.white70, fontSize: 21),
-                                    decoration: InputDecoration(
-                                       
-                                        disabledBorder: InputBorder.none,
-                                        focusedBorder: InputBorder.none,
-                                        labelStyle:
-                                            TextStyle(color: Colors.white, fontSize: 18),
-                                        //labelText: '',
-                                        hintText: "",
-                                        hintStyle:
-                                            TextStyle(color: Colors.white54, fontSize: 18),
+                       padding:  EdgeInsets.only(left: size.width/12.34),
+                       child: SingleChildScrollView(
+                         child: Column(
+                           // mainAxisAlignment: MainAxisAlignment.start,
+                           crossAxisAlignment: CrossAxisAlignment.start,
+                           children: <Widget>[
+                   
+                             Padding(
+                               padding:  EdgeInsets.only(top: size.width/0.9,right:size.width/8.64),
+                               child: Column(
+                                    children: <Widget>[
+                                     TextFormField(
+                                           
+                                           controller: _nameController,
+                                           onChanged: (val) {
+                                             setState(() {
+                                               name = _nameController.text;
+                                             });
+                                           },
+                                           
+                                          
+                                           
+                                           
+                                         style: TextStyle(color: Colors.transparent, fontSize: 21),
+                                         decoration: InputDecoration(
+                                            
+                                             disabledBorder: InputBorder.none,
+                                             focusedBorder: InputBorder.none,
+                                             labelStyle:
+                                                 TextStyle(color: Colors.white, fontSize: 18),
+                                             //labelText: '',
+                                           
+                                             ),
                                         ),
-                                   ),
-                                 
-                                 SizedBox(height:10),
-                            
-                            Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: <Widget>[
-                                    RichText(text: TextSpan(
-                                      text: "Your name", 
-                                     style: TextStyle(fontSize: 14, color: Colors.white38),
                                       
-                                      children:[
-                                        TextSpan(text:" *",
-                                        style: GoogleFonts.ubuntu(color: Colors.white),),
-                                      ],
-                                    )),
-                                    
+                                      SizedBox(height:10),
+                                 
+                                 Row(
+                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                       children: <Widget>[
+                                         RichText(text: TextSpan(
+                                           text: "Your name", 
+                                          style: TextStyle(fontSize: 14, color: Colors.white38),
+                                           
+                                           children:[
+                                             TextSpan(text:" *",
+                                             style: GoogleFonts.ubuntu(color: Colors.white),),
+                                           ],
+                                         )),
+                                         
 
-                                     
+                                          
 
-                                    Text(
-                                      '${_nameController.text.length} / 32',
-                                      style: TextStyle(fontSize: 14, color: Colors.white38),
-                                      textAlign: TextAlign.left,
-                                    ),
-                                  ],
-                            ),
-                        
-                               ],
+                                         Text(
+                                           '${name.length} / 32',
+                                           style: TextStyle(fontSize: 14, color: Colors.white38),
+                                           textAlign: TextAlign.left,
+                                         ),
+                                       ],
+                                 ),
+
+                                 Padding(
+                                   padding:  EdgeInsets.only(left: size.width/9, top: size.width/5),
+                                   child: Row(
+                                     children: <Widget>[
+                                       ballIndicators(color: Colors.red),
+                                       ballIndicators(),
+                                       ballIndicators(),
+                                       ballIndicators(),
+                                       ballIndicators(),
+                                       ballIndicators(),
+                                       ballIndicators(),
+                                       ballIndicators(),
+                                       ballIndicators(),
+                                       ballIndicators(),
+                                      ballIndicators(),
+                                       ballIndicators(),
+                                       
+                                     ],
+                                   ),
+                                 ),
+                             
+                                    ],
+                                  ),
+                               
+                           
+                             
+                               
+                                 
+                             
+                             
                              ),
-                          
-                      
-                        
-                          
-                            
-                        
-                        
-                        ),
-                      ],
-                    ),
+                           ],
+                         ),
+                       ),
             ),
              Padding(
-               padding: EdgeInsets.only(left:size.width /1.2),
-               child: ClipPath(
-                         clipper: SidebarClipper(),
-                        
-                            child: Container(
-                                
-                                width: size.width * 0.2,
-                                 height: MediaQuery.of(context).size.height,
-                                 decoration: BoxDecoration(
+                  padding: EdgeInsets.only(left:size.width /1.2),
+                  child: ClipPath(
+                            clipper: SidebarClipper(),
+                           
+                               child: Container(
+                                   
+                                   width: size.width * 0.2,
+                                    height: MediaQuery.of(context).size.height,
+                                    decoration: BoxDecoration(
        
-                                gradient: LinearGradient(
-                                  colors: [Colors.white,Colors.white54, Colors.white38],
-                                  begin: Alignment.topRight, end:Alignment.bottomLeft,
-                                  ),
-                                  
-                              ),
+                                   gradient: LinearGradient(
+                                     colors: [Colors.white,Colors.white54, Colors.white38],
+                                     begin: Alignment.topRight, end:Alignment.bottomLeft,
+                                     ),
+                                     
+                                 ),
      
-                          
-                        ),
-                      ),
+                             
+                           ),
+                         ),
              ),
-           Positioned(
-             bottom: size.width/14.4,
-             left:size.width/6.17,
+          //  Positioned(
+          //    bottom: size.width/14.4,
+          //    left:size.width/6.17,
 
-             child: SingleChildScrollView(
-                 child:  (_nameController.text.isEmpty || _nameController.text.length<3) ? buttonUnTapped(context,Colors.transparent,Colors.transparent, () {
-                   
-               }): isButtonPressed==false ? buttonUnTapped(context, Colors.red, Colors.red[200], () {
-                   
-                  setState(() {
-                   name = _nameController.text;
-                    isButtonPressed =!isButtonPressed;
-                  });
+          //    child: SingleChildScrollView(
+          //      child: 
+             
+          //     (name.isEmpty || name.length<3) ? buttonUnTapped(context,Colors.transparent,Colors.transparent, () {
+               
+          //         }): isButtonPressed==false ? buttonUnTapped(context, Colors.red, Colors.red[200], () {
+               
+          //     setState(() {
+               
+          //       isButtonPressed =!isButtonPressed;
+          //     });
 
-                  print(name);
+          //     print(name);
 
-                  
-                  
-                 
-                  
-                  
-                 
+              
+              
+             
+              
+              
+             
 
-
-                   
-               }
-               ): buttonUnTapped(context, Colors.grey, Colors.blueGrey, () {}),
 
                
-                    
-
-
-             ),
-           ),
+          //         }
+          //         ): buttonUnTapped(context, Colors.grey, Colors.blueGrey, () {}),
+          //  ),
+          //  )
           ],
         ),
-                  ),
               
             
       
@@ -883,7 +967,7 @@ Widget bioPage() {
                               ),
             ),
              Padding(
-               padding: EdgeInsets.only(left:size.height/2.21),
+               padding: EdgeInsets.only(left:size.width/1.2),
                child: ClipPath(
                          clipper: SidebarClipper(),
                         
@@ -904,20 +988,20 @@ Widget bioPage() {
                         ),
                       ),
              ),
-           Positioned(
-             bottom: size.width/14.4,
-             left:size.width/6.17,
-             child: SingleChildScrollView(
-                 child:  (age==null) ? buttonUnTapped(context,Colors.transparent,Colors.transparent, () {
+          //  Positioned(
+          //    bottom: size.width/14.4,
+          //    left:size.width/6.17,
+          //    child: SingleChildScrollView(
+          //        child:  (age==null) ? buttonUnTapped(context,Colors.transparent,Colors.transparent, () {
                    
-               }): isButtonPressed2==false ? buttonUnTapped(context, Colors.pink.shade300, Colors.deepOrangeAccent, () {
+          //      }): isButtonPressed2==false ? buttonUnTapped(context, Colors.pink.shade300, Colors.deepOrangeAccent, () {
                    
-                  setState(() {
+          //         setState(() {
                   
-                    isButtonPressed2 =!isButtonPressed2;
-                  });
+          //           isButtonPressed2 =!isButtonPressed2;
+          //         });
 
-                  print(age);
+          //         print(age);
                   
                  
                   
@@ -926,15 +1010,38 @@ Widget bioPage() {
 
 
                    
-               }
-               ): buttonUnTapped(context, Colors.grey, Colors.pink.shade100, () {}),
+          //      }
+          //      ): buttonUnTapped(context, Colors.grey, Colors.pink.shade100, () {}),
 
                
                     
 
 
-             ),
-           ),
+          //    ),
+          //  ),
+
+         Padding(
+                                   padding:  EdgeInsets.only(left: size.width/5, top: size.width*1.5),
+                                   child: Row(
+                                     children: <Widget>[
+                                       ballIndicators(color: Colors.red),
+                                       ballIndicators(color: Colors.blue),
+                                       ballIndicators(),
+                                       ballIndicators(),
+                                       ballIndicators(),
+                                       ballIndicators(),
+                                       ballIndicators(),
+                                       ballIndicators(),
+                                       ballIndicators(),
+                                       ballIndicators(),
+                                      ballIndicators(),
+                                       ballIndicators(),
+                                       
+                                     ],
+                                   ),
+                                 ),
+
+
           ],
         ),
                   ),
@@ -1165,22 +1272,22 @@ Widget bioPage() {
                         ),
                       ),
              ),
-           Padding(
-              padding: EdgeInsets.only( right: size.width/21.6, top:size.width/0.63),
-             child: SingleChildScrollView(
-                 child:  (gender==null) ? buttonUnTapped(context,Colors.transparent,Colors.transparent, () {
+          //  Padding(
+          //     padding: EdgeInsets.only( right: size.width/21.6, top:size.width * 1.35),
+          //    child: SingleChildScrollView(
+          //        child:  (gender==null) ? buttonUnTapped(context,Colors.transparent,Colors.transparent, () {
                    
-               }): isButtonPressed3==false ? buttonUnTapped(context, Colors.yellow.shade400, Colors.redAccent, () {
+          //      }): isButtonPressed3==false ? buttonUnTapped(context, Colors.yellow.shade400, Colors.redAccent, () {
                    
-                  setState(() {
+          //         setState(() {
                   
-                    gender = gender;
-                    interestedIn = interestedIn;
-                    isButtonPressed3 = !isButtonPressed3;
-                  });
+          //           gender = gender;
+          //           interestedIn = interestedIn;
+          //           isButtonPressed3 = !isButtonPressed3;
+          //         });
 
-                  print(gender);
-                  print(interestedIn);
+          //         print(gender);
+          //         print(interestedIn);
 
                   
                   
@@ -1188,15 +1295,36 @@ Widget bioPage() {
 
 
                    
-               }
-               ): buttonUnTapped(context, Colors.grey, Colors.grey, () {}),
+          //      }
+          //      ): buttonUnTapped(context, Colors.grey, Colors.grey, () {}),
 
                
                     
 
 
-             ),
-           ),
+          //    ),
+          //  ),
+           Padding(
+                                   padding:  EdgeInsets.only(left: size.width/5, top: size.width*1.5),
+                                   child: Row(
+                                     children: <Widget>[
+                                       ballIndicators(color: Colors.red),
+                                       ballIndicators(color: Colors.blue),
+                                       ballIndicators(color: Colors.purple),
+                                       ballIndicators(),
+                                       ballIndicators(),
+                                       ballIndicators(),
+                                       ballIndicators(),
+                                       ballIndicators(),
+                                       ballIndicators(),
+                                       ballIndicators(),
+                                      ballIndicators(),
+                                       ballIndicators(),
+                                       
+                                     ],
+                                   ),
+                                 ),
+
           ],
         ),
                   ),
@@ -1235,10 +1363,13 @@ Widget bioPage() {
                         "*Attach a Profile Picture ",
                         style:
                             GoogleFonts.quicksand(color: Colors.white, fontSize: 25, fontWeight: FontWeight.w800),
-                      )),
+                      
+                      textAlign: TextAlign.center,
+                      ),
+                      ),
             
                   Padding(
-                    padding:  EdgeInsets.only(top:size.width/2.27, left:size.width/20),
+                    padding:  EdgeInsets.only(top:size.width/2.27, left:size.width/28),
                     child: GestureDetector(
                                 onTap: () async {
                                    File getPic = await ImagePicker.pickImage(source: ImageSource.gallery,
@@ -1271,7 +1402,7 @@ Widget bioPage() {
                               ),
                   ),
                    Padding(
-                     padding:  EdgeInsets.only(top:size.width/1.6, left:size.width/2.0),
+                     padding:  EdgeInsets.only(top:size.width/1.6, left:size.width/2.15),
                      child: Column(
                                 children: <Widget>[
                                   Text(
@@ -1321,18 +1452,18 @@ Widget bioPage() {
                         ),
                     ),
 
-                  Positioned(
+                  // Positioned(
 
-                     bottom: size.width/14.4,
-                      left:size.width/6.17,
-                    child: photo==null ? buttonUnTapped(context,Colors.transparent, Colors.transparent, () {})
-                    : isButtonPressed4 == false ? buttonUnTapped(context, Colors.deepPurple.shade400, Colors.red.shade400, () {
-                        setState(() {
-                          isButtonPressed4 = !isButtonPressed4;
-                        });
-                        print("Got photo");
-                    }) : buttonTapped(context, (){}),
-                    ),
+                  //    bottom: size.width/14.4,
+                  //     left:size.width/6.17,
+                  //   child: photo==null ? buttonUnTapped(context,Colors.transparent, Colors.transparent, () {})
+                  //   : isButtonPressed4 == false ? buttonUnTapped(context, Colors.deepPurple.shade400, Colors.red.shade400, () {
+                  //       setState(() {
+                  //         isButtonPressed4 = !isButtonPressed4;
+                  //       });
+                  //       print("Got photo");
+                  //   }) : buttonTapped(context, (){}),
+                  //   ),
 
                      
              
@@ -1359,7 +1490,28 @@ Widget bioPage() {
                         ),
                       ),
              ),
+              Padding(
+                                   padding:  EdgeInsets.only(left: size.width/5, top: size.width*1.5),
+                                   child: Row(
+                                     children: <Widget>[
+                                       ballIndicators(color: Colors.red),
+                                       ballIndicators(color: Colors.blue),
+                                       ballIndicators(color: Colors.purple),
+                                       ballIndicators(color: Colors.pink),
+                                       ballIndicators(),
+                                       ballIndicators(),
+                                       ballIndicators(),
+                                       ballIndicators(),
+                                       ballIndicators(),
+                                       ballIndicators(),
+                                      ballIndicators(),
+                                       ballIndicators(),
+                                       
+                                     ],
+                                   ),
+                                 ),
           ],
+          
       ),
       ),
                  ),
@@ -1443,6 +1595,7 @@ Widget bioPage() {
                                   setState(() {
                                         photo3 = photo3;
                                       });
+                                      
 
                                 }
                               },
@@ -1609,29 +1762,50 @@ Widget bioPage() {
                       ),
              ),
 
-              Positioned(
-                bottom: size.width/14.4,
-             left:size.width/6.17,
+            //   Positioned(
+            //     bottom: size.width/14.4,
+            //  left:size.width/6.17,
                 
-                child: isButtonPressed5 == false ? buttonUnTapped(context, Colors.deepOrange.shade400, Colors.white, () async {
-                      setState(() {
-                        isButtonPressed5 = !isButtonPressed5;
-                      });
-                      try{
-                               await uploadImage(photo3, "photo2");
-                               await uploadImage(photo4, "photo3");
+            //     child: isButtonPressed5 == false ? buttonUnTapped(context, Colors.deepOrange.shade400, Colors.white, () async {
+            //           setState(() {
+            //             isButtonPressed5 = !isButtonPressed5;
+            //           });
+            //           try{
+            //                    await uploadImage(photo3, "photo2");
+            //                    await uploadImage(photo4, "photo3");
 
-                              await uploadImage(photo6, "photo4");
-                              await uploadImage(photo7, "photo5");
-                              print("Gallary");
-                      } catch (e) {
+            //                   await uploadImage(photo6, "photo4");
+            //                   await uploadImage(photo7, "photo5");
+            //                   print("Gallary");
+            //           } catch (e) {
 
-                      }
-                }):  buttonTapped(context, () {}),
+            //           }
+            //     }):  buttonTapped(context, () {}),
 
                
 
-              )
+            //   )
+
+             Padding(
+                                   padding:  EdgeInsets.only(left: size.width/5, top: size.width*1.5),
+                                   child: Row(
+                                     children: <Widget>[
+                                       ballIndicators(color: Colors.red),
+                                       ballIndicators(color: Colors.blue),
+                                       ballIndicators(color: Colors.purple),
+                                       ballIndicators(color: Colors.blue),
+                                       ballIndicators(),
+                                       ballIndicators(),
+                                       ballIndicators(),
+                                       ballIndicators(),
+                                       ballIndicators(),
+                                       ballIndicators(),
+                                      ballIndicators(),
+                                       ballIndicators(),
+                                       
+                                     ],
+                                   ),
+                                 ),
           ],
                  ),
       ),
@@ -1664,7 +1838,7 @@ Widget bioPage() {
     
             
             Padding(
-                      padding: EdgeInsets.symmetric(horizontal: size.width/19.7, vertical: size.width/5),
+                      padding: EdgeInsets.symmetric(horizontal: size.width/19.7, vertical: size.width/8),
                       child: Text(
                         "Select your Religion: ",
                         style:
@@ -1673,7 +1847,7 @@ Widget bioPage() {
                       
 
                       Padding(
-                        padding: EdgeInsets.only(left:5, top: size.width/2.7),
+                        padding: EdgeInsets.only(left:5, top: size.width/4),
                         child: Column(
                           children: <Widget>[
                            
@@ -1694,22 +1868,25 @@ Widget bioPage() {
                                   setState(() {
                                     religion ="Hindu";
                                     _hindu =!_hindu;
+                                    
                                   });
+                                  
                               },
-                                trailing: _hindu ? Icon(Icons.check, color: Colors.blue.shade900): Text(""),
+                                trailing:( religion == "Hindu" ) ? Icon(Icons.check, color: Colors.blue.shade900): Text(""),
+                               
                                 ),
                                 Divider(
                                   
                                 ),
                                 ListTile(
-                                title:Text("Cristian", style: GoogleFonts.ubuntu(color: Colors.black, fontSize: 20),),
+                                title:Text("Christian", style: GoogleFonts.ubuntu(color: Colors.black, fontSize: 20),),
                                 onTap: () {
                                   setState(() {
                                     religion ="Christian";
                                     _christian =!_christian;
                                   });
                               },
-                                trailing: _christian ? Icon(Icons.check, color: Colors.blue.shade900): Text(""),
+                                trailing: (religion =="Christian" ) ? Icon(Icons.check, color: Colors.blue.shade900): Text(""),
                                 ),
                                  Divider(
                                   
@@ -1722,7 +1899,7 @@ Widget bioPage() {
                                     _muslim =!_muslim;
                                   });
                               },
-                                trailing: _muslim ? Icon(Icons.check, color: Colors.blue.shade900): Text(""),
+                                trailing: (religion =="Muslim" ) ? Icon(Icons.check, color: Colors.blue.shade900): Text(""),
                                 ),
                                  Divider(
                                   
@@ -1735,20 +1912,20 @@ Widget bioPage() {
                                     _buddhist =!_buddhist;
                                   });
                               },
-                                trailing: _buddhist ? Icon(Icons.check, color: Colors.blue.shade900): Text(""),
+                                trailing: (religion =="Buddhist" ) ? Icon(Icons.check, color: Colors.blue.shade900): Text(""),
                                 ),
                                  Divider(
                                   
                                 ),
                                 ListTile(
-                                title:Text("Sikh", style: GoogleFonts.ubuntu(color: Colors.black, fontSize: 20),),
+                                title:Text("Athiest", style: GoogleFonts.ubuntu(color: Colors.black, fontSize: 20),),
                                 onTap: () {
                                   setState(() {
-                                    religion ="Sikh";
+                                    religion ="Athiest";
                                     _sikh =!_sikh;
                                   });
                               },
-                                trailing: _sikh ? Icon(Icons.check, color:Colors.blue.shade900): Text(""),
+                                trailing: (religion =="Athiest" ) ? Icon(Icons.check, color:Colors.blue.shade900): Text(""),
                                 ),
                                  Divider(
                                   
@@ -1761,7 +1938,7 @@ Widget bioPage() {
                                     _jewish =!_jewish;
                                   });
                               },
-                                trailing: _jewish ? Icon(Icons.check, color: Colors.blue.shade900): Text(""),
+                                trailing: (religion =="Jewish" ) ? Icon(Icons.check, color: Colors.blue.shade900): Text(""),
                                 ),
                                  Divider(
                                   
@@ -1774,7 +1951,7 @@ Widget bioPage() {
                                     _other =!_other;
                                   });
                               },
-                                trailing: _other ? Icon(Icons.check, color: Colors.blue.shade900): Text(""),
+                                trailing: (religion =="Other" ) ? Icon(Icons.check, color: Colors.blue.shade900): Text(""),
                                 ),
 
                                 
@@ -1790,18 +1967,18 @@ Widget bioPage() {
                       ),
             
                  
-                  Positioned(
+                  // Positioned(
 
-                    bottom: size.width/14.4,
-                    left:size.width/6.17,
-                    child: religion==null ? buttonUnTapped(context,Colors.transparent, Colors.transparent, () {})
-                    : isButtonPressed6 == false ? buttonUnTapped(context, Colors.black26, Colors.redAccent, () {
-                        setState(() {
-                          isButtonPressed6 = !isButtonPressed6;
-                        });
-                        print(religion);
-                    }) : buttonTapped(context, (){}),
-                    ),
+                  //   bottom: size.width/14.4,
+                  //   left:size.width/6.17,
+                  //   child: religion==null ? buttonUnTapped(context,Colors.transparent, Colors.transparent, () {})
+                  //   : isButtonPressed6 == false ? buttonUnTapped(context, Colors.black26, Colors.redAccent, () {
+                  //       setState(() {
+                  //         isButtonPressed6 = !isButtonPressed6;
+                  //       });
+                  //       print(religion);
+                  //   }) : buttonTapped(context, (){}),
+                  //   ),
 
                      
              
@@ -1820,6 +1997,26 @@ Widget bioPage() {
                         ),
                       ),
              ),
+               Padding(
+                                   padding:  EdgeInsets.only(left: size.width/5, top: size.width*1.5),
+                                   child: Row(
+                                     children: <Widget>[
+                                       ballIndicators(color: Colors.red),
+                                       ballIndicators(color: Colors.blue),
+                                       ballIndicators(color: Colors.purple),
+                                       ballIndicators(color: Colors.blue),
+                                       ballIndicators(color: Colors.brown),
+                                       ballIndicators(),
+                                       ballIndicators(),
+                                       ballIndicators(),
+                                       ballIndicators(),
+                                       ballIndicators(),
+                                      ballIndicators(),
+                                       ballIndicators(),
+                                       
+                                     ],
+                                   ),
+                                 ),
           ],
       ),
       ),
@@ -1852,7 +2049,7 @@ Widget bioPage() {
     
             
             Padding(
-                      padding: EdgeInsets.symmetric(horizontal: size.width/17.7, vertical: size.width/5),
+                      padding: EdgeInsets.symmetric(horizontal: size.width/17.7, vertical: size.width/8),
                       child: Text(
                         "Where were you raised? ",
                         style:
@@ -1861,7 +2058,7 @@ Widget bioPage() {
                       
 
                       Padding(
-                        padding:  EdgeInsets.only(left:5, top: size.width/2.7),
+                        padding:  EdgeInsets.only(left:5, top: size.width/4),
                         child: Column(
                           children: <Widget>[
                            
@@ -1885,7 +2082,7 @@ Widget bioPage() {
                                     _us =!_us;
                                   });
                               },
-                                trailing: _us ? Icon(Icons.check, color: Colors.white): Text(""),
+                                trailing: (country =="United States" ) ? Icon(Icons.check, color: Colors.white): Text(""),
                                 ),
                                 Divider(
                                   
@@ -1898,7 +2095,7 @@ Widget bioPage() {
                                     _nepal =!_nepal;
                                   });
                               },
-                                trailing: _nepal ? Icon(Icons.check, color: Colors.white): Text(""),
+                                trailing: (country =="Nepal" ) ? Icon(Icons.check, color: Colors.white): Text(""),
                                 ),
                                  Divider(
                                   
@@ -1911,7 +2108,7 @@ Widget bioPage() {
                                     _canada =!_canada;
                                   });
                               },
-                                trailing: _canada ? Icon(Icons.check, color: Colors.white): Text(""),
+                                trailing: (country =="Canada" ) ? Icon(Icons.check, color: Colors.white): Text(""),
                                 ),
                                  Divider(
                                   
@@ -1924,7 +2121,7 @@ Widget bioPage() {
                                     _uk =!_uk;
                                   });
                               },
-                                trailing: _uk ? Icon(Icons.check, color: Colors.white): Text(""),
+                                trailing: (country =="UK" ) ? Icon(Icons.check, color: Colors.white): Text(""),
                                 ),
                                  Divider(
                                   
@@ -1937,7 +2134,7 @@ Widget bioPage() {
                                     _aus =!_aus;
                                   });
                               },
-                                trailing: _aus ? Icon(Icons.check, color:Colors.white): Text(""),
+                                trailing: (country =="Australia" ) ? Icon(Icons.check, color:Colors.white): Text(""),
                                 ),
                                  Divider(
                                   
@@ -1950,7 +2147,7 @@ Widget bioPage() {
                                     _india =!_india;
                                   });
                               },
-                                trailing: _india ? Icon(Icons.check, color: Colors.white): Text(""),
+                                trailing: (country =="India" ) ? Icon(Icons.check, color: Colors.white): Text(""),
                                 ),
                                  Divider(
                                   
@@ -1963,7 +2160,7 @@ Widget bioPage() {
                                     _other1 =!_other1;
                                   });
                               },
-                                trailing: _other1 ? Icon(Icons.check, color: Colors.white): Text(""),
+                                trailing: (country =="Other" ) ? Icon(Icons.check, color: Colors.white): Text(""),
                                 ),
 
                                 
@@ -1979,17 +2176,17 @@ Widget bioPage() {
                       ),
             
                  
-                  Positioned(
+                  // Positioned(
 
-                    bottom: size.width/14.4,
-                     left:size.width/6.17,
-                      child: country==null ? buttonUnTapped(context,Colors.transparent,Colors.transparent, () {})
-                    : isButtonPressed7 == false ? buttonUnTapped(context, Colors.white, Colors.deepOrange, () {
-                        setState(() {
-                          isButtonPressed7 = !isButtonPressed7;
-                        });
-                    }) : buttonTapped(context, (){}),
-                    ),
+                  //   bottom: size.width/14.4,
+                  //    left:size.width/6.17,
+                  //     child: country==null ? buttonUnTapped(context,Colors.transparent,Colors.transparent, () {})
+                  //   : isButtonPressed7 == false ? buttonUnTapped(context, Colors.white, Colors.deepOrange, () {
+                  //       setState(() {
+                  //         isButtonPressed7 = !isButtonPressed7;
+                  //       });
+                  //   }) : buttonTapped(context, (){}),
+                  //   ),
 
                      
              
@@ -2008,6 +2205,26 @@ Widget bioPage() {
                         ),
                       ),
              ),
+               Padding(
+                                   padding:  EdgeInsets.only(left: size.width/5, top: size.width*1.5),
+                                   child: Row(
+                                     children: <Widget>[
+                                       ballIndicators(color: Colors.red),
+                                       ballIndicators(color: Colors.blue),
+                                       ballIndicators(color: Colors.purple),
+                                       ballIndicators(color: Colors.blue),
+                                       ballIndicators(color: Colors.brown),
+                                       ballIndicators(color: Colors.grey),
+                                       ballIndicators(),
+                                       ballIndicators(),
+                                       ballIndicators(),
+                                       ballIndicators(),
+                                      ballIndicators(),
+                                       ballIndicators(),
+                                       
+                                     ],
+                                   ),
+                                 ),
           ],
       ),
       ),
@@ -2033,7 +2250,7 @@ Widget bioPage() {
       child: Stack(
             children: <Widget>[  
       Padding(
-          padding: EdgeInsets.symmetric(horizontal: size.width/19.7, vertical: size.width/5),
+          padding: EdgeInsets.symmetric(horizontal: size.width/19.7, vertical: size.width/8),
           child: Text(
             "Select your community: ",
             style:
@@ -2043,7 +2260,7 @@ Widget bioPage() {
           
 
           Padding(
-            padding:  EdgeInsets.only(top: size.width/3),
+            padding:  EdgeInsets.only(top: size.width/4),
             child: SingleChildScrollView(
                           child: Column(
                 
@@ -2069,7 +2286,7 @@ Widget bioPage() {
                            _brahmin =!_brahmin;
                          });
                         },
-                       trailing: _brahmin ? Icon(Icons.check, color: Colors.deepPurple): Text(""),
+                       trailing: (community =="Brahmin") ? Icon(Icons.check, color: Colors.deepPurple): Text(""),
                        ),
                        Divider(
                          
@@ -2082,7 +2299,7 @@ Widget bioPage() {
                            _chettri =!_chettri;
                          });
                         },
-                       trailing: _chettri ? Icon(Icons.check, color: Colors.deepPurple): Text(""),
+                       trailing: (community =="Chettri") ? Icon(Icons.check, color: Colors.deepPurple): Text(""),
                        ),
                         Divider(
                          
@@ -2095,7 +2312,7 @@ Widget bioPage() {
                            _gurung =!_gurung;
                          });
                         },
-                       trailing: _gurung ? Icon(Icons.check, color: Colors.deepPurple): Text(""),
+                       trailing: (community =="Gurung") ? Icon(Icons.check, color: Colors.deepPurple): Text(""),
                        ),
                         Divider(
                          
@@ -2108,7 +2325,7 @@ Widget bioPage() {
                            _tamang =!_tamang;
                          });
                         },
-                       trailing: _tamang ? Icon(Icons.check, color: Colors.deepPurple): Text(""),
+                       trailing: (community =="Tamang") ? Icon(Icons.check, color: Colors.deepPurple): Text(""),
                        ),
                         Divider(
                          
@@ -2121,21 +2338,9 @@ Widget bioPage() {
                            _newar =!_newar;
                          });
                         },
-                       trailing: _newar ? Icon(Icons.check, color:Colors.deepPurple): Text(""),
+                       trailing: (community =="Newar") ? Icon(Icons.check, color:Colors.deepPurple): Text(""),
                        ),
-                        Divider(
-                         
-                       ),
-                       ListTile(
-                       title:Text("Tharu", style: GoogleFonts.ubuntu(color: Colors.black, fontSize: 20),),
-                       onTap: () {
-                         setState(() {
-                           community ="Tharu";
-                           _tharu =!_tharu;
-                         });
-                        },
-                       trailing: _tharu ? Icon(Icons.check, color:Colors.deepPurple): Text(""),
-                       ),
+                       
                         Divider(
                          
                        ),
@@ -2147,7 +2352,7 @@ Widget bioPage() {
                            _magar =!_magar;
                          });
                         },
-                       trailing: _magar ? Icon(Icons.check, color: Colors.deepPurple): Text(""),
+                       trailing: (community =="Magar") ? Icon(Icons.check, color: Colors.deepPurple): Text(""),
                        ),
                         Divider(
                          
@@ -2160,7 +2365,7 @@ Widget bioPage() {
                            _other2 =!_other2;
                          });
                         },
-                       trailing: _other2 ? Icon(Icons.check, color: Colors.deepPurple): Text(""),
+                       trailing: (community =="Other") ? Icon(Icons.check, color: Colors.deepPurple): Text(""),
                        ),
                        ],
                       ),
@@ -2186,7 +2391,7 @@ Widget bioPage() {
                            _gujrati =!_gujrati;
                          });
                         },
-                       trailing: _gujrati ? Icon(Icons.check, color: Colors.black): Text(""),
+                       trailing: (community =="Gujrati") ? Icon(Icons.check, color: Colors.black): Text(""),
                        ),
                        Divider(
                          
@@ -2199,7 +2404,7 @@ Widget bioPage() {
                            _jatt =!_jatt;
                          });
                         },
-                       trailing: _jatt ? Icon(Icons.check, color: Colors.black): Text(""),
+                       trailing: (community =="Jatt") ? Icon(Icons.check, color: Colors.black): Text(""),
                        ),
                        Divider(
                          
@@ -2212,21 +2417,9 @@ Widget bioPage() {
                            _punjabi =!_punjabi;
                          });
                         },
-                       trailing: _punjabi ? Icon(Icons.check, color: Colors.black): Text(""),
+                       trailing: (community =="Punjabi") ? Icon(Icons.check, color: Colors.black): Text(""),
                        ),
-                        Divider(
-                         
-                       ),
-                       ListTile(
-                       title:Text("Sunni", style: GoogleFonts.ubuntu(color: Colors.black, fontSize: 20),),
-                       onTap: () {
-                         setState(() {
-                           community ="Sunni";
-                           _sunni =!_sunni;
-                         });
-                        },
-                       trailing: _sunni ? Icon(Icons.check, color: Colors.black): Text(""),
-                       ),
+                       
                         Divider(
                          
                        ),
@@ -2238,20 +2431,20 @@ Widget bioPage() {
                            _shia =!_shia;
                          });
                         },
-                       trailing: _shia ? Icon(Icons.check, color: Colors.black): Text(""),
+                       trailing: (community =="Shia") ? Icon(Icons.check, color: Colors.black): Text(""),
                        ),
                         Divider(
                          
                        ),
                        ListTile(
-                       title:Text("Sindhi", style: GoogleFonts.ubuntu(color: Colors.black, fontSize: 20),),
+                       title:Text("Other", style: GoogleFonts.ubuntu(color: Colors.black, fontSize: 20),),
                        onTap: () {
                          setState(() {
-                           community ="Sindhi";
+                           community ="Other";
                            _sindhi =!_sindhi;
                          });
                         },
-                       trailing: _sindhi ? Icon(Icons.check, color: Colors.black): Text(""),
+                       trailing: (community =="Other") ? Icon(Icons.check, color: Colors.black): Text(""),
                        ),
                         Divider(
                          
@@ -2264,7 +2457,7 @@ Widget bioPage() {
                            _bengali =!_bengali;
                          });
                         },
-                       trailing: _bengali ? Icon(Icons.check, color: Colors.black): Text(""),
+                       trailing: (community =="Bengali") ? Icon(Icons.check, color: Colors.black): Text(""),
                        ),
                         Divider(
                          
@@ -2277,7 +2470,7 @@ Widget bioPage() {
                            _tamil =!_tamil;
                          });
                         },
-                       trailing: _tamil ? Icon(Icons.check, color: Colors.black): Text(""),
+                       trailing: (community =="Tamil") ? Icon(Icons.check, color: Colors.black): Text(""),
                        ),
                         Divider(
                          
@@ -2307,7 +2500,7 @@ Widget bioPage() {
                            _brahmin =!_brahmin;
                          });
                         },
-                       trailing: _brahmin ? Icon(Icons.check, color: Colors.deepPurple): Text(""),
+                       trailing: (community =="Brahmin") ? Icon(Icons.check, color: Colors.deepPurple): Text(""),
                        ),
                        Divider(
                          
@@ -2320,7 +2513,7 @@ Widget bioPage() {
                            _chettri =!_chettri;
                          });
                         },
-                       trailing: _chettri ? Icon(Icons.check, color: Colors.deepPurple): Text(""),
+                       trailing: (community =="Chettri") ? Icon(Icons.check, color: Colors.deepPurple): Text(""),
                        ),
                         Divider(
                          
@@ -2333,7 +2526,7 @@ Widget bioPage() {
                            _gurung =!_gurung;
                          });
                         },
-                       trailing: _gurung ? Icon(Icons.check, color: Colors.deepPurple): Text(""),
+                       trailing: (community =="Gurung") ? Icon(Icons.check, color: Colors.deepPurple): Text(""),
                        ),
                         Divider(
                          
@@ -2346,7 +2539,7 @@ Widget bioPage() {
                            _gujrati =!_gujrati;
                          });
                         },
-                       trailing: _gujrati ? Icon(Icons.check, color: Colors.black): Text(""),
+                       trailing: (community =="Gujrati") ? Icon(Icons.check, color: Colors.black): Text(""),
                        ),
                        Divider(
                          
@@ -2359,7 +2552,7 @@ Widget bioPage() {
                            _jatt =!_jatt;
                          });
                         },
-                       trailing: _jatt ? Icon(Icons.check, color: Colors.black): Text(""),
+                       trailing: (community =="Jatt") ? Icon(Icons.check, color: Colors.black): Text(""),
                        ),
                        Divider(
                          
@@ -2372,21 +2565,9 @@ Widget bioPage() {
                            _punjabi =!_punjabi;
                          });
                         },
-                       trailing: _punjabi ? Icon(Icons.check, color: Colors.black): Text(""),
+                       trailing: (community =="Punjabi") ? Icon(Icons.check, color: Colors.black): Text(""),
                        ),
-                        Divider(
-                         
-                       ),
-                       ListTile(
-                       title:Text("Sunni", style: GoogleFonts.ubuntu(color: Colors.black, fontSize: 20),),
-                       onTap: () {
-                         setState(() {
-                           community ="Sunni";
-                           _sunni =!_sunni;
-                         });
-                        },
-                       trailing: _sunni ? Icon(Icons.check, color: Colors.black): Text(""),
-                       ),
+                       
                         Divider(
                          
                        ),
@@ -2398,7 +2579,7 @@ Widget bioPage() {
                            _other2 =!_other2;
                          });
                         },
-                       trailing: _other2 ? Icon(Icons.check, color: Colors.deepPurple): Text(""),
+                       trailing: (community =="Other") ? Icon(Icons.check, color: Colors.deepPurple): Text(""),
                        ),
                        Divider(
                          
@@ -2407,7 +2588,7 @@ Widget bioPage() {
                       ),
                     ),
                   ),
-
+ 
 
                   
                   
@@ -2418,18 +2599,18 @@ Widget bioPage() {
           ),
         
              
-      Positioned(
+      // Positioned(
 
-            bottom: size.width/14.4,
-             left:size.width/6.17,
-        child: community==null ? buttonUnTapped(context,Colors.transparent, Colors.transparent, () {})
-        : isButtonPressed8 == false ? buttonUnTapped(context, Colors.deepOrange, Colors.orange, () {
-            setState(() {
-              isButtonPressed8 = !isButtonPressed8;
-            });
-            print(community);
-        }) : buttonTapped(context, (){}),
-        ),
+      //       bottom: size.width/14.4,
+      //        left:size.width/6.17,
+      //   child: community==null ? buttonUnTapped(context,Colors.transparent, Colors.transparent, () {})
+      //   : isButtonPressed8 == false ? buttonUnTapped(context, Colors.deepOrange, Colors.orange, () {
+      //       setState(() {
+      //         isButtonPressed8 = !isButtonPressed8;
+      //       });
+      //       print(community);
+      //   }) : buttonTapped(context, (){}),
+      //   ),
 
          
          
@@ -2448,7 +2629,28 @@ Widget bioPage() {
             ),
           ),
          ),
+         Padding(
+                                   padding:  EdgeInsets.only(left: size.width/5, top: size.width*1.5),
+                                   child: Row(
+                                     children: <Widget>[
+                                       ballIndicators(color: Colors.red),
+                                       ballIndicators(color: Colors.blue),
+                                       ballIndicators(color: Colors.purple),
+                                       ballIndicators(color: Colors.blue),
+                                       ballIndicators(color: Colors.brown),
+                                       ballIndicators(color: Colors.grey),
+                                       ballIndicators(color: Colors.lime),
+                                       ballIndicators(color: Colors.tealAccent),
+                                       ballIndicators(),
+                                       ballIndicators(),
+                                      ballIndicators(),
+                                       ballIndicators(),
+                                       
+                                     ],
+                                   ),
+                                 ),
       ],
+      
           ),
       ),
                  
@@ -2478,7 +2680,7 @@ Widget bioPage() {
     
             
             Padding(
-                      padding: EdgeInsets.symmetric(horizontal: size.width/19.63, vertical: size.width/5),
+                      padding: EdgeInsets.symmetric(horizontal: size.width/19.63, vertical: size.width/8),
                       child: Text(
                         "How tall are you? ",
                         style:
@@ -2487,7 +2689,7 @@ Widget bioPage() {
                       
 
                       Padding(
-                        padding: EdgeInsets.only(left:5, top: size.width/2.7),
+                        padding: EdgeInsets.only(left:5, top: size.width/4),
                         child: Column(
                           children: <Widget>[
                            
@@ -2511,7 +2713,7 @@ Widget bioPage() {
                                     _four =!_four;
                                   });
                               },
-                                trailing: (_four && heightP !=null) ? Icon(Icons.check, color: Colors.white): Text(""),
+                                trailing: (heightP =="4'7 - 4'10") ? Icon(Icons.check, color: Colors.white): Text(""),
                                 ),
                                 Divider(
                                   
@@ -2524,7 +2726,7 @@ Widget bioPage() {
                                     _five =!_five;
                                   });
                               },
-                                trailing: (_five && heightP !=null) ? Icon(Icons.check, color: Colors.white): Text(""),
+                                trailing: (heightP =="4'10 - 5'5") ? Icon(Icons.check, color: Colors.white): Text(""),
                                 ),
                                  Divider(
                                   
@@ -2537,7 +2739,7 @@ Widget bioPage() {
                                     _sadefive =!_sadefive;
                                   });
                               },
-                                trailing: (_sadefive && heightP !=null) ? Icon(Icons.check, color: Colors.white): Text(""),
+                                trailing: (heightP == "5'5 - 5'8") ? Icon(Icons.check, color: Colors.white): Text(""),
                                 ),
                                  Divider(
                                   
@@ -2550,7 +2752,7 @@ Widget bioPage() {
                                     _fiveten =!_fiveten;
                                   });
                               },
-                                trailing: (_fiveten && heightP !=null)? Icon(Icons.check, color: Colors.white): Text(""),
+                                trailing: (heightP == "5'8 - 6'" )? Icon(Icons.check, color: Colors.white): Text(""),
                                 ),
                                  Divider(
                                   
@@ -2563,7 +2765,7 @@ Widget bioPage() {
                                     _cha =!_cha;
                                   });
                               },
-                                trailing: (_cha && heightP !=null)? Icon(Icons.check, color:Colors.white): Text(""),
+                                trailing: (heightP == "6' - 6'5")? Icon(Icons.check, color:Colors.white): Text(""),
                                 ),
                                  Divider(
                                   
@@ -2576,7 +2778,7 @@ Widget bioPage() {
                                     _badi =!_badi;
                                   });
                               },
-                                trailing: (_badi && heightP !=null) ? Icon(Icons.check, color: Colors.white): Text(""),
+                                trailing: (heightP == "6'5 + ") ? Icon(Icons.check, color: Colors.white): Text(""),
                                 ),
                                 
 
@@ -2593,19 +2795,19 @@ Widget bioPage() {
                       ),
             
                  
-                  Positioned(
+            //       Positioned(
 
-                     bottom: size.width/14.4,
-             left:size.width/6.17,
-                    child: heightP==null ? buttonUnTapped(context, Colors.transparent, Colors.transparent,() {})
-                    : isButtonPressed9 == false ? buttonUnTapped(context, Colors.black, Colors.white,  () {
-                        setState(() {
-                          isButtonPressed9 = !isButtonPressed9;
-                        });
-                        print(heightP);
+            //          bottom: size.width/14.4,
+            //  left:size.width/6.17,
+            //         child: heightP==null ? buttonUnTapped(context, Colors.transparent, Colors.transparent,() {})
+            //         : isButtonPressed9 == false ? buttonUnTapped(context, Colors.black, Colors.white,  () {
+            //             setState(() {
+            //               isButtonPressed9 = !isButtonPressed9;
+            //             });
+            //             print(heightP);
                         
-                    }) : buttonTapped(context, (){}),
-                    ),
+            //         }) : buttonTapped(context, (){}),
+            //         ),
 
                      
              
@@ -2631,6 +2833,26 @@ Widget bioPage() {
                         ),
                       ),
              ),
+               Padding(
+                                   padding:  EdgeInsets.only(left: size.width/5, top: size.width*1.5),
+                                   child: Row(
+                                     children: <Widget>[
+                                       ballIndicators(color: Colors.red),
+                                       ballIndicators(color: Colors.blue),
+                                       ballIndicators(color: Colors.purple),
+                                       ballIndicators(color: Colors.blue),
+                                       ballIndicators(color: Colors.brown),
+                                       ballIndicators(color: Colors.grey),
+                                       ballIndicators(color: Colors.lime),
+                                       ballIndicators(color: Colors.tealAccent),
+                                       ballIndicators(color: Colors.yellow),
+                                       ballIndicators(),
+                                      ballIndicators(),
+                                       ballIndicators(),
+                                       
+                                     ],
+                                   ),
+                                 ),
           ],
       ),
       ),
@@ -2813,17 +3035,17 @@ Widget bioPage() {
                       ),
             
                  
-                  Positioned(
+            //       Positioned(
 
-                     bottom: size.width/14.4,
-             left:size.width/6.17,
-                    child: isButtonPressed10 == false ? buttonUnTapped(context, Colors.deepOrange, Colors.deepOrange, () {
-                        setState(() {
-                          isButtonPressed10 = !isButtonPressed10;
-                        });
+            //          bottom: size.width/14.4,
+            //  left:size.width/6.17,
+            //         child: isButtonPressed10 == false ? buttonUnTapped(context, Colors.deepOrange, Colors.deepOrange, () {
+            //             setState(() {
+            //               isButtonPressed10 = !isButtonPressed10;
+            //             });
                         
-                    }) : buttonTapped(context, (){}),
-                    ),
+            //         }) : buttonTapped(context, (){}),
+            //         ),
 
                      
              
@@ -2848,6 +3070,26 @@ Widget bioPage() {
                         ),
                       ),
              ),
+             Padding(
+                                   padding:  EdgeInsets.only(left: size.width/5, top: size.width*1.5),
+                                   child: Row(
+                                     children: <Widget>[
+                                       ballIndicators(color: Colors.red),
+                                       ballIndicators(color: Colors.blue),
+                                       ballIndicators(color: Colors.purple),
+                                       ballIndicators(color: Colors.blue),
+                                       ballIndicators(color: Colors.brown),
+                                       ballIndicators(color: Colors.grey),
+                                       ballIndicators(color: Colors.lime),
+                                       ballIndicators(color: Colors.tealAccent),
+                                       ballIndicators(color: Colors.yellow),
+                                       ballIndicators(color: Colors.black),
+                                      ballIndicators(),
+                                       ballIndicators(),
+                                       
+                                     ],
+                                   ),
+                                 ),
           ],
       ),
       ),
@@ -2990,18 +3232,18 @@ Container(
                       ),
             
                  
-                  Positioned(
+            //       Positioned(
 
-                     bottom: size.width/14.4,
-             left:size.width/6.17,
-                    child: isButtonPressed11 == false ? buttonUnTapped(context, Colors.deepOrange, Colors.deepOrange, () {
-                        setState(() {
-                          isButtonPressed11 = !isButtonPressed11;
-                        });
+            //          bottom: size.width/14.4,
+            //  left:size.width/6.17,
+            //         child: isButtonPressed11 == false ? buttonUnTapped(context, Colors.deepOrange, Colors.deepOrange, () {
+            //             setState(() {
+            //               isButtonPressed11 = !isButtonPressed11;
+            //             });
 
                         
-                    }) : buttonTapped(context, (){}),
-                    ),
+            //         }) : buttonTapped(context, (){}),
+            //         ),
 
                      
              
@@ -3026,6 +3268,26 @@ Container(
                         ),
                       ),
              ),
+              Padding(
+                                   padding:  EdgeInsets.only(left: size.width/5, top: size.width*1.5),
+                                   child: Row(
+                                     children: <Widget>[
+                                       ballIndicators(color: Colors.red),
+                                       ballIndicators(color: Colors.blue),
+                                       ballIndicators(color: Colors.purple),
+                                       ballIndicators(color: Colors.blue),
+                                       ballIndicators(color: Colors.brown),
+                                       ballIndicators(color: Colors.grey),
+                                       ballIndicators(color: Colors.lime),
+                                       ballIndicators(color: Colors.tealAccent),
+                                       ballIndicators(color: Colors.yellow),
+                                       ballIndicators(color: Colors.black),
+                                      ballIndicators(color: Colors.orangeAccent),
+                                       ballIndicators(),
+                                       
+                                     ],
+                                   ),
+                                 ),
           ],
       ),
       ),
@@ -3055,7 +3317,7 @@ Container(
     
             
             Padding(
-                      padding: EdgeInsets.symmetric(horizontal: size.width/28.8, vertical: size.width/5),
+                      padding: EdgeInsets.symmetric(horizontal: size.width/26, vertical: size.width/5),
                       child: Text(
                         "We need your permissions: ",
                         style:
@@ -3147,7 +3409,7 @@ Container(
 
                         Navigator.push(context, MaterialPageRoute(builder: (context) => bioPage()));
                         
-                    }, "Lets get Started") : buttonTapped(context, (){}),
+                    }, "Save") : buttonTapped(context, (){}),
                     ),
 
                      
@@ -3173,6 +3435,26 @@ Container(
                         ),
                       ),
              ),
+              Padding(
+                                   padding:  EdgeInsets.only(left: size.width/5, top: size.width*1.3),
+                                   child: Row(
+                                     children: <Widget>[
+                                       ballIndicators(color: Colors.red),
+                                       ballIndicators(color: Colors.blue),
+                                       ballIndicators(color: Colors.purple),
+                                       ballIndicators(color: Colors.blue),
+                                       ballIndicators(color: Colors.brown),
+                                       ballIndicators(color: Colors.grey),
+                                       ballIndicators(color: Colors.lime),
+                                       ballIndicators(color: Colors.tealAccent),
+                                       ballIndicators(color: Colors.yellow),
+                                       ballIndicators(color: Colors.black),
+                                      ballIndicators(color: Colors.orangeAccent),
+                                       ballIndicators(color: Colors.amber),
+                                       
+                                     ],
+                                   ),
+                                 ),
           ],
       ),
       ),
@@ -3190,9 +3472,16 @@ Container(
     );
   }
 
+
   @override
   void dispose() {
-    // _nameController.dispose();
+    _nameController.dispose();
+    _jobController.dispose();
+    _salaryController.dispose();
+    _schoolController.dispose();
+    _instaController.dispose();
+    _gotraController.dispose();
+    _bioController.dispose();
 
     super.dispose();
   }

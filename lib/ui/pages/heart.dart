@@ -1,6 +1,4 @@
 
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -11,8 +9,6 @@ import 'package:merosathi/ui/pages/matchTab.dart';
 import 'package:merosathi/ui/pages/likesTab.dart';
 import 'package:merosathi/ui/pages/my_profile.dart';
 import 'package:merosathi/ui/pages/search.dart';
-import 'package:rxdart/rxdart.dart';
-import 'package:merosathi/repositories/matchesRepository.dart';
 import 'package:merosathi/ui/widgets/animations/slide_tansition.dart';
 class MenuItem {
   final String name;
@@ -111,6 +107,7 @@ class _HeartState extends State<Heart> {
     return DefaultTabController(
       length: 2,
        child: Scaffold(
+         
          appBar: PreferredSize(
          preferredSize: MediaQuery.of(context).size/10,
          child: AppBar(
@@ -148,7 +145,8 @@ class _HeartState extends State<Heart> {
          ),
 
          body: TabBarView(
-            children: pages),
+           
+              children: pages),
 
        bottomNavigationBar:Container(
       

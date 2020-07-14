@@ -19,6 +19,7 @@ class User {
   Timestamp age;
   GeoPoint location;
   bool live;
+  
 
   User({
     this.uid,
@@ -38,7 +39,8 @@ class User {
     this.religion,
     this.education,
     this.insta,
-    this.live
+    this.live,
+    
     
   });
 }

@@ -1,8 +1,10 @@
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:merosathi/bloc/authentication/authentication_bloc.dart';
 import 'package:merosathi/bloc/authentication/authentication_event.dart';
 import 'package:merosathi/bloc/signup/bloc.dart';
@@ -32,6 +34,8 @@ class _SignUpFormState extends State<SignUpForm> {
     return isPopulated && !state.isSubmitting;
   }
 
+  GoogleSignIn _googleSignIn = GoogleSignIn(scopes:['email']);
+  FirebaseAuth _auth;
   @override
   void initState() {
     //_signUpBloc = SignUpBloc(userRepository: _userRepository);
@@ -77,34 +81,261 @@ class _SignUpFormState extends State<SignUpForm> {
         }
 
         if (state.isSuccess) {
-          print("isSuccess");
+         // print("isSuccess");
           BlocProvider.of<AuthenticationBloc>(context).add(LoggedIn());
-          Navigator.of(context).pop();
+           Navigator.popUntil(context, ModalRoute.withName("/"));
         }
       },
       child: BlocBuilder<SignUpBloc, SignUpState>(
         builder: ( context,  state) {
-          return Scaffold(
-      body: CustomPaint(
-        painter: BackgroundSignUp(),
-        child: Stack(
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 35),
-              child: Column(
-                children: <Widget>[
-                  _getHeader(),
-                  _getTextFields(state),
-                  _getSignIn(),
-                  _getBottomRow(context),
-                ],
+           return Scaffold(
+      body: SingleChildScrollView(
+        child: CustomPaint(
+          painter: BackgroundSignIn(),
+                  child: Container(
+            child: Container(
+              height: MediaQuery.of(context).size.height,
+              width: MediaQuery.of(context).size.width,
+              
+              child: SafeArea(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: <Widget>[
+                   
+                   _getHeader(),
+
+                    Container(
+                      padding: EdgeInsets.symmetric(horizontal: size.width * 0.1,vertical: size.width*0.1),
+                      height: MediaQuery.of(context).size.height * 0.70,
+                      width: MediaQuery.of(context).size.width,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors:  [Colors.black12, Colors.black],
+                          begin: Alignment.topCenter, end: Alignment.bottomCenter,
+                        ),
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(25),
+                          topRight: Radius.circular(25)
+                        )
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: <Widget>[
+                          
+                          SizedBox(height: size.width/3),
+                             
+                TextFormField(
+                          controller: _emailController,
+                         autovalidate: true,
+                        validator: (_) {
+                        return !state.isEmailValid ? "Invalid Email" : null;
+                             },
+                          decoration: InputDecoration(
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(30),
+                              borderSide: BorderSide(color: Colors.lightGreen, width:2),
+                              
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius:BorderRadius.circular(30),
+                              borderSide: BorderSide(color: Colors.white, width:2)
+                            ),
+                            border: InputBorder.none,
+
+                            contentPadding:
+                                EdgeInsets.symmetric(horizontal: size.width / 20,vertical: size.width/30),
+                            labelStyle: GoogleFonts.ubuntu(
+                              color: Colors.black,
+                              fontSize: 20,
+                            ),
+                            
+                            hintText: "Email",
+                            hintStyle: GoogleFonts.ubuntu(
+                              color: Colors.black38,
+                            ),
+                            fillColor: Colors.black,
+                           
+                            focusColor: Colors.white,
+                            
+                            
+                          ),
+                          cursorColor: Colors.black,
+                          textAlign: TextAlign.left,
+                        ),
+                      
+    
+                          SizedBox(height: 10),
+                  
+                    TextFormField(
+                          controller: _passwordController,
+                          autovalidate: true,
+                          autocorrect: false,
+                          obscureText: true,
+                          validator: (_) {
+                            return !state.isPasswordValid ? "Invalid Password" : null;
+                         },
+                         
+                          decoration: InputDecoration(
+                            
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: Colors.lightGreen, width: 2),
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                          border: InputBorder.none,
+                            enabledBorder:  OutlineInputBorder(
+                            
+                              borderRadius: BorderRadius.circular(30,
+                              ),
+                              
+                              
+                              
+                              borderSide:  BorderSide(color: Colors.white, width: 2),
+                            ),
+                            contentPadding:
+                                EdgeInsets.symmetric(horizontal: size.width / 20,vertical: size.width/30),
+                            labelStyle: GoogleFonts.ubuntu(
+                              color: Colors.white,
+                              fontSize: 20,
+                            ),
+                            
+                            hintText: "Password",
+                            hintStyle: GoogleFonts.ubuntu(
+                              color: Colors.black38,
+                            ),
+                            fillColor: Colors.black,
+                            
+                            focusColor: Colors.white,
+                            
+                            
+                          ),
+                          cursorColor: Colors.black,
+                          textAlign: TextAlign.left,
+                        ),
+                  
+                
+                Spacer(),
+                GestureDetector(
+                  onTap: () async {
+                    try{
+                   GoogleSignInAccount googleSignInAccount =  await _googleSignIn.signIn();
+                    GoogleSignInAuthentication googleSignInAuthentication = await googleSignInAccount.authentication;
+                    
+
+                    AuthCredential credential = GoogleAuthProvider.getCredential(idToken: googleSignInAuthentication.idToken, accessToken: googleSignInAuthentication.accessToken);
+                    await  _auth.signInWithCredential(credential);
+                                       
+                   
+                   BlocProvider.of<AuthenticationBloc>(context).add(LoggedIn());
+
+                    } catch (e) {
+
+                    }
+
+                  },
+                  child: Icon(FontAwesomeIcons.google, color: Colors.white),
+
+
+                ),
+                 Center(
+                   child: Container(
+                              height: size.width* 0.13,
+                              width: size.width*0.4,
+
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(20),
+                                color: Colors.green
+                              ),
+                              child: GestureDetector(
+                                onTap: () {
+                                      _onFormSubmitted(); 
+                                      
+                                },
+                                child: Center(
+                                  child: Text("Create account", style: GoogleFonts.ubuntu(color: Colors.white),)
+                                ),
+                              ),
+                            ),
+                 ),
+
+
+
+                         Spacer(),
+                         
+
+                          Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: <Widget>[
+                            Text("Already have an account? ",
+                            style: GoogleFonts.ubuntu(fontSize:12, color: Colors.white),
+                            ),
+
+                            
+                            
+
+
+                             GestureDetector(
+                              onTap: () {
+                          Navigator.of(context).pop();
+            
+            
+                              },
+                              child: Container(
+                                height: size.width * 0.08,
+                                width: size.width /4,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(30),
+                                  color: Colors.transparent
+                                  
+                                ),
+                                child: Center(child: Text("Log In", style: GoogleFonts.ubuntu(color:Colors.blue, fontSize: 16),)),
+                              ),
+                            ),
+
+
+                          ],
+                            ),
+
+
+                         
+
+                          
+                        ],
+                      ),
+                    )
+
+                  ],
+                ),
               ),
             ),
-            _getBackBtn()
-          ],
+          ),
         ),
       ),
     );
+
+
+
+    //       return Scaffold(
+    //   body: CustomPaint(
+    //     painter: BackgroundSignUp(),
+    //     child: Stack(
+    //       children: <Widget>[
+    //         Padding(
+    //           padding: const EdgeInsets.symmetric(horizontal: 35),
+    //           child: Column(
+    //             children: <Widget>[
+    //               _getHeader(),
+    //               _getTextFields(state),
+    //               _getSignIn(),
+    //               _getBottomRow(context),
+    //             ],
+    //           ),
+    //         ),
+    //         _getBackBtn()
+    //       ],
+    //     ),
+    //   ),
+    // );
         },
       ),
     );
@@ -126,6 +357,7 @@ class _SignUpFormState extends State<SignUpForm> {
   );
 }
 _getBottomRow(context) {
+  Size size = MediaQuery.of(context).size;
   return Expanded(
     flex: 1,
     child: Row(
@@ -135,15 +367,18 @@ _getBottomRow(context) {
           onTap: (){
             Navigator.pop(context);
           },
-                  child: Text(
-            'Sign in',
-            style: GoogleFonts.raleway(
-              color: Colors.white,
-              fontSize: 15,
-              fontWeight: FontWeight.w500,
-              decoration: TextDecoration.underline,
-            ),
-          ),
+                  child: Container(
+                          height: size.width/12,
+                          width: size.width/3,
+                          decoration: BoxDecoration(
+                            color: Colors.black,
+                            borderRadius: BorderRadius.circular(20),
+
+                          ),
+                          child: Center(child: Text("Sign In", style: GoogleFonts.ubuntu(color:Colors.white),)),
+                          
+                        ),
+                     
         ),
         Text(
           '',
@@ -202,7 +437,7 @@ _getTextFields(SignUpState state) {
             
             decoration: InputDecoration(
               enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white)),
-              labelText: 'Name', labelStyle: GoogleFonts.raleway(color: Colors.white)),
+              labelText: 'Name', labelStyle: GoogleFonts.ubuntu(color: Colors.white)),
           ),
           SizedBox(
             height: 15,
@@ -215,7 +450,7 @@ _getTextFields(SignUpState state) {
             },
             decoration: InputDecoration(
               enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white)),
-              labelText: 'Email', labelStyle: GoogleFonts.raleway(color: Colors.white)),
+              labelText: 'Email', labelStyle: GoogleFonts.ubuntu(color: Colors.white)),
           ),
           SizedBox(
             height: 15,
@@ -230,7 +465,7 @@ _getTextFields(SignUpState state) {
             },
             decoration: InputDecoration(
               enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white)),
-              labelText: 'Password', labelStyle: GoogleFonts.raleway(color: Colors.white)),
+              labelText: 'Password', labelStyle: GoogleFonts.ubuntu(color: Colors.white)),
           ),
           SizedBox(
             height: 25,
@@ -243,12 +478,31 @@ _getTextFields(SignUpState state) {
 
 _getHeader() {
   return Expanded(
-    flex: 3,
+    
     child: Container(
-      alignment: Alignment.bottomLeft,
-      child: Text(
-        'Create\nAccount',
-        style: GoogleFonts.raleway(color: Colors.white, fontSize: 40),
+      
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          IconButton(icon: Icon(Icons.arrow_back), onPressed: () {
+            Navigator.of(context).pop();
+          }),
+
+          Center(
+              
+            child: Padding(
+              padding: const EdgeInsets.only(left: 20.0),
+              child: Text(
+                'Welcome to JODI',
+                style: GoogleFonts.shadowsIntoLight(color: Colors.white, fontSize: 40,),
+                textAlign: TextAlign.center,
+                //  TextStyle(color: Colors.white, fontSize: 40, fontFamily:),
+              ),
+            ),
+          ),
+          
+        ],
       ),
     ),
   );
@@ -280,7 +534,7 @@ _getHeader() {
   }
 }
 
-class BackgroundSignUp extends CustomPainter {
+class BackgroundSignIn extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     var sw = size.width;
@@ -294,20 +548,30 @@ class BackgroundSignUp extends CustomPainter {
 
     Path blueWave = Path();
     blueWave.lineTo(sw, 0);
-    blueWave.lineTo(sw, sh * 0.65);
-    blueWave.cubicTo(sw * 0.8, sh * 0.8, sw * 0.55, sh * 0.8, sw * 0.45, sh);
-    blueWave.lineTo(0, sh);
+    blueWave.lineTo(sw, sh * 0.5);
+    blueWave.quadraticBezierTo(sw * 0.5, sh * 0.45, sw * 0.2, 0);
     blueWave.close();
-    paint.color = Colors.red.shade300;
+    paint.color = Colors.blue.shade900;
     canvas.drawPath(blueWave, paint);
 
     Path greyWave = Path();
     greyWave.lineTo(sw, 0);
-    greyWave.lineTo(sw, sh * 0.3);
-    greyWave.cubicTo(sw * 0.65, sh * 0.45, sw * 0.25, sh * 0.35, 0, sh * 0.5);
+    greyWave.lineTo(sw, sh * 0.1);
+    greyWave.cubicTo(
+        sw * 0.95, sh * 0.15, sw * 0.65, sh * 0.15, sw * 0.6, sh * 0.38);
+    greyWave.cubicTo(sw * 0.52, sh * 0.52, sw * 0.05, sh * 0.45, 0, sh * 0.4);
     greyWave.close();
-    paint.color = Colors.orangeAccent;
+    paint.color = Colors.black;
     canvas.drawPath(greyWave, paint);
+
+    Path yellowWave = Path();
+    yellowWave.lineTo(sw * 0.7, 0);
+    yellowWave.cubicTo(
+        sw * 0.6, sh * 0.05, sw * 0.27, sh * 0.01, sw * 0.18, sh * 0.12);
+    yellowWave.quadraticBezierTo(sw * 0.12, sh * 0.2, 0, sh * 0.2);
+    yellowWave.close();
+    paint.color = Colors.deepOrange;
+    canvas.drawPath(yellowWave, paint);
   }
 
   @override

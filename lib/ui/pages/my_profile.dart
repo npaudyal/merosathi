@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:focused_menu/focused_menu.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:merosathi/bloc/authentication/bloc.dart';
 import 'package:merosathi/models/user.dart';
@@ -46,6 +47,7 @@ class _MyProfileState extends State<MyProfile> {
 
   int count, count1, count2;
   List<Container> feed = [];
+  
   List items = [
     MenuItem(x: -1.0, name: 'lak', color: Colors.red),
     MenuItem(x: -0.3, name: 'message', color: Colors.purple),
@@ -55,7 +57,7 @@ class _MyProfileState extends State<MyProfile> {
 
   MenuItem active;
   
-  bool toggleLive = false;
+ 
 
   @override
   void initState() {
@@ -63,6 +65,8 @@ class _MyProfileState extends State<MyProfile> {
 
     super.initState();
   }
+
+  
 
   Future getImageURL() async {
     for (int i = 1; i <= 5; i++) {
@@ -77,10 +81,12 @@ class _MyProfileState extends State<MyProfile> {
 
         images.add(url);
       } catch (e) {
-        print(e);
+        //print(e);
       }
     }
   }
+
+  
 
   getCount() async {
     try {
@@ -101,6 +107,9 @@ class _MyProfileState extends State<MyProfile> {
           .document(widget.currentUserId)
           .collection("matchedList")
           .getDocuments();
+
+     
+     
 
       if (count == null) count = 0;
       if (count1 == null) count1 = 0;
@@ -160,12 +169,42 @@ class _MyProfileState extends State<MyProfile> {
     );
   }
 
+  User user1 = new User();
+
+   Future getUserInfo(currentUserId) async {
+    await Firestore.instance
+        .collection("users")
+        .document(currentUserId)
+        .get()
+        .then((data) {
+      
+        user1.bio = data['bio'];
+        user1.job = data['job'];
+        user1.education = data['education'];
+        user1.religion = data['religion'];
+        user1.salary = data['salary'];
+        user1.gotra = data['gotra'];
+        user1.name = data['name'];
+        user1.location = data['location'];
+        user1.heightP = data['height'];
+        user1.community = data['community'];
+        user1.uid = data['uid'];
+        user1.gender = data['gender'];
+        user1.interestedIn = data['interestedIn'];
+        user1.photo = data['photoUrl'];
+        user1.age = data['age'];
+        user1.country = data['country'];
+        user1.live = data['live'];
+     
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     images.clear();
     Size size = MediaQuery.of(context).size;
     return FutureBuilder(
-        future: getImageURL(),
+        future: Future.wait([getImageURL(), getUserInfo(widget.currentUserId)]),
         builder: (context, snapshot) {
           switch (snapshot.connectionState) {
             case ConnectionState.none:
@@ -209,6 +248,71 @@ class _MyProfileState extends State<MyProfile> {
                   children: <Widget>[
                     CustomSocialHeader(currentUser, images),
                     SocialInfo(),
+                    SizedBox(height:size.width *0.02),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal:25.0),
+                      child: Column(
+                       
+                        children: <Widget>[
+                          ListTile(
+          leading: Icon(Icons.format_quote),
+          title: user1.bio != null
+              ? Text("${user1.bio}")
+              : Text("I don't have a bio"),
+        ),
+        ListTile(
+          leading: Icon(Icons.work),
+          title:user1.job != null
+              ? Text("Works at ${user1.job}")
+              : Text("Job"),
+        ),
+        ListTile(
+          leading: Icon(Icons.school),
+          title:user1.education != null
+              ? Text("Studied ${user1.education}")
+              : Text("University"),
+        ),
+        ListTile(
+          leading: Icon(FontAwesomeIcons.church),
+          title:user1.religion != null
+              ? Text("${user1.religion}")
+              : Text("Religion"),
+        ),
+        ListTile(
+          leading: Icon(FontAwesomeIcons.moneyBill),
+          title: user1.salary != null
+              ? Text("Earns ${user1.salary}")
+              : Text("Enough"),
+        ),
+        ListTile(
+          leading: Icon(Icons.star),
+          title: user1.gotra != null
+              ? Text("${user1.gotra} Gotra")
+              : Text("Who knows?"),
+        ),
+        ListTile(
+          leading: Icon(Icons.group),
+          title: user1.community != null
+              ? Text("${user1.community}")
+              : Text("Community"),
+        ),
+        ListTile(
+          leading: Icon(FontAwesomeIcons.ruler),
+          title: user1.heightP != null
+              ? Text("${user1.heightP} ")
+              : Text("Height"),
+        ),
+
+         ListTile(
+          leading: Icon(FontAwesomeIcons.instagram),
+          title:user1.insta != null
+              ? Text("${user1.insta} ")
+              : Text("Instagram"),
+        ),
+                      
+                        ],
+                      ),
+                    ),
                     Container(
                       padding: EdgeInsets.all(25),
                       decoration: BoxDecoration(
@@ -257,9 +361,11 @@ class _MyProfileState extends State<MyProfile> {
                         },
                       ),
                     ),
-                    //showMap(widget.currentUser),
-                    signoutButton(),
 
+                    showMap(),
+
+                    //showMap(widget.currentUser),
+                   
                     
                   ],
                 ),
@@ -270,10 +376,58 @@ class _MyProfileState extends State<MyProfile> {
         });
   }
 
-  showMap(User currentUser) {
+  updateLive(userId, value) async {
+    await Firestore.instance
+    .collection("users")
+    .document(userId)
+    .updateData({
+      'live' : value
+    });
+  }
+
+  showMap() {
     
-   return currentUser.live == true ? Column(
+    
+   bool toggleLive = user1.live;
+    
+   return user1.live == true ? Column(
+
      children: <Widget>[
+       SizedBox(height:10),
+       Padding(
+         padding:  EdgeInsets.only(left:10),
+         child: Text(
+                "Maps",
+                style: GoogleFonts.varelaRound(
+                  color: Colors.black54,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
+                ),
+               
+              ),
+       ),
+       SizedBox(height:10),
+        GestureDetector(
+          onTap: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => GMap(
+                        user1.location.latitude, user1.location.longitude)));
+          },
+          child: Container(
+            padding: EdgeInsets.all(5),
+            height: 180,
+            width: MediaQuery.of(context).size.width / 1.05,
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage("assets/images/maps.png"),
+                fit: BoxFit.cover,
+              ),
+              borderRadius: BorderRadius.circular(40),
+            ),
+          ),
+        ),
        Text("Stop sharing location.", 
        style: GoogleFonts.ubuntu(color: Colors.red, fontSize: 20),),
       // SizedBox(height: MediaQuery.of(context).size.width /10) ,
@@ -284,6 +438,9 @@ class _MyProfileState extends State<MyProfile> {
              toggleLive = val;
           });
          
+             updateLive(user1.uid, val);
+          
+         
          // updateLive();
        }),
 
@@ -292,7 +449,7 @@ class _MyProfileState extends State<MyProfile> {
      children: <Widget>[
        Text("Start sharing location.", 
        style: GoogleFonts.ubuntu(color: Colors.red, fontSize: 20),),
-       SizedBox(height: MediaQuery.of(context).size.width /5) ,
+       SizedBox(height: MediaQuery.of(context).size.width /20) ,
 
        Switch(value: toggleLive,
         onChanged: (val) {
@@ -300,7 +457,7 @@ class _MyProfileState extends State<MyProfile> {
              toggleLive = val;
           });
          
-          //updateLive();
+          updateLive(user1.uid, val);
        }),
 
      ],
@@ -314,25 +471,19 @@ class _MyProfileState extends State<MyProfile> {
     return Container(
       padding: EdgeInsets.only(bottom: 5),
       height: 50.0,
-      width: MediaQuery.of(context).size.width / 9,
-      child: Material(
-        borderRadius: BorderRadius.circular(20.0),
-        shadowColor: Colors.greenAccent,
-        color: Colors.red,
-        elevation: 7.0,
-        child: GestureDetector(
-          onTap: () {
-            BlocProvider.of<AuthenticationBloc>(context).add(LoggedOut());
-            Navigator.popUntil(context, ModalRoute.withName("/"));
-          },
-          child: Center(
-            child: Text(
-              'Sign Out',
-              style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontFamily: 'Montserrat'),
-            ),
+      width: MediaQuery.of(context).size.width/5 ,
+      child: GestureDetector(
+        onTap: () {
+          BlocProvider.of<AuthenticationBloc>(context).add(LoggedOut());
+          Navigator.popUntil(context, ModalRoute.withName("/"));
+        },
+        child: Center(
+          child: Text(
+            'Sign Out',
+            style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontFamily: 'Montserrat'),
           ),
         ),
       ),
@@ -350,8 +501,15 @@ class _MyProfileState extends State<MyProfile> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
           Row(
-            mainAxisAlignment: MainAxisAlignment.end,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
+              GestureDetector(
+                onTap: () {
+                BlocProvider.of<AuthenticationBloc>(context).add(LoggedOut());
+                 Navigator.popUntil(context, ModalRoute.withName("/"));
+                },
+                child: Icon(FontAwesomeIcons.powerOff, size: 20),
+              ),
               GestureDetector(
                 onTap: () {
                   Navigator.push(

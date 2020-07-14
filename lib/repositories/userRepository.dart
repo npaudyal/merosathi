@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:image/image.dart' as Im;
 
 
 class UserRepository {
@@ -33,7 +32,7 @@ class UserRepository {
   }
 
   Future<void> signUpWithEmail(String email, String password) async {
-    print(_firebaseAuth);
+   // print(_firebaseAuth);
     return await _firebaseAuth.createUserWithEmailAndPassword(
         email: email, password: password);
   }

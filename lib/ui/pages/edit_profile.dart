@@ -1,16 +1,12 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:file_picker/file_picker.dart';
+
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_native_image/flutter_native_image.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:merosathi/models/user.dart';
-import 'package:merosathi/ui/pages/my_profile.dart';
-import 'package:merosathi/ui/pages/spash_screen.dart';
 import 'package:merosathi/ui/widgets/button_untapped.dart';
 
 class EditProfile extends StatefulWidget {
@@ -63,6 +59,8 @@ class _EditProfileState extends State<EditProfile> {
   Map<int, String> imageData = {};
   List<int> requestedIndex = [];
 
+
+
   TextEditingController _bioController = TextEditingController();
   TextEditingController _jobController = TextEditingController();
   TextEditingController _religionController = TextEditingController();
@@ -71,6 +69,8 @@ class _EditProfileState extends State<EditProfile> {
   TextEditingController _gotraController = TextEditingController();
 
   bool isTapped = false;
+
+  
 
   List<bool> tapped = [false, false, false, false];
   ImagePicker imagePicker = ImagePicker();
@@ -103,23 +103,10 @@ class _EditProfileState extends State<EditProfile> {
         await Firestore.instance
             .collection('users')
             .document(widget.currentUser.uid)
-            .setData({
-          'uid': widget.currentUserId,
+            .updateData({
+          
           'photoUrl': url,
-          'name': name,
-          "location": location,
-          'gender': gender,
-          'interestedIn': interestedIn,
-          'age': age,
-          'country': country,
-          'height': heightP,
-          'community': community,
-          'job': job,
-          'gotra': gotra,
-          'religion': religion,
-          'salary': salary,
-          'bio': bio,
-          'education': education,
+         
         });
       });
     });
@@ -140,7 +127,7 @@ class _EditProfileState extends State<EditProfile> {
 
           images1.add(url);
         } catch (e) {
-          print(e);
+          //print(e);
         }
       }
     }
@@ -260,19 +247,21 @@ class _EditProfileState extends State<EditProfile> {
                       setState(() {
                         photo1 = photo1;
                         tapped[0] = !tapped[0];
+                         maps.putIfAbsent(0, () => photo1);
                       });
 
                       replacedPhotos.add(photo1);
-                      maps.putIfAbsent(0, () => photo1);
+                     
                       await uploadImage(photo1, "photo2");
                     } else if (index == 1) {
                       photo2 = getPic;
                       setState(() {
                         photo2 = photo2;
                         tapped[1] = !tapped[1];
+                         maps.putIfAbsent(1, () => photo2);
                       });
                       replacedPhotos.add(photo2);
-                      maps.putIfAbsent(1, () => photo2);
+                     
                       await uploadImage(photo2, "photo3");
                     } else if (index == 2) {
                       photo3 = getPic;
@@ -280,20 +269,22 @@ class _EditProfileState extends State<EditProfile> {
                       setState(() {
                         photo3 = photo3;
                         tapped[2] = !tapped[2];
+                        maps.putIfAbsent(2, () => photo3);
                       });
 
                       replacedPhotos.add(photo3);
-                      maps.putIfAbsent(2, () => photo3);
+                      
                       await uploadImage(photo3, "photo4");
                     } else if (index == 3) {
                       photo4 = getPic;
                       setState(() {
                         photo4 = photo4;
                         tapped[3] = !tapped[3];
+                         maps.putIfAbsent(3, () => photo4);
                       });
 
                       replacedPhotos.add(photo4);
-                      maps.putIfAbsent(3, () => photo4);
+                     
                       await uploadImage(photo4, "photo5");
                     } else
                       return;
@@ -313,9 +304,9 @@ class _EditProfileState extends State<EditProfile> {
                           : tapped[index] == false
                               ? Image.network(
                                   images[index],
-                                  fit: BoxFit.cover,
+                                  fit: BoxFit.contain,
                                 )
-                              : (Image.file(maps[index])),
+                              : (Image.file(maps[index], fit: BoxFit.contain,)),
                     ),
                   ),
                 ),
@@ -335,8 +326,8 @@ class _EditProfileState extends State<EditProfile> {
       "education": _educationController.text.isEmpty
           ? education
           : _educationController.text,
-      "salary":
-          _salaryController.text.isEmpty ? salary : _salaryController.text,
+      "salary": salary == null ? "": salary,
+          
       "religion": _religionController.text.isEmpty
           ? religion
           : _religionController.text,
@@ -344,9 +335,12 @@ class _EditProfileState extends State<EditProfile> {
     });
   }
 
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+
   EditInfo() {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         title: Text(
           "Edit Profile",
@@ -510,34 +504,44 @@ class _EditProfileState extends State<EditProfile> {
             SizedBox(
               height: 10,
             ),
-            Container(
-              height: size.height * 0.06,
+            Padding(
+              padding: const EdgeInsets.only(),
+     child: Container(
+        height: size.height * 0.06,
               width: size.width / 1.1,
               decoration: BoxDecoration(
-                  color: Colors.black12, borderRadius: BorderRadius.circular(30)),
-              child: Padding(
-                padding: const EdgeInsets.only(),
-                child: TextField(
-                  controller: _salaryController,
-                  decoration: InputDecoration(
-                    contentPadding:
-                        EdgeInsets.symmetric(horizontal: 15, vertical: 15),
-                    border: InputBorder.none,
-                    labelStyle: GoogleFonts.ubuntu(
-                      color: Colors.black,
-                      fontSize: 20,
-                    ),
-                    hintText: salary,
-                    fillColor: Colors.black,
-                    focusedBorder: OutlineInputBorder(
-                        borderSide:
-                            BorderSide(color: Colors.deepOrange, width: 2.0),
-                        borderRadius: BorderRadius.circular(30)),
-                  ),
-                  cursorColor: Colors.black,
-                  textAlign: TextAlign.left,
-                ),
+                color:Colors.black12,
+                borderRadius: BorderRadius.circular(30)
               ),
+              
+              
+       child: DropdownButtonHideUnderline(
+        
+    child:  DropdownButtonFormField(
+      decoration: InputDecoration(
+        contentPadding: EdgeInsets.only(left:10, right: 10),
+        border: InputBorder.none,
+        
+      ),
+        
+  items: <String>['10,000 - 50,000', '50,000 - 70,000', '70,000 - 100,000', '100,000 +'].map((String value) {
+    return new DropdownMenuItem<String>(
+        value: value,
+    
+        child: new Text(value),
+    );
+  }).toList(),
+
+  
+  onChanged: (value) {
+    
+    salary = value;
+    
+   
+  },
+),
+                ),
+     )
             ),
             Padding(
               padding: const EdgeInsets.only(top: 25, right: 280),
@@ -624,10 +628,11 @@ class _EditProfileState extends State<EditProfile> {
                 ),
               ),
             ),
-             buttonUnTappedWithText(
+              buttonUnTappedWithText(
                                   context, Colors.deepOrange, Colors.deepOrange,
                                   () {
                                 updateChanges(widget.currentUserId);
+                                createSavedSnackBar();
                                
                               }, "Save Changes"),
 
@@ -640,11 +645,20 @@ class _EditProfileState extends State<EditProfile> {
       ),
     );
   }
+  createSavedSnackBar() {
+    final snackBar = new SnackBar(
+      content: new Text("Saved!")
+
+    );
+
+    _scaffoldKey.currentState.showSnackBar(snackBar);
+
+    
+  }
 
   @override
   Widget build(BuildContext context) {
     images1.clear();
-   
 
     Size size = MediaQuery.of(context).size;
 
@@ -729,5 +743,17 @@ class _EditProfileState extends State<EditProfile> {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _jobController.dispose();
+    _bioController.dispose();
+    _salaryController.dispose();
+    _religionController.dispose();
+    _educationController.dispose();
+    _gotraController.dispose();
+  
+    super.dispose();
   }
 }

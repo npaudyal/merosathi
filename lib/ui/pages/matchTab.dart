@@ -8,7 +8,6 @@ import 'package:merosathi/bloc/matches/matches_state.dart';
 import 'package:merosathi/models/user.dart';
 import 'package:merosathi/repositories/matchesRepository.dart';
 import 'package:merosathi/ui/pages/people_profile.dart';
-import 'package:merosathi/ui/pages/spash_screen.dart';
 import 'package:merosathi/ui/widgets/profile.dart';
 
 class MatchTab extends StatefulWidget {
@@ -43,7 +42,7 @@ class _MatchTabState extends State<MatchTab> {
           
           if (state is LoadingMState) {
             _matchesBloc.add(LoadListsEvent(userId: widget.userId));
-            return SplashScreen();
+            return Center(child: CircularProgressIndicator());
           }
           if (state is LoadUserMState) {
 
@@ -64,7 +63,7 @@ class _MatchTabState extends State<MatchTab> {
                           height: size.height,
                           
                            child: GridView.builder(
-                           
+                           physics: ScrollPhysics(),
                             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2) ,
                              itemBuilder: (BuildContext context, int index) {
                                 return GestureDetector(

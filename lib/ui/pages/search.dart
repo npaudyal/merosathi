@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flare_flutter/flare_actor.dart';
-import 'package:flare_flutter/flare_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
@@ -64,7 +63,7 @@ class _SearchState extends State<Search> {
     try {
       position = await Geolocator().getCurrentPosition();
     } catch (e) {
-      print(e);
+      //print(e);
     }
     double location = await Geolocator().distanceBetween(userLocation.latitude,
         userLocation.longitude, position.latitude, position.longitude);
@@ -385,38 +384,44 @@ class _SearchState extends State<Search> {
 
   Widget PlayButton(User user, User _currentUser) {
     return Positioned(
-      bottom: 20,
-      left: MediaQuery.of(context).size.width / 2 - 15,
-      child: Container(
-        width: 20,
-        height: 20,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Colors.black,
-              Colors.black87,
-              Colors.black54,
-              Colors.black
-            ],
+        bottom:20,
+        left: MediaQuery.of(context).size.width/2-15,
+          child: GestureDetector(
+            
+        onTap: () {
+
+          Navigator.push(
+                    context,
+                    SlideUpRoute(
+                        page:  PeopleProfile(
+                            user: user,
+                            currentUserId: widget.userId,
+                            currentUser: _currentUser)));
+              },
+
+        
+            child: Container(
+            width: 20,
+            height: 20,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Colors.black,
+                  Colors.black87,
+                  Colors.black54,
+                  Colors.black
+                ],
+              ),
+            ),
+            child: Icon(Icons.arrow_drop_up,
+              
+                  color: Colors.white.withOpacity(0.9), size: 20),
+             
           ),
-        ),
-        child: IconButton(
-          padding: EdgeInsets.only(right: 20),
-          onPressed: () {
-            Navigator.push(
-                context,
-                SlideUpRoute(
-                    page:  PeopleProfile(
-                        user: user,
-                        currentUserId: widget.userId,
-                        currentUser: _currentUser)));
-          },
-          icon: Icon(Icons.arrow_drop_up,
-              color: Colors.white.withOpacity(0.9), size: 20),
-        ),
+      
       ),
     );
   }
