@@ -51,6 +51,7 @@ class MatchesRepository {
       _user.salary = user['salary'];
       _user.job = user['job'];
       _user.education = user['education'];
+      _user.insta = user['insta'];
     });
 
     return _user;

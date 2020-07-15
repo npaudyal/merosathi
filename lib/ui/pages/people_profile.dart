@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -294,7 +295,7 @@ class _PeopleProfileState extends State<PeopleProfile> {
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(50)),
                                 child: images != null
-                                    ? Image.network(images[index],
+                                    ? CachedNetworkImage(imageUrl: images[index],
                                         fit: BoxFit.cover)
                                     : Text(""),
                               ),
@@ -378,7 +379,7 @@ class _PeopleProfileState extends State<PeopleProfile> {
                     child: ClipRRect(
                       borderRadius: BorderRadius.all(Radius.circular(50)),
                       child: images != null
-                          ? Image.network(images[index], fit: BoxFit.cover)
+                          ? CachedNetworkImage(imageUrl:images[index], fit: BoxFit.cover)
                           : Text(""),
                     ),
                   );
@@ -411,7 +412,7 @@ class _PeopleProfileState extends State<PeopleProfile> {
                   IconButton(
                     icon: Icon(
                       Icons.arrow_back,
-                      color: Colors.white,
+                      color: Colors.black,
                     ),
                     onPressed: () {
                       Navigator.pop(context);
@@ -480,7 +481,7 @@ class _PeopleProfileState extends State<PeopleProfile> {
                           
                         ), context);
                       },
-                      child: Icon(FontAwesomeIcons.solidPaperPlane),
+                      child: Icon(FontAwesomeIcons.facebookMessenger),
                     ),
                   ],
                 ),
@@ -565,7 +566,7 @@ class _PeopleProfileState extends State<PeopleProfile> {
           child: Container(
             height: 450,
             decoration: BoxDecoration(
-              gradient: LinearGradient(colors: [Colors.white, Colors.black45, Colors.black54, Colors.black87, Colors.black],
+              gradient: LinearGradient(colors: [Colors.white,Colors.red, Colors.black],
               begin: Alignment.topCenter, end: Alignment.bottomCenter
               ) ,
                 

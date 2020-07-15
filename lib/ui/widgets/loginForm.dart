@@ -125,12 +125,12 @@ class _LoginFormState extends State<LoginForm> {
                           decoration: InputDecoration(
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(30),
-                              borderSide: BorderSide(color: Colors.lightGreen, width:2),
+                              borderSide: BorderSide(color: Colors.lightGreen, width:3),
                               
                             ),
                             enabledBorder: OutlineInputBorder(
                               borderRadius:BorderRadius.circular(30),
-                              borderSide: BorderSide(color: Colors.white, width:2)
+                              borderSide: BorderSide(color: Colors.white, width:3)
                             ),
                             border: InputBorder.none,
 
@@ -170,7 +170,7 @@ class _LoginFormState extends State<LoginForm> {
                           decoration: InputDecoration(
                             
                             focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.lightGreen, width: 2),
+                              borderSide: BorderSide(color: Colors.lightGreen, width: 3),
                               borderRadius: BorderRadius.circular(30),
                             ),
                           border: InputBorder.none,
@@ -181,7 +181,7 @@ class _LoginFormState extends State<LoginForm> {
                               
                               
                               
-                              borderSide:  BorderSide(color: Colors.white, width: 2),
+                              borderSide:  BorderSide(color: Colors.white, width: 3),
                             ),
                             contentPadding:
                                 EdgeInsets.symmetric(horizontal: size.width / 20,vertical: size.width/30),
@@ -235,7 +235,7 @@ class _LoginFormState extends State<LoginForm> {
                             
                             children: <Widget>[
                               Text("Don't have an account? ",
-                              style: GoogleFonts.ubuntu(fontSize:12, color: Colors.white),
+                              style: GoogleFonts.ubuntu(fontSize:15, color: Colors.white),
                               ),
 
                               

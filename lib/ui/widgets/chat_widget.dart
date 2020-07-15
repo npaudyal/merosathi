@@ -33,7 +33,7 @@ class _ChatWidgetState extends State<ChatWidget> {
         .getLastMessage(
             currentUserId: widget.userId, selectedUserId: widget.selectedUserId)
         .catchError((error) {
-      print(error);
+     // print(error);
     });
 
     if (message == null) {
@@ -65,7 +65,7 @@ class _ChatWidgetState extends State<ChatWidget> {
       pageTurn(Messaging(currentUser: currentUser, selectedUser: selectedUser),
           context);
     } catch (e) {
-      print(e.toString());
+      //print(e.toString());
     }
   }
 

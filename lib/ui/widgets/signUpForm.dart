@@ -1,8 +1,5 @@
-import 'package:eva_icons_flutter/eva_icons_flutter.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:merosathi/bloc/authentication/authentication_bloc.dart';
@@ -34,8 +31,8 @@ class _SignUpFormState extends State<SignUpForm> {
     return isPopulated && !state.isSubmitting;
   }
 
-  GoogleSignIn _googleSignIn = GoogleSignIn(scopes:['email']);
-  FirebaseAuth _auth;
+  GoogleSignIn googleAuth = new GoogleSignIn();
+  
   @override
   void initState() {
     //_signUpBloc = SignUpBloc(userRepository: _userRepository);
@@ -134,12 +131,12 @@ class _SignUpFormState extends State<SignUpForm> {
                           decoration: InputDecoration(
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(30),
-                              borderSide: BorderSide(color: Colors.lightGreen, width:2),
+                              borderSide: BorderSide(color: Colors.lightGreen, width:3),
                               
                             ),
                             enabledBorder: OutlineInputBorder(
                               borderRadius:BorderRadius.circular(30),
-                              borderSide: BorderSide(color: Colors.white, width:2)
+                              borderSide: BorderSide(color: Colors.white, width:3)
                             ),
                             border: InputBorder.none,
 
@@ -179,7 +176,7 @@ class _SignUpFormState extends State<SignUpForm> {
                           decoration: InputDecoration(
                             
                             focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.lightGreen, width: 2),
+                              borderSide: BorderSide(color: Colors.lightGreen, width: 3),
                               borderRadius: BorderRadius.circular(30),
                             ),
                           border: InputBorder.none,
@@ -190,7 +187,7 @@ class _SignUpFormState extends State<SignUpForm> {
                               
                               
                               
-                              borderSide:  BorderSide(color: Colors.white, width: 2),
+                              borderSide:  BorderSide(color: Colors.white, width: 3),
                             ),
                             contentPadding:
                                 EdgeInsets.symmetric(horizontal: size.width / 20,vertical: size.width/30),
@@ -215,28 +212,7 @@ class _SignUpFormState extends State<SignUpForm> {
                   
                 
                 Spacer(),
-                GestureDetector(
-                  onTap: () async {
-                    try{
-                   GoogleSignInAccount googleSignInAccount =  await _googleSignIn.signIn();
-                    GoogleSignInAuthentication googleSignInAuthentication = await googleSignInAccount.authentication;
-                    
-
-                    AuthCredential credential = GoogleAuthProvider.getCredential(idToken: googleSignInAuthentication.idToken, accessToken: googleSignInAuthentication.accessToken);
-                    await  _auth.signInWithCredential(credential);
-                                       
-                   
-                   BlocProvider.of<AuthenticationBloc>(context).add(LoggedIn());
-
-                    } catch (e) {
-
-                    }
-
-                  },
-                  child: Icon(FontAwesomeIcons.google, color: Colors.white),
-
-
-                ),
+       
                  Center(
                    child: Container(
                               height: size.width* 0.13,
@@ -252,7 +228,7 @@ class _SignUpFormState extends State<SignUpForm> {
                                       
                                 },
                                 child: Center(
-                                  child: Text("Create account", style: GoogleFonts.ubuntu(color: Colors.white),)
+                                  child: Text("Sign Up", style: GoogleFonts.ubuntu(color: Colors.white),)
                                 ),
                               ),
                             ),
@@ -267,7 +243,7 @@ class _SignUpFormState extends State<SignUpForm> {
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: <Widget>[
                             Text("Already have an account? ",
-                            style: GoogleFonts.ubuntu(fontSize:12, color: Colors.white),
+                            style: GoogleFonts.ubuntu(fontSize:15, color: Colors.white),
                             ),
 
                             
@@ -312,169 +288,11 @@ class _SignUpFormState extends State<SignUpForm> {
         ),
       ),
     );
-
-
-
-    //       return Scaffold(
-    //   body: CustomPaint(
-    //     painter: BackgroundSignUp(),
-    //     child: Stack(
-    //       children: <Widget>[
-    //         Padding(
-    //           padding: const EdgeInsets.symmetric(horizontal: 35),
-    //           child: Column(
-    //             children: <Widget>[
-    //               _getHeader(),
-    //               _getTextFields(state),
-    //               _getSignIn(),
-    //               _getBottomRow(context),
-    //             ],
-    //           ),
-    //         ),
-    //         _getBackBtn()
-    //       ],
-    //     ),
-    //   ),
-    // );
-        },
+    },
       ),
     );
   }
 
-  _getBackBtn() {
-  return Positioned(
-      top: 35,
-      left: 25,
-      child: GestureDetector(
-        onTap: () {  Navigator.pop(context);
-        },
-              child: Icon(
-          Icons.arrow_back_ios,
-          color: Colors.white,
-        ),
-      ),
-    
-  );
-}
-_getBottomRow(context) {
-  Size size = MediaQuery.of(context).size;
-  return Expanded(
-    flex: 1,
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: <Widget>[
-        GestureDetector(
-          onTap: (){
-            Navigator.pop(context);
-          },
-                  child: Container(
-                          height: size.width/12,
-                          width: size.width/3,
-                          decoration: BoxDecoration(
-                            color: Colors.black,
-                            borderRadius: BorderRadius.circular(20),
-
-                          ),
-                          child: Center(child: Text("Sign In", style: GoogleFonts.ubuntu(color:Colors.white),)),
-                          
-                        ),
-                     
-        ),
-        Text(
-          '',
-          style: TextStyle(
-            fontSize: 15,
-            fontWeight: FontWeight.w500,
-            decoration: TextDecoration.underline,
-          ),
-        ),
-      ],
-    ),
-  );
-}
-
-_getSignIn() {
-  return Expanded(
-    flex: 1,
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: <Widget>[
-        Text(
-          'Sign up',
-          style: GoogleFonts.raleway(color: Colors.white,fontSize: 25, fontWeight: FontWeight.w500)
-          
-        ),
-        GestureDetector(
-            onTap: () {
-               _onFormSubmitted(); 
-            },
-            child: CircleAvatar(
-            backgroundColor: Colors.grey.withOpacity(.8),
-            radius: 40,
-            child: Icon(
-              FontAwesomeIcons.kissWinkHeart,
-              
-              color: Colors.red,
-            ),
-          ),
-        )
-      ],
-    ),
-  );
-}
-
-_getTextFields(SignUpState state) {
-  return Expanded(
-    flex: 4,
-    child: SingleChildScrollView(
-          child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: <Widget>[
-          SizedBox(
-            height: 15,
-          ),
-          TextField(
-            
-            decoration: InputDecoration(
-              enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white)),
-              labelText: 'Name', labelStyle: GoogleFonts.ubuntu(color: Colors.white)),
-          ),
-          SizedBox(
-            height: 15,
-          ),
-          TextFormField(
-            controller: _emailController,
-            autovalidate: true,
-            validator: (_) {
-              return !state.isEmailValid ? "Invalid Email" : null;
-            },
-            decoration: InputDecoration(
-              enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white)),
-              labelText: 'Email', labelStyle: GoogleFonts.ubuntu(color: Colors.white)),
-          ),
-          SizedBox(
-            height: 15,
-          ),
-          TextFormField(
-            controller: _passwordController,
-            autovalidate: true,
-            autocorrect: false,
-            obscureText: true,
-            validator: (_) {
-              return !state.isPasswordValid ? "Invalid Password" : null;
-            },
-            decoration: InputDecoration(
-              enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white)),
-              labelText: 'Password', labelStyle: GoogleFonts.ubuntu(color: Colors.white)),
-          ),
-          SizedBox(
-            height: 25,
-          ),
-        ],
-      ),
-    ),
-  );
-}
 
 _getHeader() {
   return Expanded(

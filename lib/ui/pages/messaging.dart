@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -18,6 +19,7 @@ import 'package:merosathi/models/user.dart';
 import 'package:merosathi/repositories/messageRepository.dart';
 import 'package:merosathi/repositories/messaging.dart';
 import 'package:merosathi/services/database.dart';
+import 'package:merosathi/ui/pages/people_profile.dart';
 import 'package:merosathi/ui/widgets/message.dart';
 import 'package:merosathi/ui/widgets/photo.dart';
 
@@ -114,9 +116,17 @@ class _MessagingState extends State<Messaging> {
                 icon: Icon(Icons.arrow_back,color: Colors.black,),
               ),
               SizedBox(width: 2,),
-              CircleAvatar(
-                backgroundImage: NetworkImage(widget.selectedUser.photo),
+              GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => PeopleProfile(user:widget.selectedUser, currentUser: widget.currentUser, currentUserId: widget.currentUser.uid,)));
+                  },
+                  child:  CachedNetworkImage(imageUrl: widget.selectedUser.photo,
+              imageBuilder: (context,imageProvider) => CircleAvatar(
+                
+                backgroundImage: imageProvider,
                 maxRadius: 20,
+              ),            
+            )
               ),
               SizedBox(width: 12,),
               Expanded(
@@ -209,10 +219,12 @@ class _MessagingState extends State<Messaging> {
                   stream: messageStream,
                   builder: (context, snapshot) {
                     if (!snapshot.hasData) {
-                      return Text(
-                        "Start the conversation?",
-                        style: GoogleFonts.ubuntu(
-                            fontSize: 16.0, fontWeight: FontWeight.bold),
+                      return Center(
+                        child: Text(
+                          "Start the conversation?",
+                          style: GoogleFonts.ubuntu(
+                              fontSize: 16.0, fontWeight: FontWeight.bold),
+                        ),
                       );
                     }
                     if (snapshot.data.documents.isNotEmpty) {

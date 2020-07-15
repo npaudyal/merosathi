@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:merosathi/models/user.dart';
 import 'package:merosathi/ui/widgets/button_untapped.dart';
@@ -58,6 +59,8 @@ class _EditProfileState extends State<EditProfile> {
 
   Map<int, String> imageData = {};
   List<int> requestedIndex = [];
+
+  final _picker = ImagePicker();
 
 
 
@@ -177,15 +180,32 @@ class _EditProfileState extends State<EditProfile> {
             width: size.width,
             child: GestureDetector(
               onTap: () async {
-                 File getPic = await ImagePicker.pickImage(source: ImageSource.gallery,
+                 PickedFile getPic = await _picker.getImage(source: ImageSource.gallery,
                 imageQuality: 100
                  );
                 if (getPic != null) {
-                  photo = getPic;
+
+                   File cropped = await ImageCropper.cropImage(
+                                  sourcePath: getPic.path,
+                                  aspectRatio:
+                                      CropAspectRatio(ratioX: 1, ratioY: 1),
+                                  compressQuality: 100,
+                                  maxWidth: 700,
+                                  maxHeight: 700,
+                                  compressFormat: ImageCompressFormat.jpg,
+                                  androidUiSettings: AndroidUiSettings(
+                                      toolbarColor: Colors.black,
+                                      toolbarTitle: "Edit your picture",
+                                      toolbarWidgetColor: Colors.white,
+                                      dimmedLayerColor: Colors.white12,
+                                      statusBarColor:
+                                          Colors.deepOrange.shade900,
+                                      backgroundColor: Colors.black));
+                  
                   
                   setState(
                     () {
-                      photo = photo;
+                      photo = cropped;
                       isTapped = !isTapped;
                     },
                   );
@@ -237,13 +257,29 @@ class _EditProfileState extends State<EditProfile> {
             itemBuilder: (context, index) {
               return GestureDetector(
                 onTap: () async {
-                File getPic = await ImagePicker.pickImage(source: ImageSource.gallery,
+                PickedFile getPic = await _picker.getImage(source: ImageSource.gallery,
                 imageQuality: 40
                  );
                   if (getPic != null) {
+                     File cropped = await ImageCropper.cropImage(
+                                  sourcePath: getPic.path,
+                                  aspectRatio:
+                                      CropAspectRatio(ratioX: 1, ratioY: 1),
+                                  compressQuality: 100,
+                                  maxWidth: 700,
+                                  maxHeight: 700,
+                                  compressFormat: ImageCompressFormat.jpg,
+                                  androidUiSettings: AndroidUiSettings(
+                                      toolbarColor: Colors.black,
+                                      toolbarTitle: "Edit your picture",
+                                      toolbarWidgetColor: Colors.white,
+                                      dimmedLayerColor: Colors.white12,
+                                      statusBarColor:
+                                          Colors.deepOrange.shade900,
+                                      backgroundColor: Colors.black));
                     //await compressImage();
                     if (index == 0) {
-                      photo1 = getPic;
+                      photo1 = cropped;
                       setState(() {
                         photo1 = photo1;
                         tapped[0] = !tapped[0];
@@ -254,7 +290,7 @@ class _EditProfileState extends State<EditProfile> {
                      
                       await uploadImage(photo1, "photo2");
                     } else if (index == 1) {
-                      photo2 = getPic;
+                      photo2 = cropped;
                       setState(() {
                         photo2 = photo2;
                         tapped[1] = !tapped[1];
@@ -264,7 +300,7 @@ class _EditProfileState extends State<EditProfile> {
                      
                       await uploadImage(photo2, "photo3");
                     } else if (index == 2) {
-                      photo3 = getPic;
+                      photo3 = cropped;
 
                       setState(() {
                         photo3 = photo3;
@@ -276,7 +312,7 @@ class _EditProfileState extends State<EditProfile> {
                       
                       await uploadImage(photo3, "photo4");
                     } else if (index == 3) {
-                      photo4 = getPic;
+                      photo4 = cropped;
                       setState(() {
                         photo4 = photo4;
                         tapped[3] = !tapped[3];

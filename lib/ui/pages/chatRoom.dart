@@ -3,9 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:focused_menu/modals.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:merosathi/bloc/message/message_bloc.dart';
 import 'package:merosathi/bloc/message/message_event.dart';
 import 'package:merosathi/bloc/message/message_state.dart';
@@ -15,7 +13,6 @@ import 'package:merosathi/services/database.dart';
 import 'package:merosathi/ui/pages/heart.dart';
 import 'package:merosathi/ui/pages/my_profile.dart';
 import 'package:merosathi/ui/pages/search.dart';
-import 'package:focused_menu/focused_menu.dart';
 import 'package:merosathi/ui/widgets/animations/slide_tansition.dart';
 import 'package:merosathi/ui/widgets/chat_widget.dart';
 
@@ -188,7 +185,7 @@ List filtered = [];
                 stream: chatStream,
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) {
-                    return Center(child: Text("No data"));
+                    return Center(child: Text(""));
                   }
 
                   if (snapshot.data.documents.isNotEmpty) {
@@ -202,7 +199,7 @@ List filtered = [];
                           scrollDirection: Axis.vertical,
                           itemCount: snapshot.data.documents.length,
                           itemBuilder: (BuildContext context, int index) {
-                            print(snapshot.data.documents[index].data['timestamp']);
+                            //print(snapshot.data.documents[index].data['timestamp']);
                             return ChatWidget(
                                   creationTime:
                                       snapshot.data.documents[index].data['timestamp'],

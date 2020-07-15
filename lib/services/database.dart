@@ -35,12 +35,7 @@ getConversationMessages(String chatRoomId) async {
   
 }
 
-getChatRooms(String userName) async {
-  return await Firestore.instance
-  .collection("chatRoom")
-  .where("users", arrayContains: userName)
-  .snapshots();
-}
+
 
 chatRoomExists(String chatRoomId) async {
   bool exists = false;

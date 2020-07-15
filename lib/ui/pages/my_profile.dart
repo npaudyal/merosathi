@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 
@@ -17,6 +18,7 @@ import 'package:merosathi/ui/pages/map.dart';
 import 'package:merosathi/ui/pages/search.dart';
 import 'package:merosathi/ui/pages/edit_profile.dart';
 import 'package:merosathi/ui/widgets/animations/slide_tansition.dart';
+import 'package:shimmer/shimmer.dart';
 
 
 Color mainColor = Color(0xff774a63);
@@ -57,13 +59,17 @@ class _MyProfileState extends State<MyProfile> {
 
   MenuItem active;
   
- 
+ bool showImageWidget = false;
 
   @override
   void initState() {
     active = items[3];
 
+
+
     super.initState();
+
+   
   }
 
   
@@ -195,12 +201,14 @@ class _MyProfileState extends State<MyProfile> {
         user1.age = data['age'];
         user1.country = data['country'];
         user1.live = data['live'];
+        user1.insta = data['insta'];
      
     });
   }
 
   @override
   Widget build(BuildContext context) {
+   
     images.clear();
     Size size = MediaQuery.of(context).size;
     return FutureBuilder(
@@ -306,7 +314,7 @@ class _MyProfileState extends State<MyProfile> {
          ListTile(
           leading: Icon(FontAwesomeIcons.instagram),
           title:user1.insta != null
-              ? Text("${user1.insta} ")
+              ? Text("${user1.insta}")
               : Text("Instagram"),
         ),
                       
@@ -350,7 +358,8 @@ class _MyProfileState extends State<MyProfile> {
                                 borderRadius: BorderRadius.all(
                                   Radius.circular(50),
                                 ),
-                                child: Image.network(images[index],
+                                child: CachedNetworkImage(
+                                  imageUrl: images[index],
                                     fit: BoxFit.cover),
                               ),
                             ),
@@ -364,7 +373,7 @@ class _MyProfileState extends State<MyProfile> {
 
                     showMap(),
 
-                    //showMap(widget.currentUser),
+                    
                    
                     
                   ],
@@ -535,9 +544,12 @@ class _MyProfileState extends State<MyProfile> {
                 ),
               ],
             ),
-            child: CircleAvatar(
-              backgroundImage: NetworkImage(currentUser.photo),
-            ),
+            child: CachedNetworkImage(imageUrl: currentUser.photo,
+              imageBuilder: (context,imageProvider) => CircleAvatar(
+                
+                backgroundImage: imageProvider,
+              ),            
+            )
           ),
           Container(),
           Text(

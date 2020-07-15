@@ -1,15 +1,11 @@
-import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:merosathi/bloc/authentication/bloc.dart';
 import 'package:merosathi/bloc/login/login_bloc.dart';
-import 'package:merosathi/bloc/login/login_state.dart';
 import 'package:merosathi/repositories/userRepository.dart';
 import 'package:merosathi/ui/pages/Authentication/animations/fade_animation.dart';
 import 'package:merosathi/ui/pages/Authentication/components/customButtonAnimation.dart';
 import 'package:merosathi/ui/pages/Authentication/components/custom_button.dart';
-import 'package:merosathi/ui/pages/Authentication/screens/login_screen.dart';
 import 'package:merosathi/ui/widgets/loginForm.dart';
 
 class HomeScreen extends StatefulWidget {
