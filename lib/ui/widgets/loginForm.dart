@@ -1,4 +1,6 @@
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -97,6 +99,7 @@ class _LoginFormState extends State<LoginForm> {
                    
                    _getHeader(),
 
+                 
                     Container(
                       padding: EdgeInsets.symmetric(horizontal: size.width * 0.1,vertical: size.width*0.1),
                       height: MediaQuery.of(context).size.height * 0.70,
@@ -115,7 +118,7 @@ class _LoginFormState extends State<LoginForm> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: <Widget>[
-                          SizedBox(height: size.height * 0.2),
+                          SizedBox(height: size.height * 0.15),
               TextFormField(
                           controller: _emailController,
                          autovalidate: true,
@@ -228,6 +231,20 @@ class _LoginFormState extends State<LoginForm> {
 
                         Spacer(),
 
+                        Center(
+                          child: GestureDetector(
+
+                            onTap: () {
+                                Navigator.of(context).push(MaterialPageRoute(builder: (context) => forgotPassword(state)));
+                            },
+
+                            child: Text("Forgot Password?", style: GoogleFonts.ubuntu(color: Colors.white54,  ),),
+                          ),
+                        ),
+
+
+                        Spacer(),
+
                          
 
                           Row(
@@ -282,148 +299,180 @@ class _LoginFormState extends State<LoginForm> {
     );
 
 
-    //     return  Scaffold(
-    //   body: CustomPaint(
-    //     painter: BackgroundSignIn(),
-    //     child: Stack(
-    //       children: <Widget>[
-    //         Padding(
-    //           padding: const EdgeInsets.symmetric(horizontal: 35),
-    //           child: Column(
-    //             children: <Widget>[
-    //               _getHeader(),
-    //               SizedBox(height: size.height * 0.035),
-    //               _getTextFields(state),
-    //               _getSignIn(state),
-    //               _getBottomRow(context),
-    //             ],
-    //           ),
-    //         ),
-    //         _getBackBtn(),
-    //       ],
-    //     ),
-    //   ),
-    // );
       }),
     );
   
   }
-  _getBackBtn() {
-  return Positioned(
-    top: 35,
-    left: 25,
-    child: Icon(
-      Icons.arrow_back_ios,
-      color: Colors.white,
-    ),
-  );
-}
 
-_getBottomRow(context) {
-Size size = MediaQuery.of(context).size;
-  return Expanded(
-    flex: 1,
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: <Widget>[
-        GestureDetector(
-          onTap: (){
-            Navigator.of(context).push(
-                            MaterialPageRoute(builder: (context){
-                              return SignUp(userRepository: _userRepository);
-                            }));
-          
-          },
+
+forgotPassword(state) {
+
+  TextEditingController controller = TextEditingController();
+  bool tapped =false;
+  final snackBar = SnackBar(content: Text("A password reset link has been sent to your email address",
+  style: GoogleFonts.ubuntu(),
+  ));
+
+  showSnackBar() {
+    Scaffold.of(context).showSnackBar(snackBar);
+  }
+  
+  Size size = MediaQuery.of(context).size;
+  return 
+Scaffold(
+      
+      body: SingleChildScrollView(
+        child: CustomPaint(
+          painter: BackgroundSignIn(),
                   child: Container(
-                          height: size.width/12,
-                          width: size.width/5,
-                          decoration: BoxDecoration(
-                            color: Colors.black,
-                            borderRadius: BorderRadius.circular(20),
-
-                          ),
-                          child: Center(child: Text("Sign Up", style: GoogleFonts.ubuntu(color:Colors.white),)),
-                          
-                        ),
-                     
-        ),
-        
-      ],
-    ),
-  );
-}
-
-
-_getSignIn(LoginState state) {
-  return Expanded(
-    flex: 1,
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: <Widget>[
-        Text(
-          'Sign in',
-          style: GoogleFonts.raleway(fontSize: 25, fontWeight: FontWeight.w500 ),
-          
-        ),
-        GestureDetector(
-            onTap: () { 
+                    
+            child: Container(
+              height: MediaQuery.of(context).size.height,
+              width: MediaQuery.of(context).size.width,
               
-            _onFormSubmitted();
+              child: SafeArea(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Padding(
+                      padding: EdgeInsets.all(5),
+                      child: IconButton(icon: Icon(Icons.arrow_back, color: Colors.white,), onPressed: () {
+                       Navigator.pop(context);
+                   }),
+                     ),
+                   
+                   _getHeader(),
+                    
 
-            },
-            child: CircleAvatar(
-            backgroundColor: Colors.grey.shade800,
-            radius: 40,
-            child: Icon(
-             EvaIcons.heartOutline ,
-              color: Colors.red,
-            ),
-          ),
-        )
-      ],
-    ),
-  );
-}
+                    Container(
+                      padding: EdgeInsets.symmetric(horizontal: size.width * 0.1,vertical: size.width*0.1),
+                      height: MediaQuery.of(context).size.height * 0.70,
+                      width: MediaQuery.of(context).size.width,
+                      decoration: BoxDecoration(
+                       gradient: LinearGradient(
+                         colors: [Colors.black12, Colors.black],
+                         begin: Alignment.topCenter, end: Alignment.bottomCenter
+                       ),
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(25),
+                          topRight: Radius.circular(25)
+                        )
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: <Widget>[
+                          SizedBox(height: size.height * 0.15),
 
-_getTextFields(LoginState state) {
-  return Expanded(
-    flex: 4,
-    child: SingleChildScrollView(
-          child: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: <Widget>[
-          SizedBox(
-            height: 15,
-          ),
-          TextFormField(
-            controller: _emailController,
-            autovalidate: true,
-            validator: (_) {
-           return !state.isEmailValid ? "Invalid Email" : null;
-              },
-            decoration: InputDecoration(labelText: 'Email', labelStyle: GoogleFonts.ubuntu(color: Colors.white)),
-          ),
-          SizedBox(
-            height: 15,
-          ),
-          TextFormField(
-            controller: _passwordController,
-            autovalidate: true,
-             autocorrect: false,
-            obscureText: true,
-            validator: (_) {
-               return !state.isPasswordValid ? "Invalid Password" : null;
-            },
-            decoration: InputDecoration(labelText: 'Password', labelStyle: GoogleFonts.ubuntu(color:Colors.black)),
-          ),
-          SizedBox(
-            height: 25,
-          ),
-        ],
+
+                    TextFormField(
+                          controller: controller,
+                         autovalidate: true,
+                        validator: (_) {
+                        return !state.isEmailValid ? "Invalid Email" : null;
+                             },
+                          decoration: InputDecoration(
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(30),
+                              borderSide: BorderSide(color: Colors.lightGreen, width:3),
+                              
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius:BorderRadius.circular(30),
+                              borderSide: BorderSide(color: Colors.white, width:3)
+                            ),
+                            border: InputBorder.none,
+
+                            contentPadding:
+                                EdgeInsets.symmetric(horizontal: size.width / 20,vertical: size.width/30),
+                            labelStyle: GoogleFonts.ubuntu(
+                              color: Colors.black,
+                              fontSize: 20,
+                            ),
+                            
+                            hintText: "Email",
+                            hintStyle: GoogleFonts.ubuntu(
+                              color: Colors.black38,
+                            ),
+                            fillColor: Colors.black,
+                           
+                            focusColor: Colors.white,
+                            
+                            
+                          ),
+                          cursorColor: Colors.black,
+                          textAlign: TextAlign.left,
+                        ),
+
+                        SizedBox(height: size.width * 0.1),
+
+                         Center(
+                   child: Container(
+                              height: size.width* 0.13,
+                              width: size.width*0.4,
+
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(20),
+                                color: Colors.green
+                              ),
+                              child: GestureDetector(
+
+                                onTap: () {
+                                    
+                                      FirebaseAuth.instance.sendPasswordResetEmail(email: controller.text).then((value) {
+                                        Navigator.pop(context);
+                                       showSnackBar();
+
+                                      });
+                                     
+                                
+                                },
+                               
+                                child: Center(
+                                  child: Text("Send Link", style: GoogleFonts.ubuntu(color: Colors.white),)
+                                ),
+                              ),
+                            ),
+                 ),
+
+                 tapped?  showDialog(
+                    context: context,
+                       builder: (_) => CupertinoAlertDialog(
+                         
+                       content: Text("A password reset link has been sent to your email address!",
+                       style: GoogleFonts.ubuntu(color:Colors.black),
+
+                       ),
+                       ),
+                 ) : Text(""),
+                        ],
+
+
+                      
+                    
+
+                      ),
+                    ),
+
+
+                  ],
+              ),
+
+                  ),
+               
       ),
-    ),
-  );
+        ),
+      ),
+                  ),
+        
+      
+);
+
+
+  
 }
+
 
 _getHeader() {
   return Expanded(

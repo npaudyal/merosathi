@@ -202,7 +202,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     yield ProfileState.loading();
     try {
       await _userRepository.profileSetup(
-          photo, userId, name, gender, interestedIn,country, heightP, community,salary,gotra,job,bio,religion,education,insta,live,age, location);
+          photo, userId, name, gender, interestedIn,country, heightP, community,salary,gotra,bio,job,religion,education,insta,live,age, location);
       yield ProfileState.success();
     } catch (_) {
       yield ProfileState.failure();
