@@ -80,7 +80,7 @@ configurePushNotification() async {
   _firebaseMessaging.getToken().then((token) 
   {
     
-    //print("Firebase token: $token");
+    print("Firebase token: $token");
      Firestore.instance.collection("users")
      .document(firebaseUser.uid)
      .updateData({
@@ -89,18 +89,40 @@ configurePushNotification() async {
   });
 
   _firebaseMessaging.configure(
-    // onLaunch: (Map<String, dynamic> message) async {},
-    // onResume:  (Map<String, dynamic> message) async {},
-    onMessage:  (Map<String, dynamic> message) async {
-     //
-     // print("On message: $message");
+    onLaunch: (Map<String, dynamic> message) async {
+        print("On message: $message");
       final String recipientId = message['data']['recipient'];
       final String body = message['notification']['body'];
       if(recipientId == firebaseUser.uid) {
-       // print("Notification shown");
+       print("Notification shown");
 
       } else {
-       // print("Notification not shown");
+       print("Notification not shown");
+      }
+
+    },
+    onResume:  (Map<String, dynamic> message) async {
+      print("On message: $message");
+      final String recipientId = message['data']['recipient'];
+      final String body = message['notification']['body'];
+      if(recipientId == firebaseUser.uid) {
+       print("Notification shown");
+
+      } else {
+       print("Notification not shown");
+      }
+
+    },
+    onMessage:  (Map<String, dynamic> message) async {
+     //
+     print("On message: $message");
+      final String recipientId = message['data']['recipient'];
+      final String body = message['notification']['body'];
+      if(recipientId == firebaseUser.uid) {
+       print("Notification shown");
+
+      } else {
+       print("Notification not shown");
       }
     },
 
@@ -112,7 +134,7 @@ _firebaseMessaging.requestNotificationPermissions(
 );
 
 _firebaseMessaging.onIosSettingsRegistered.listen((settings) {
-  //print("Setting registered: $settings");
+  print("Setting registered: $settings");
  });
 }
 }

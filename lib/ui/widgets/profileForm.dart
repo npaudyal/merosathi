@@ -282,7 +282,7 @@ class _ProfileFormState extends State<ProfileForm> {
                   content: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  Text("Profile Creation Unsuccessful"),
+                  Text("Profile Creation Unsuccessful! Please fill up required criteria!"),
                   Icon(
                     Icons.error,
                     color: Colors.white,
