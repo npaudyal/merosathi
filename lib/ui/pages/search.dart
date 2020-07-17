@@ -242,35 +242,46 @@ class _SearchState extends State<Search> {
                         SizedBox(
                           height: size.height * 0.15,
                         ),
-                        Row(
-                          children: <Widget>[
-                            RichText(
-                              text: TextSpan(
-                                text: usera.name != null
-                                    ? " ${usera.name}, "
-                                    : " ",
-                                style: GoogleFonts.roboto(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                  fontSize: size.height * 0.04,
-                                ),
-                                children: <TextSpan>[
-                                  TextSpan(
-                                    text: usera.age != null
-                                        ? (DateTime.now().year -
-                                                usera.age.toDate().year)
-                                            .toString()
-                                        : "",
-                                    style: GoogleFonts.roboto(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w400,
-                                      fontSize: size.height * 0.035,
-                                    ),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                SlideUpRoute(
+                                    page: PeopleProfile(
+                                        user: usera,
+                                        currentUserId: widget.userId,
+                                        currentUser: _currentUser)));
+                          },
+                          child: Row(
+                            children: <Widget>[
+                              RichText(
+                                text: TextSpan(
+                                  text: usera.name != null
+                                      ? " ${usera.name}, "
+                                      : " ",
+                                  style: GoogleFonts.roboto(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                    fontSize: size.height * 0.04,
                                   ),
-                                ],
+                                  children: <TextSpan>[
+                                    TextSpan(
+                                      text: usera.age != null
+                                          ? (DateTime.now().year -
+                                                  usera.age.toDate().year)
+                                              .toString()
+                                          : "",
+                                      style: GoogleFonts.roboto(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w400,
+                                        fontSize: size.height * 0.035,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                         Row(
                           children: <Widget>[
@@ -295,6 +306,28 @@ class _SearchState extends State<Search> {
                   ),
                   CustomBottomBar(usera, _currentUser),
                   PlayButton(usera, _currentUser),
+                  Positioned(
+                    left: 120,
+                    bottom: 10,
+                    child: GestureDetector(
+                      onTap: () {
+                         Navigator.push(
+                                context,
+                                SlideUpRoute(
+                                    page: PeopleProfile(
+                                        user: usera,
+                                        currentUserId: widget.userId,
+                                        currentUser: _currentUser)));
+                      },
+                                          child: Container(
+                        height: 50,
+                        width: size.width / 3,
+                        decoration: BoxDecoration(
+                          color: Colors.transparent,
+                        ),
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),

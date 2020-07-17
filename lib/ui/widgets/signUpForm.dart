@@ -1,11 +1,15 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:merosathi/bloc/authentication/authentication_bloc.dart';
 import 'package:merosathi/bloc/authentication/authentication_event.dart';
 import 'package:merosathi/bloc/signup/bloc.dart';
 import 'package:merosathi/repositories/userRepository.dart';
+import 'package:merosathi/ui/widgets/or_divider.dart';
+import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 
 class SignUpForm extends StatefulWidget {
   final UserRepository _userRepository;
@@ -31,8 +35,10 @@ class _SignUpFormState extends State<SignUpForm> {
     return isPopulated && !state.isSubmitting;
   }
 
-  GoogleSignIn googleAuth = new GoogleSignIn();
-  
+  final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+  final GoogleSignIn googleSignIn =  GoogleSignIn();
+  final FacebookLogin fbLogin =  FacebookLogin();
+
   @override
   void initState() {
     //_signUpBloc = SignUpBloc(userRepository: _userRepository);
@@ -120,7 +126,7 @@ class _SignUpFormState extends State<SignUpForm> {
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: <Widget>[
                           
-                          SizedBox(height: size.width/3),
+                          SizedBox(height: size.width/5),
                              
                 TextFormField(
                           controller: _emailController,
@@ -211,11 +217,11 @@ class _SignUpFormState extends State<SignUpForm> {
                         ),
                   
                 
-                Spacer(),
+                SizedBox(height: size.height * 0.02),
        
                  Center(
                    child: Container(
-                              height: size.width* 0.13,
+                              height: size.width* 0.1,
                               width: size.width*0.4,
 
                               decoration: BoxDecoration(
@@ -234,13 +240,10 @@ class _SignUpFormState extends State<SignUpForm> {
                             ),
                  ),
 
+                 SizedBox(height: size.height * 0.02,),
 
-
-                         Spacer(),
-                         
-
-                          Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                   Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
                             Text("Already have an account? ",
                             style: GoogleFonts.ubuntu(fontSize:15, color: Colors.white),
@@ -273,6 +276,56 @@ class _SignUpFormState extends State<SignUpForm> {
                             ),
 
 
+                        
+                      OrDivider(),
+
+                      _buildSocialBtnRow(),
+
+
+
+            //      InkWell(
+            //        onTap: () {
+            //          _googleSignIn();
+
+            //        },
+
+            //       child: Container(
+            //   padding: EdgeInsets.symmetric(
+            //     vertical: 0,
+            //     horizontal: 20.0,
+            //   ),
+            //   decoration: BoxDecoration(
+            //     color: Colors.black,
+            //     borderRadius: BorderRadius.circular(30.0),
+            //   ),
+            //   child: Row(
+            //     mainAxisAlignment: MainAxisAlignment.center,
+            //     children: <Widget>[
+            //       Icon(
+            //         FontAwesomeIcons.twitter,
+            //         color: Colors.red,
+            //         size: 20.0,
+            //       ),
+            //       Text(
+            //         ' |  Sign in with Twitter',
+            //         style: TextStyle(
+            //           color: Colors.red,
+            //           fontWeight: FontWeight.bold,
+            //           fontSize: 20.0,
+            //         ),
+            //       ),
+            //     ],
+            //   ),
+            // ),
+            //      ),
+
+
+
+                         Spacer(),
+                         
+
+                        
+
                          
 
                           
@@ -291,6 +344,50 @@ class _SignUpFormState extends State<SignUpForm> {
     },
       ),
     );
+  }
+
+  _googleSignIn() async {
+
+      final GoogleSignInAccount googleUser = await googleSignIn.signIn();
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+
+      final AuthCredential credential = GoogleAuthProvider.getCredential(idToken: googleAuth.idToken, accessToken: googleAuth.accessToken);
+      try{
+      final FirebaseUser user = (await firebaseAuth.signInWithCredential(credential)).user;
+          BlocProvider.of<AuthenticationBloc>(context).add(LoggedIn());
+       Navigator.popUntil(context, ModalRoute.withName("/"));
+
+          
+      } catch (e) {
+
+      }
+
+
+  }
+
+  _facebookLogin() async {
+
+    await fbLogin.logIn(['email', 'public_profile', "user_friends"]).then((result){
+      switch(result.status) {
+        case FacebookLoginStatus.loggedIn:
+        AuthCredential cred = FacebookAuthProvider.getCredential(accessToken:result.accessToken.token);
+       FirebaseAuth.instance.signInWithCredential(cred)
+        .then((user) {
+       BlocProvider.of<AuthenticationBloc>(context).add(LoggedIn());
+       Navigator.popUntil(context, ModalRoute.withName("/"));
+        }).catchError((e) {
+          print(e);
+        });
+        break;
+        default:
+      }
+
+    
+
+    }).catchError((e) {
+        print(e);
+    });
+
   }
 
 
@@ -325,6 +422,54 @@ _getHeader() {
     ),
   );
 }
+ Widget _buildSocialBtn(Function onTap, AssetImage logo) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        height: 50.0,
+        width: 50.0,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black26,
+              offset: Offset(0, 2),
+              blurRadius: 6.0,
+            ),
+          ],
+          image: DecorationImage(
+            image: logo,
+          ),
+        ),
+      ),
+    );
+  }
+
+ Widget _buildSocialBtnRow() {
+    return Padding(
+      padding: EdgeInsets.symmetric(),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: <Widget>[
+          _buildSocialBtn(
+            () => _facebookLogin(),
+            AssetImage(
+              'assets/images/facebook.jpg',
+              
+            ),
+          ),
+          _buildSocialBtn(
+            () => _googleSignIn(),
+            AssetImage(
+              'assets/images/google.jpg',
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
 
 
   void _onEmailChanged() {

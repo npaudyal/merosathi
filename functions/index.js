@@ -46,6 +46,7 @@ exports.onCreateLikes = functions.firestore
             
             body: body,
             
+            
         },
         token : androidNotificationToken,
         data : {recipient: currentUserId}
@@ -123,6 +124,8 @@ exports.onCreateChat = functions.firestore
         notification: {
             
             body: body,
+            
+
             
         },
         token : androidNotificationToken,

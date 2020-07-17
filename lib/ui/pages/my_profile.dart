@@ -271,13 +271,13 @@ class _MyProfileState extends State<MyProfile> {
         ListTile(
           leading: Icon(Icons.work),
           title:user1.job != null
-              ? Text("Works at ${user1.job}")
+              ? Text("${user1.job}")
               : Text("Job"),
         ),
         ListTile(
           leading: Icon(Icons.school),
           title:user1.education != null
-              ? Text("Studied ${user1.education}")
+              ? Text("Studied at ${user1.education}")
               : Text("University"),
         ),
         ListTile(

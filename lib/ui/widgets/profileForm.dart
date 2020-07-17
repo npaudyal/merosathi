@@ -1239,8 +1239,8 @@ class _ProfileFormState extends State<ProfileForm> {
                       ),
 
                       Padding(
-                        padding: EdgeInsets.only(
-                            top: size.width / 2.27, left: size.width / 28),
+                        padding: EdgeInsets.symmetric(
+                            vertical: size.width / 2.27, horizontal: size.width * 0.3),
                         child: GestureDetector(
                           onTap: () async {
                             PickedFile getPic = await _picker.getImage(
@@ -1286,46 +1286,12 @@ class _ProfileFormState extends State<ProfileForm> {
                           ),
                         ),
                       ),
-                      Padding(
-                        padding: EdgeInsets.only(
-                            top: size.width / 1.6, left: size.width / 2.15),
-                        child: Column(
-                          children: <Widget>[
-                            Text(
-                              "Your photo must clearly",
-                              overflow: TextOverflow.visible,
-                              textAlign: TextAlign.center,
-                              style: GoogleFonts.ubuntu(
-                                  fontStyle: FontStyle.italic,
-                                  color: Colors.black87,
-                                  fontSize: 16),
-                            ),
-                            Text(
-                              " show your full face, without",
-                              overflow: TextOverflow.visible,
-                              textAlign: TextAlign.center,
-                              style: GoogleFonts.ubuntu(
-                                  fontStyle: FontStyle.italic,
-                                  color: Colors.black87,
-                                  fontSize: 16),
-                            ),
-                            Text(
-                              "props and other people.",
-                              overflow: TextOverflow.visible,
-                              textAlign: TextAlign.center,
-                              style: GoogleFonts.ubuntu(
-                                  fontStyle: FontStyle.italic,
-                                  color: Colors.black87,
-                                  fontSize: 16),
-                            ),
-                          ],
-                        ),
-                      ),
+                     
                       Padding(
                         padding: EdgeInsets.only(top: 480, right: 8),
                         child: Center(
                           child: Text(
-                            ' "Having a Profile Picture increases the chance of getting a match"  - Common Sense ',
+                            ' "Having a Profile Picture increases the chance of getting a match"',
                             style: GoogleFonts.openSans(
                               color: Colors.white70,
                               fontSize: 18,
@@ -1336,18 +1302,7 @@ class _ProfileFormState extends State<ProfileForm> {
                         ),
                       ),
 
-                      // Positioned(
-
-                      //    bottom: size.width/14.4,
-                      //     left:size.width/6.17,
-                      //   child: photo==null ? buttonUnTapped(context,Colors.transparent, Colors.transparent, () {})
-                      //   : isButtonPressed4 == false ? buttonUnTapped(context, Colors.deepPurple.shade400, Colors.red.shade400, () {
-                      //       setState(() {
-                      //         isButtonPressed4 = !isButtonPressed4;
-                      //       });
-                      //       print("Got photo");
-                      //   }) : buttonTapped(context, (){}),
-                      //   ),
+                    
 
                       Padding(
                         padding: EdgeInsets.only(left: size.width / 1.2),
@@ -1446,7 +1401,7 @@ class _ProfileFormState extends State<ProfileForm> {
                             ),
                             SizedBox(height: 5),
                             Text(
-                              "Don't make it vulger folks, we are watching you",
+                              "Don't make it vulgar folks, we are watching you",
                               textAlign: TextAlign.center,
                               style: GoogleFonts.ubuntu(
                                 color: Colors.white60,
@@ -3018,7 +2973,7 @@ class _ProfileFormState extends State<ProfileForm> {
                                               Colors.black.withOpacity(1),
                                               BlendMode.dstATop),
                                       image: ExactAssetImage(
-                                          'assets/images/casual.jpg'),
+                                          'assets/images/secondheart.jpg'),
                                       fit: BoxFit.cover,
                                     ),
                                   ),
@@ -3062,7 +3017,7 @@ class _ProfileFormState extends State<ProfileForm> {
                                               Colors.black.withOpacity(1),
                                               BlendMode.dstATop),
                                       image: ExactAssetImage(
-                                          'assets/images/dating2.jpg'),
+                                          'assets/images/heartTree.jpg'),
                                       fit: BoxFit.cover,
                                     ),
                                   ),
@@ -3106,7 +3061,7 @@ class _ProfileFormState extends State<ProfileForm> {
                                               Colors.black.withOpacity(1),
                                               BlendMode.dstATop),
                                       image: ExactAssetImage(
-                                          'assets/images/dating3.jpg'),
+                                          'assets/images/rings.jpg'),
                                       fit: BoxFit.cover,
                                     ),
                                   ),
@@ -3243,8 +3198,8 @@ class _ProfileFormState extends State<ProfileForm> {
                                               BlendMode.dstATop),
                                       image: ExactAssetImage(
                                           interestedIn == "Female"
-                                              ? 'assets/images/18.jpg'
-                                              : 'assets/images/18m.jpg'),
+                                              ? 'assets/images/18f.jpg'
+                                              : 'assets/images/beardless.jpg'),
                                       fit: BoxFit.cover,
                                     ),
                                   ),
@@ -3256,7 +3211,7 @@ class _ProfileFormState extends State<ProfileForm> {
                                       "18-25",
                                       textAlign: TextAlign.left,
                                       style: GoogleFonts.ubuntu(
-                                          color: Colors.white,
+                                          color: Colors.black,
                                           fontSize: size.width * 0.05),
                                     ),
                                   ),
@@ -3291,8 +3246,8 @@ class _ProfileFormState extends State<ProfileForm> {
                                               BlendMode.dstATop),
                                       image: ExactAssetImage(
                                           interestedIn == "Male"
-                                              ? 'assets/images/25.jpg'
-                                              : 'assets/images/25m.jpg'),
+                                              ? 'assets/images/bearded.jpg'
+                                              : 'assets/images/25f.jpg'),
                                       fit: BoxFit.cover,
                                     ),
                                   ),
@@ -3304,7 +3259,7 @@ class _ProfileFormState extends State<ProfileForm> {
                                         "25+",
                                         textAlign: TextAlign.left,
                                         style: GoogleFonts.ubuntu(
-                                            color: Colors.white,
+                                            color: Colors.black,
                                             fontSize: size.width * 0.05),
                                       )),
                                 ),
