@@ -214,7 +214,7 @@ class _LoginFormState extends State<LoginForm> {
 
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                color: Colors.lightBlue
+                                color: Colors.deepOrange
                               ),
                               child: GestureDetector(
                                 onTap: () {
@@ -528,7 +528,7 @@ _getHeader() {
 
   void _onFormSubmitted() {
     _loginBloc.add(LoginWithCredentialsPressed(
-        email: _emailController.text, password: _passwordController.text));
+        email: _emailController.text.trim(), password: _passwordController.text));
   }
 }
 

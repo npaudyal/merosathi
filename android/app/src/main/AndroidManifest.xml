@@ -12,8 +12,16 @@
         android:name="io.flutter.app.FlutterApplication"
         android:label="Jodi"
         android:icon="@mipmap/ic_launcher"
-       
         >
+
+            <meta-data
+             android:name="com.google.firebase.messaging.default_notification_icon"
+             android:resource="@drawable/notification_icon"/>
+
+             <meta-data
+            android:name="com.google.firebase.messaging.default_notification_color"
+            android:resource="@color/colorPrimary"/>
+
         
 
         
@@ -39,15 +47,18 @@
                  Flutter's first frame. -->
             <meta-data
               android:name="io.flutter.embedding.android.SplashScreenDrawable"
-              android:resource="@drawable/launch_background"
-              />
+              android:resource="@drawable/launch_background"/>
 
-          
-            <meta-data
-             android:name="com.google.firebase.messaging.default_notification_icon"
-             android:resource="@mipmap/ic_launcher" />
+            
+
 
              
+
+          
+            
+            
+
+
              
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -57,7 +68,13 @@
             <action android:name="FLUTTER_NOTIFICATION_CLICK" />
                 <category android:name="android.intent.category.DEFAULT" />
                 </intent-filter> 
+
         </activity>
+
+
+          
+
+
         <activity
     android:name="com.yalantis.ucrop.UCropActivity"
     android:screenOrientation="portrait"
@@ -89,7 +106,10 @@
         </intent-filter>
     </activity>
 
+    
     </application>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
+   
   
 </manifest>

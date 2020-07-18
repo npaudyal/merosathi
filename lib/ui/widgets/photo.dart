@@ -29,7 +29,6 @@ class PhotoWidget extends StatelessWidget {
               child: Center(
                 child: Text("Reload")
 
-                //TODO build a loading icon
               
               ),
               onTap: () {state.reLoadImage();

@@ -184,14 +184,7 @@ class _LikesTabState extends State<LikesTab> {
 
                                     _getModalBottomSheet(context, selectedUser, currentUser, currentUser.uid);
 
-                                    // Navigator.push(
-                                    //     context,
-                                    //     MaterialPageRoute(
-                                    //         builder: (context) => PeopleProfile(
-                                    //               user: selectedUser,
-                                    //               currentUser: currentUser,
-                                    //               currentUserId: currentUser.uid,
-                                    //             )));
+                                   
                                   },
                                   child: Padding(
                                     padding: EdgeInsets.only(top: size.height*0.01),

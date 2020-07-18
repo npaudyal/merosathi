@@ -126,7 +126,7 @@ class _SignUpFormState extends State<SignUpForm> {
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: <Widget>[
                           
-                          SizedBox(height: size.width/5),
+                         Spacer(),
                              
                 TextFormField(
                           controller: _emailController,
@@ -283,45 +283,7 @@ class _SignUpFormState extends State<SignUpForm> {
 
 
 
-            //      InkWell(
-            //        onTap: () {
-            //          _googleSignIn();
-
-            //        },
-
-            //       child: Container(
-            //   padding: EdgeInsets.symmetric(
-            //     vertical: 0,
-            //     horizontal: 20.0,
-            //   ),
-            //   decoration: BoxDecoration(
-            //     color: Colors.black,
-            //     borderRadius: BorderRadius.circular(30.0),
-            //   ),
-            //   child: Row(
-            //     mainAxisAlignment: MainAxisAlignment.center,
-            //     children: <Widget>[
-            //       Icon(
-            //         FontAwesomeIcons.twitter,
-            //         color: Colors.red,
-            //         size: 20.0,
-            //       ),
-            //       Text(
-            //         ' |  Sign in with Twitter',
-            //         style: TextStyle(
-            //           color: Colors.red,
-            //           fontWeight: FontWeight.bold,
-            //           fontSize: 20.0,
-            //         ),
-            //       ),
-            //     ],
-            //   ),
-            // ),
-            //      ),
-
-
-
-                         Spacer(),
+           
                          
 
                         
@@ -493,7 +455,7 @@ _getHeader() {
 
   void _onFormSubmitted() {
     _signUpBloc.add(SignUpWithCredentialsPressed(
-        email: _emailController.text, password: _passwordController.text));
+        email: _emailController.text.trim(), password: _passwordController.text));
   }
 }
 
