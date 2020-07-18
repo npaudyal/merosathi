@@ -966,7 +966,8 @@ class _ProfileFormState extends State<ProfileForm> {
                             "*I am a: ",
                             style: GoogleFonts.ubuntu(
                                 color: Colors.white,
-                                fontSize: 28,
+                                fontSize: size.height *
+                                            0.04,
                                 fontWeight: FontWeight.w800),
                           )),
 
@@ -1059,7 +1060,8 @@ class _ProfileFormState extends State<ProfileForm> {
                           style: GoogleFonts.ubuntu(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
-                            fontSize: 28,
+                            fontSize: size.height *
+                                            0.04,
                           ),
                         ),
                       ),
@@ -1224,10 +1226,12 @@ class _ProfileFormState extends State<ProfileForm> {
                 child: SingleChildScrollView(
                   child: Stack(
                     children: <Widget>[
+
+
                       Padding(
                         padding: EdgeInsets.symmetric(
                             horizontal: size.width / 6.5,
-                            vertical: size.width / 4.5),
+                            vertical: size.width / 6.5),
                         child: Text(
                           "*Attach a Profile Picture ",
                           style: GoogleFonts.quicksand(
@@ -1239,8 +1243,7 @@ class _ProfileFormState extends State<ProfileForm> {
                       ),
 
                       Padding(
-                        padding: EdgeInsets.symmetric(
-                            vertical: size.width / 2.27, horizontal: size.width * 0.3),
+                        padding:  EdgeInsets.only(left: size.width/6, top:size.width*0.35),
                         child: GestureDetector(
                           onTap: () async {
                             PickedFile getPic = await _picker.getImage(
@@ -1270,37 +1273,31 @@ class _ProfileFormState extends State<ProfileForm> {
                             }
                           },
                           child: Container(
-                            alignment: Alignment.centerLeft,
-                            width: size.width / 2.3,
-                            height: size.height / 3,
+                            alignment: Alignment.center,
+                            width: size.width/1.5,
+                            height: size.height / 2,
                             decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(20),
                                 border: Border.all(
-                                    color: Colors.deepPurple, width: 7),
+                                  color: Colors.deepPurple,
+                                  width: 4
+                                ),
+                               
                                 image: DecorationImage(
                                     image: photo == null
                                         ? AssetImage(
-                                            'assets/images/addImage.jpg')
+                                            'assets/images/addImage1.jpg')
                                         : FileImage(photo),
-                                    fit: BoxFit.cover)),
+                                    fit: BoxFit.cover,
+                                     colorFilter: new ColorFilter.mode(Colors.black.withOpacity(0.8), BlendMode.dstATop),
+                                    )),
+
+                                   
                           ),
                         ),
                       ),
                      
-                      Padding(
-                        padding: EdgeInsets.only(top: 480, right: 8),
-                        child: Center(
-                          child: Text(
-                            ' "Having a Profile Picture increases the chance of getting a match"',
-                            style: GoogleFonts.openSans(
-                              color: Colors.white70,
-                              fontSize: 18,
-                              fontStyle: FontStyle.italic,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      ),
+                    
 
                     
 
@@ -1374,7 +1371,7 @@ class _ProfileFormState extends State<ProfileForm> {
                         child: Icon(
                           Icons.landscape,
                           color: Colors.white,
-                          size: 30,
+                          size: size.width * 0.1,
                         ),
                       ),
 
@@ -2935,7 +2932,7 @@ class _ProfileFormState extends State<ProfileForm> {
                           "What are you looking for in here? ",
                           style: GoogleFonts.ubuntu(
                               color: Colors.deepOrangeAccent,
-                              fontSize: 25,
+                              fontSize: size.width * 0.063,
                               fontWeight: FontWeight.w600),
                         ),
                       ),
@@ -3159,7 +3156,7 @@ class _ProfileFormState extends State<ProfileForm> {
                           "Preferred age of your partner: ",
                           style: GoogleFonts.ubuntu(
                               color: Colors.deepOrange,
-                              fontSize: 25,
+                              fontSize:  size.width * 0.063,
                               fontWeight: FontWeight.w600),
                         ),
                       ),
@@ -3348,7 +3345,7 @@ class _ProfileFormState extends State<ProfileForm> {
                           "We need your permissions: ",
                           style: GoogleFonts.ubuntu(
                               color: Colors.deepOrange,
-                              fontSize: 25,
+                              fontSize:  size.width * 0.062,
                               fontWeight: FontWeight.w600),
                         ),
                       ),
