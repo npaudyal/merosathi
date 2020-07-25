@@ -3,15 +3,23 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter_facebook_login/flutter_facebook_login.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 
 class UserRepository {
   final FirebaseAuth _firebaseAuth;
   final Firestore _firestore;
+  final GoogleSignIn _googleSignIn;
+  final FacebookLogin _facebookLogin;
+  
 
-  UserRepository({FirebaseAuth firebaseAuth, Firestore firestore})
+  UserRepository({FirebaseAuth firebaseAuth, Firestore firestore, GoogleSignIn googleSignIn, FacebookLogin facebookLogin})
       : _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance,
-        _firestore = firestore ?? Firestore.instance;
+        _firestore = firestore ?? Firestore.instance,
+        _googleSignIn = googleSignIn ?? GoogleSignIn(),
+        _facebookLogin = facebookLogin ?? FacebookLogin();
+       
 
   Future<void> signInWithEmail(String email, String password) {
     return _firebaseAuth.signInWithEmailAndPassword(
@@ -38,7 +46,11 @@ class UserRepository {
   }
 
   Future<void> signOut() async {
-    return await _firebaseAuth.signOut();
+    return Future.wait([
+
+      _firebaseAuth.signOut(),
+      _googleSignIn.signOut()
+    ]);
   }
 
   Future<bool> isSignedIn() async {
@@ -53,6 +65,37 @@ class UserRepository {
   Future<FirebaseUser> getUserOnly() async {
     return(await _firebaseAuth.currentUser());
   }
+
+ Future<FirebaseUser> signInWithGoogle() async {
+    final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
+    final GoogleSignInAuthentication googleAuth =
+        await googleUser.authentication;
+    final AuthCredential credential = GoogleAuthProvider.getCredential(
+      accessToken: googleAuth.accessToken,
+      idToken: googleAuth.idToken,
+    );
+    await _firebaseAuth.signInWithCredential(credential);
+    return _firebaseAuth.currentUser();
+  }
+
+  Future<FirebaseUser> signInWithFacebook() async {
+    final result = await _facebookLogin.logIn(['email', 'public_profile', "user_friends"]);
+    switch(result.status) {
+         case FacebookLoginStatus.loggedIn:
+        AuthCredential cred = FacebookAuthProvider.getCredential(accessToken:result.accessToken.token);
+        await _firebaseAuth.signInWithCredential(cred);
+        return _firebaseAuth.currentUser();
+
+        break;
+
+        default:
+
+
+    }
+
+  }
+
+
 
   //profile setup
   Future<void> profileSetup(

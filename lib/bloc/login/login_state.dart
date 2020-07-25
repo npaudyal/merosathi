@@ -23,8 +23,9 @@ class LoginState {
       isEmailValid: true,
       isPasswordValid: true,
       isSubmitting: false,
-      isFailure: false,
+      
       isSuccess: false,
+      isFailure: false,
     );
   }
 
@@ -33,8 +34,9 @@ class LoginState {
       isEmailValid: true,
       isPasswordValid: true,
       isSubmitting: true,
-      isFailure: false,
+      
       isSuccess: false,
+      isFailure: false,
     );
   }
 
@@ -43,8 +45,9 @@ class LoginState {
       isEmailValid: true,
       isPasswordValid: true,
       isSubmitting: false,
-      isFailure: true,
+     
       isSuccess: false,
+       isFailure: true,
     );
   }
 
@@ -53,8 +56,9 @@ class LoginState {
       isEmailValid: true,
       isPasswordValid: true,
       isSubmitting: false,
-      isFailure: false,
+      
       isSuccess: true,
+      isFailure: false,
     );
   }
 
@@ -66,8 +70,9 @@ class LoginState {
       isEmailValid: isEmailValid,
       isPasswordValid: isPasswordValid,
       isSubmitting: false,
-      isFailure: false,
+     
       isSuccess: false,
+       isFailure: false,
     );
   }
 
@@ -82,7 +87,7 @@ class LoginState {
     return LoginState(
         isEmailValid: isEmailValid ?? this.isEmailValid,
         isPasswordValid: isPasswordValid ?? this.isPasswordValid,
-        isSubmitting: isSubmitting ?? this.isPasswordValid,
+        isSubmitting: isSubmitting ?? this.isSubmitting,
         isSuccess: isSuccess ?? this.isSuccess,
         isFailure: isFailure ?? this.isFailure);
   }

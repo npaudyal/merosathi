@@ -1,16 +1,12 @@
-import 'package:eva_icons_flutter/eva_icons_flutter.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:merosathi/bloc/authentication/bloc.dart';
 import 'package:merosathi/bloc/login/bloc.dart';
 import 'package:merosathi/repositories/userRepository.dart';
-import 'package:merosathi/ui/pages/login.dart';
-import 'package:merosathi/ui/pages/signUp.dart';
-import 'package:merosathi/ui/validators.dart';
+
+import 'package:merosathi/ui/widgets/or_divider.dart';
 
 class LoginForm extends StatefulWidget {
   final UserRepository _userRepository;
@@ -46,6 +42,8 @@ class _LoginFormState extends State<LoginForm> {
     super.initState();
   }
 
+  
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -59,10 +57,12 @@ class _LoginFormState extends State<LoginForm> {
                 content: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                Text("Login Failed"),
+                Text("Please check your email and password!"),
                 Icon(Icons.error),
               ],
-            )));
+            ),
+             backgroundColor: Colors.red,
+            ));
         }
         if (state.isSubmitting) {
           Scaffold.of(context)
@@ -74,229 +74,238 @@ class _LoginFormState extends State<LoginForm> {
                 Text("Logging in..."),
                 CircularProgressIndicator(),
               ],
-            )));
+            ),
+            
+            ));
         }
         if (state.isSuccess) {
-         // print("isSuccess");
           BlocProvider.of<AuthenticationBloc>(context).add(LoggedIn());
         }
       },
       child: BlocBuilder<LoginBloc, LoginState>(builder: (context, state) {
-        return Scaffold(
-      body: SingleChildScrollView(
-        child: CustomPaint(
-          painter: BackgroundSignIn(),
-                  child: Container(
-                    
-            child: Container(
-              height: MediaQuery.of(context).size.height,
-              width: MediaQuery.of(context).size.width,
-              
-              child: SafeArea(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: <Widget>[
-                   
-                   _getHeader(),
 
-                 
-                    Container(
-                      padding: EdgeInsets.symmetric(horizontal: size.width * 0.1,vertical: size.width*0.1),
-                      height: MediaQuery.of(context).size.height * 0.70,
-                      width: MediaQuery.of(context).size.width,
-                      decoration: BoxDecoration(
-                       gradient: LinearGradient(
-                         colors: [Colors.black12, Colors.black],
-                         begin: Alignment.topCenter, end: Alignment.bottomCenter
-                       ),
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(25),
-                          topRight: Radius.circular(25)
-                        )
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: <Widget>[
-                          SizedBox(height: size.height * 0.15),
-              TextFormField(
-                          controller: _emailController,
-                         autovalidate: true,
-                        validator: (_) {
-                        return !state.isEmailValid ? "Invalid Email" : null;
-                             },
-                          decoration: InputDecoration(
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(30),
-                              borderSide: BorderSide(color: Colors.lightGreen, width:3),
-                              
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius:BorderRadius.circular(30),
-                              borderSide: BorderSide(color: Colors.white, width:3)
-                            ),
-                            border: InputBorder.none,
 
-                            contentPadding:
-                                EdgeInsets.symmetric(horizontal: size.width / 20,vertical: size.width/30),
-                            labelStyle: GoogleFonts.ubuntu(
-                              color: Colors.black,
-                              fontSize: 20,
-                            ),
-                            
-                            hintText: "Email",
-                            hintStyle: GoogleFonts.ubuntu(
-                              color: Colors.black38,
-                            ),
-                            fillColor: Colors.black,
-                           
-                            focusColor: Colors.white,
-                            
-                            
-                          ),
-                          cursorColor: Colors.black,
-                          textAlign: TextAlign.left,
-                        ),
+      return Scaffold(
+              body: Stack(
+                children:<Widget> [
+                  Container
+                  (
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(colors: [Color(0xff414141), Color(0xff000000
+
+
+
+)],
+                      begin: Alignment.topCenter, end: Alignment.bottomCenter
+                       )
                       
-    
-                          SizedBox(height: 10),
-                  
-                    TextFormField(
-                          controller: _passwordController,
-                          autovalidate: true,
-                          autocorrect: false,
-                          obscureText: true,
-                          validator: (_) {
-                            return !state.isPasswordValid ? "Invalid Password" : null;
-                         },
-                         
-                          decoration: InputDecoration(
-                            
-                            focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.lightGreen, width: 3),
-                              borderRadius: BorderRadius.circular(30),
-                            ),
-                          border: InputBorder.none,
-                            enabledBorder:  OutlineInputBorder(
-                            
-                              borderRadius: BorderRadius.circular(30,
-                              ),
-                              
-                              
-                              
-                              borderSide:  BorderSide(color: Colors.white, width: 3),
-                            ),
-                            contentPadding:
-                                EdgeInsets.symmetric(horizontal: size.width / 20,vertical: size.width/30),
-                            labelStyle: GoogleFonts.ubuntu(
-                              color: Colors.white,
-                              fontSize: 20,
-                            ),
-                            
-                            hintText: "Password",
-                            hintStyle: GoogleFonts.ubuntu(
-                              color: Colors.black38,
-                            ),
-                            fillColor: Colors.black,
-                            
-                            focusColor: Colors.white,
-                            
-                            
-                          ),
-                          cursorColor: Colors.black,
-                          textAlign: TextAlign.left,
-                        ),
-                 Spacer(),
-                 Center(
-                   child: Container(
-                              height: size.width* 0.15,
-                              width: size.width*0.15,
-
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: Colors.deepOrange
-                              ),
-                              child: GestureDetector(
-                                onTap: () {
-                                    _onFormSubmitted();
-                                },
-                                child: Center(
-                                  child: Icon(FontAwesomeIcons.signInAlt, color: Colors.white,),
-                                ),
-                              ),
-                            ),
-                 ),
+                    ),
 
 
-
-                        Spacer(),
-
-                        Center(
-                          child: GestureDetector(
-
-                            onTap: () {
-                                Navigator.of(context).push(MaterialPageRoute(builder: (context) => forgotPassword(state)));
-                            },
-
-                            child: Text("Forgot Password?", style: GoogleFonts.ubuntu(color: Colors.white54,  ),),
-                          ),
-                        ),
-
-
-                        Spacer(),
-
-                         
-
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            
-                            children: <Widget>[
-                              Text("Don't have an account? ",
-                              style: GoogleFonts.ubuntu(fontSize:15, color: Colors.white),
-                              ),
-
-                              
-
-
-                               GestureDetector(
-                                onTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(builder: (context){
-                                return SignUp(userRepository: _userRepository);
-                              }));
-            
-            
-                                },
-                                child: Container(
-                                  
-                                  height: size.width * 0.1,
-                                  width: size.width /3,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(30),
-                                    color: Colors.transparent
-                                    
-                                  ),
-                                  child: Center(child: Text("Sign Up", style: GoogleFonts.ubuntu(color:Colors.green, fontSize: 16),)),
-                                ),
-                              ),
-
-
-                            ],
-                          ),
-
-                          
-                        ],
+                  ),
+ GestureDetector(
+            onTap: () => FocusScope.of(context).unfocus(),
+            child: Padding(
+              padding: EdgeInsets.only(top: 55),
+              child: ListView(
+                  children: <Widget>[
+                    Text(
+                      'Welcome to',
+                      style: GoogleFonts.pacifico(
+                        color: Colors.white60,
+                        fontSize: 45,
+                         fontWeight: FontWeight.w200,
+                       
                       ),
-                    )
+                      textAlign: TextAlign.center,
+                    ),
+                    Text(
+                      "Jodi.",
+                      style: GoogleFonts.loversQuarrel(
+                        color: Colors.white,
+                        fontSize: 45,
+                        fontWeight: FontWeight.w900,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    SizedBox(height: 30),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 40, vertical: 10),
+                      child: TextFormField(
+                        style: TextStyle(
+                          color: Colors.white
+                        ),
+                        controller: _emailController,
+                        autovalidate: true,
+                       
+                              validator: (_) {
+                                
+                          return !state.isEmailValid ? "Invalid Email" : null;
+                               },
+                           cursorColor: Colors.white,
+                        decoration: InputDecoration(
+                         
+                          border: InputBorder.none,
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30),
+                            borderSide: BorderSide(
+                              color: Colors.pink,
+                              width: 2.5,
+                            ),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30),
+                            borderSide: BorderSide(
+                              color: Colors.pink,
+                              width: 2.5,
+                            ),
+                          ),
+                          labelText: 'E-mail',
+                          
+                          labelStyle: TextStyle(
+                            color:Colors.grey,
+                            fontWeight: FontWeight.w300,
+                          ),
+                          prefixIcon: Icon(
+                            Icons.person_outline,
+                            color:Colors.grey
+                          ),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 40, vertical: 10),
+                      child: TextFormField(
+                        autovalidate: true,
+                         validator: (_) {
+                          return !state.isPasswordValid
+                              ? "Invalid Password"
+                              : null;
+                        },
+                        controller: _passwordController,
+                        obscureText: true,
+                        cursorColor: Colors.white,
+                        style: TextStyle(
+                          color: Colors.white
+                        ),
+                        decoration: InputDecoration(
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30),
+                            borderSide: BorderSide(
+                              color: Colors.pink,
+                              width: 2.5,
+                            ),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30),
+                            borderSide: BorderSide(
+                              color: Colors.pink,
+                              width: 2.5,
+                            ),
+                          ),
+                          labelText: 'Password',
+                          labelStyle: TextStyle(
+                            color: Colors.grey,
+                            fontWeight: FontWeight.w300,
+                          ),
+                          prefixIcon: Icon(
+                            Icons.lock_outline,
+                            color: Colors.grey,
+                          ),
+                        ),
+                      ),
+                    ),
+                    Container(
+                      margin: EdgeInsets.symmetric(horizontal: 40, vertical: 25),
+                      height: 55,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: isLoginButtonEnabled(state) ? Colors.green: Colors.transparent,
+                        borderRadius: BorderRadius.circular(30),
+                        border: Border.all(color: Colors.grey),
+                      ),
+                      child: FlatButton(
+                        onPressed: isLoginButtonEnabled(state)
+                                ? _onFormSubmitted
+                                : null,
+                        child: Text(
+                          'Log In',
+                          style: GoogleFonts.ubuntu(
+                            color: Colors.white,
+                            fontSize: 20,
+                            fontWeight: FontWeight.w200,
+                          ),
+                        ),
+                      ),
+                    ),
 
+             
+                    SizedBox(
+                      height: size.height * 0.03,
+                    ),
+                   
+                   OrDivider(),
+                    
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Container(
+                          margin: EdgeInsets.only(right: 30, top: 15),
+                          height: 55,
+                          width: 55,
+                          decoration: BoxDecoration(
+                            color: Color(0xFFF25652),
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                          child: _buildSocialBtn(
+                () {
+                  _loginBloc.add(
+                    LoginWithFacebookPressed(),
+                  );
+    
+                    },
+                AssetImage(
+                  'assets/facebook.png',
+                  
+                ),
+                          ),
+                          
+                         
+                        ),
+                        SizedBox(width: size.width * 0.05), 
+                        Container(
+                          margin: EdgeInsets.only(top: 15),
+                          height: 55,
+                          width: 55,
+                          decoration: BoxDecoration(
+                            color: Color(0xFFF25652),
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                          child:  _buildSocialBtn(
+                () {
+                  _loginBloc.add(
+                    LoginWithGooglePressed(),
+                  );
+                  
+                },
+                AssetImage(
+                  'assets/google.png',
+                ),
+              ),
+                        ),
+                      ],
+                    ),
+                   
                   ],
                 ),
               ),
             ),
-          ),
+                ],
+        
         ),
-      ),
-    );
+      );
+
+   
 
 
       }),
@@ -305,203 +314,66 @@ class _LoginFormState extends State<LoginForm> {
   }
 
 
-forgotPassword(state) {
-
-  TextEditingController controller = TextEditingController();
-  bool tapped =false;
-  final snackBar = SnackBar(content: Text("A password reset link has been sent to your email address",
-  style: GoogleFonts.ubuntu(),
-  ));
-
-  showSnackBar() {
-    Scaffold.of(context).showSnackBar(snackBar);
-  }
-  
-  Size size = MediaQuery.of(context).size;
-  return 
-Scaffold(
-      
-      body: SingleChildScrollView(
-        child: CustomPaint(
-          painter: BackgroundSignIn(),
-                  child: Container(
-                    
-            child: Container(
-              height: MediaQuery.of(context).size.height,
-              width: MediaQuery.of(context).size.width,
-              
-              child: SafeArea(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Padding(
-                      padding: EdgeInsets.all(5),
-                      child: IconButton(icon: Icon(Icons.arrow_back, color: Colors.white,), onPressed: () {
-                       Navigator.pop(context);
-                   }),
-                     ),
-                   
-                   _getHeader(),
-                    
-
-                    Container(
-                      padding: EdgeInsets.symmetric(horizontal: size.width * 0.1,vertical: size.width*0.1),
-                      height: MediaQuery.of(context).size.height * 0.70,
-                      width: MediaQuery.of(context).size.width,
-                      decoration: BoxDecoration(
-                       gradient: LinearGradient(
-                         colors: [Colors.black12, Colors.black],
-                         begin: Alignment.topCenter, end: Alignment.bottomCenter
-                       ),
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(25),
-                          topRight: Radius.circular(25)
-                        )
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: <Widget>[
-                          SizedBox(height: size.height * 0.15),
 
 
-                    TextFormField(
-                          controller: controller,
-                         autovalidate: true,
-                        validator: (_) {
-                        return !state.isEmailValid ? "Invalid Email" : null;
-                             },
-                          decoration: InputDecoration(
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(30),
-                              borderSide: BorderSide(color: Colors.lightGreen, width:3),
-                              
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius:BorderRadius.circular(30),
-                              borderSide: BorderSide(color: Colors.white, width:3)
-                            ),
-                            border: InputBorder.none,
-
-                            contentPadding:
-                                EdgeInsets.symmetric(horizontal: size.width / 20,vertical: size.width/30),
-                            labelStyle: GoogleFonts.ubuntu(
-                              color: Colors.black,
-                              fontSize: 20,
-                            ),
-                            
-                            hintText: "Email",
-                            hintStyle: GoogleFonts.ubuntu(
-                              color: Colors.black38,
-                            ),
-                            fillColor: Colors.black,
-                           
-                            focusColor: Colors.white,
-                            
-                            
-                          ),
-                          cursorColor: Colors.black,
-                          textAlign: TextAlign.left,
-                        ),
-
-                        SizedBox(height: size.width * 0.1),
-
-                         Center(
-                   child: Container(
-                              height: size.width* 0.13,
-                              width: size.width*0.4,
-
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(20),
-                                color: Colors.green
-                              ),
-                              child: GestureDetector(
-
-                                onTap: () {
-                                    
-                                      FirebaseAuth.instance.sendPasswordResetEmail(email: controller.text).then((value) {
-                                        Navigator.pop(context);
-                                       showSnackBar();
-
-                                      });
-                                     
-                                
-                                },
-                               
-                                child: Center(
-                                  child: Text("Send Link", style: GoogleFonts.ubuntu(color: Colors.white),)
-                                ),
-                              ),
-                            ),
-                 ),
-
-                 tapped?  showDialog(
-                    context: context,
-                       builder: (_) => CupertinoAlertDialog(
-                         
-                       content: Text("A password reset link has been sent to your email address!",
-                       style: GoogleFonts.ubuntu(color:Colors.black),
-
-                       ),
-                       ),
-                 ) : Text(""),
-                        ],
-
-
-                      
-                    
-
-                      ),
-                    ),
-
-
-                  ],
-              ),
-
-                  ),
-               
-      ),
+ Widget _buildSocialBtn(Function onTap, AssetImage logo) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        height: 50.0,
+        width: 50.0,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black26,
+              offset: Offset(0, 2),
+              blurRadius: 6.0,
+            ),
+          ],
+          image: DecorationImage(
+            image: logo,
+          ),
         ),
       ),
-                  ),
-        
-      
-);
+    );
+  }
 
-
-  
-}
-
-
-_getHeader() {
-  return Expanded(
-    
-    child: Container(
-      
+ Widget _buildSocialBtnRow() {
+    return Padding(
+      padding: EdgeInsets.symmetric(),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
-          
-          Center(
+          _buildSocialBtn(
+            () {
+              _loginBloc.add(
+                LoginWithFacebookPressed(),
+              );
+    
+                },
+            AssetImage(
+              'assets/images/facebook.jpg',
               
-            child: Padding(
-              padding:  EdgeInsets.only(left:MediaQuery.of(context).size.width*0.4),
-              child: Text(
-                'JODI',
-                style: GoogleFonts.shadowsIntoLight(color: Colors.white, fontSize: 40,),
-                textAlign: TextAlign.center,
-                //  TextStyle(color: Colors.white, fontSize: 40, fontFamily:),
-              ),
             ),
           ),
-          
+          _buildSocialBtn(
+            () {
+              _loginBloc.add(
+                LoginWithGooglePressed(),
+              );
+              
+            },
+            AssetImage(
+              'assets/images/google.jpg',
+            ),
+          ),
         ],
       ),
-    ),
-  );
-}
+    );
+  }
+
 
 
   
@@ -532,49 +404,3 @@ _getHeader() {
   }
 }
 
-
-class BackgroundSignIn extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    var sw = size.width;
-    var sh = size.height;
-    var paint = Paint();
-
-    Path mainBackground = Path();
-    mainBackground.addRect(Rect.fromLTRB(0, 0, sw, sh));
-    paint.color = Colors.grey.shade100;
-    canvas.drawPath(mainBackground, paint);
-
-    Path blueWave = Path();
-    blueWave.lineTo(sw, 0);
-    blueWave.lineTo(sw, sh * 0.5);
-    blueWave.quadraticBezierTo(sw * 0.5, sh * 0.45, sw * 0.2, 0);
-    blueWave.close();
-    paint.color = Colors.green.shade900.withGreen(100);
-    canvas.drawPath(blueWave, paint);
-
-    Path greyWave = Path();
-    greyWave.lineTo(sw, 0);
-    greyWave.lineTo(sw, sh * 0.1);
-    greyWave.cubicTo(
-        sw * 0.95, sh * 0.15, sw * 0.65, sh * 0.15, sw * 0.6, sh * 0.38);
-    greyWave.cubicTo(sw * 0.52, sh * 0.52, sw * 0.05, sh * 0.45, 0, sh * 0.4);
-    greyWave.close();
-    paint.color = Colors.black;
-    canvas.drawPath(greyWave, paint);
-
-    Path yellowWave = Path();
-    yellowWave.lineTo(sw * 0.7, 0);
-    yellowWave.cubicTo(
-        sw * 0.6, sh * 0.05, sw * 0.27, sh * 0.01, sw * 0.18, sh * 0.12);
-    yellowWave.quadraticBezierTo(sw * 0.12, sh * 0.2, 0, sh * 0.2);
-    yellowWave.close();
-    paint.color = Colors.deepOrange;
-    canvas.drawPath(yellowWave, paint);
-  }
-
-  @override
-  bool shouldRepaint(CustomPainter oldDelegate) {
-    return oldDelegate != this;
-  }
-}

@@ -202,56 +202,56 @@ class _PeopleProfileState extends State<PeopleProfile> {
         CustomHeader(),
         ListTile(
           leading: Icon(Icons.format_quote),
-          title: user.bio != null
+          title: user.bio != ""
               ? Text("${user.bio}")
               : Text("I don't have a bio"),
         ),
         ListTile(
           leading: Icon(Icons.work),
-          title: user.job != null
+          title: user.job != ""
               ? Text("${user.job}")
               : Text("Job"),
         ),
         ListTile(
           leading: Icon(Icons.school),
-          title: user.education != null
+          title: user.education != ""
               ? Text("Studied at ${user.education}")
               : Text("University"),
         ),
         ListTile(
           leading: Icon(FontAwesomeIcons.church),
-          title: user.religion != null
+          title: user.religion != ""
               ? Text("${user.religion}")
               : Text("Religion"),
         ),
         ListTile(
           leading: Icon(FontAwesomeIcons.moneyBill),
-          title: user.salary != null
+          title: user.salary != ""
               ? Text("Earns ${user.salary}")
               : Text("Enough"),
         ),
         ListTile(
           leading: Icon(Icons.star),
-          title: user.gotra != null
+          title: user.gotra != ""
               ? Text("${user.gotra} Gotra")
               : Text("Who knows?"),
         ),
         ListTile(
           leading: Icon(Icons.group),
-          title: user.community != null
+          title: user.community != ""
               ? Text("${user.community}")
               : Text("Community"),
         ),
         ListTile(
           leading: Icon(FontAwesomeIcons.ruler),
-          title: user.heightP != null
+          title: user.heightP != ""
               ? Text("${user.heightP} ")
               : Text("Height"),
         ),
 
          ListTile(
           leading: Icon(FontAwesomeIcons.instagram),
-          title: user.insta != null
+          title: user.insta != ""
               ? Text("${user.insta} ")
               : Text("Instagram"),
         ),

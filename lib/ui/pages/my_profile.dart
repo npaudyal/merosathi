@@ -262,15 +262,15 @@ class _MyProfileState extends State<MyProfile> {
                       child: Column(
                        
                         children: <Widget>[
-                          ListTile(
+                       ListTile(
           leading: Icon(Icons.format_quote),
-          title: user1.bio != null
+          title: user1.bio !=""
               ? Text("${user1.bio}")
               : Text("I don't have a bio"),
         ),
         ListTile(
           leading: Icon(Icons.work),
-          title:user1.job != null
+          title:user1.job != ""
               ? Text("${user1.job}")
               : Text("Job"),
         ),

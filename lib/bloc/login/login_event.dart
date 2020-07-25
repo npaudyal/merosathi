@@ -43,6 +43,12 @@ class Submitted extends LoginEvent {
   List<Object> get props => [email, password];
 }
 
+class LoginWithGooglePressed extends LoginEvent {}
+
+class LoginWithFacebookPressed extends LoginEvent {}
+
+
+
 class LoginWithCredentialsPressed extends LoginEvent {
   final String email;
   final String password;

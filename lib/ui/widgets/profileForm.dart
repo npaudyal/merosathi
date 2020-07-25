@@ -288,7 +288,9 @@ class _ProfileFormState extends State<ProfileForm> {
                     color: Colors.white,
                   ),
                 ],
-              )));
+              ),
+              backgroundColor: Colors.red,
+              ));
           }
           if (state.isSubmitting) {
             Scaffold.of(context)
@@ -309,11 +311,13 @@ class _ProfileFormState extends State<ProfileForm> {
         child:
             BlocBuilder<ProfileBloc, ProfileState>(builder: (context, state) {
           return Scaffold(
-            appBar: AppBar(
-              backgroundColor: Colors.black,
-              elevation: 0,
-            ),
+            // appBar: AppBar(
+            //   backgroundColor: Colors.black,
+            //   elevation: 0,
+            // ),
+            
             body: Container(
+              padding: EdgeInsets.symmetric(vertical:50),
               decoration: BoxDecoration(
                   gradient: LinearGradient(
                 colors: [Colors.black, Colors.black, Colors.grey, Colors.grey],
@@ -578,7 +582,7 @@ class _ProfileFormState extends State<ProfileForm> {
                       },
                       "Lets get Started",
                     ),
-                    SizedBox(height: 20),
+                  
                   ],
                 ),
               ),
@@ -604,7 +608,7 @@ class _ProfileFormState extends State<ProfileForm> {
                 content: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                Text("Profile Creation Unsuccessful"),
+                Text("Please complete all the required info!"),
                 Icon(Icons.error),
               ],
             )));
@@ -1232,13 +1236,18 @@ class _ProfileFormState extends State<ProfileForm> {
                         padding: EdgeInsets.symmetric(
                             horizontal: size.width / 6.5,
                             vertical: size.width / 6.5),
-                        child: Text(
-                          "*Attach a Profile Picture ",
-                          style: GoogleFonts.quicksand(
+                        child: RichText(
+                          textAlign: TextAlign.center,
+                          text: TextSpan(
+                            text: "*Attach a Profile Picture",
+                             style: GoogleFonts.quicksand(
                               color: Colors.white,
                               fontSize: 25,
                               fontWeight: FontWeight.w800),
-                          textAlign: TextAlign.center,
+                           
+                          ),
+                          
+                         
                         ),
                       ),
 
@@ -3079,17 +3088,7 @@ class _ProfileFormState extends State<ProfileForm> {
                         ),
                       ),
 
-                      //       Positioned(
-
-                      //          bottom: size.width/14.4,
-                      //  left:size.width/6.17,
-                      //         child: isButtonPressed10 == false ? buttonUnTapped(context, Colors.deepOrange, Colors.deepOrange, () {
-                      //             setState(() {
-                      //               isButtonPressed10 = !isButtonPressed10;
-                      //             });
-
-                      //         }) : buttonTapped(context, (){}),
-                      //         ),
+                     
 
                       Padding(
                         padding: EdgeInsets.only(left: size.width / 1.2),
@@ -3266,18 +3265,7 @@ class _ProfileFormState extends State<ProfileForm> {
                         ),
                       ),
 
-                      //       Positioned(
-
-                      //          bottom: size.width/14.4,
-                      //  left:size.width/6.17,
-                      //         child: isButtonPressed11 == false ? buttonUnTapped(context, Colors.deepOrange, Colors.deepOrange, () {
-                      //             setState(() {
-                      //               isButtonPressed11 = !isButtonPressed11;
-                      //             });
-
-                      //         }) : buttonTapped(context, (){}),
-                      //         ),
-
+                    
                       Padding(
                         padding: EdgeInsets.only(left: size.width / 1.2),
                         child: ClipPath(
@@ -3384,7 +3372,7 @@ class _ProfileFormState extends State<ProfileForm> {
                             SizedBox(height: size.height * 0.08),
                             RichText(
                               text: TextSpan(
-                                  text: "Do you to share live location? ",
+                                  text: "Do you want to share live location? ",
                                   style: GoogleFonts.ubuntu(
                                       color: Colors.deepOrange, fontSize: 20),
                                   children: <TextSpan>[

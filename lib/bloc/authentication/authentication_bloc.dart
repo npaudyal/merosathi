@@ -42,6 +42,7 @@ class AuthenticationBloc
 
         if (!isFirstTime) {
           yield AuthenticatedButNotSet(uid);
+         
         } else {
           yield Authenticated(uid);
           configurePushNotification();
